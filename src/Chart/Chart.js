@@ -1,4 +1,4 @@
-GeoDash.Chart = function() {
+GeoDash.Chart = function(el, options) {
   this.el = el;
   this.options = options;
   this.drawChart();
@@ -6,7 +6,6 @@ GeoDash.Chart = function() {
 
 GeoDash.Chart.prototype.drawChart = function(){
   var self = this;
-  console.log('drawing');
   this.margin = {top: 20, right: 20, bottom: 30, left: 40},
       this.width = 300 - this.margin.left - this.margin.right,
       this.height = 200 - this.margin.top - this.margin.bottom;
@@ -23,7 +22,6 @@ GeoDash.Chart.prototype.drawChart = function(){
       .scale(this.x)
       .orient("bottom")
       .tickFormat(function(d){
-        console.log(d);
         return '';
       });
 
