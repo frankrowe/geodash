@@ -31,7 +31,7 @@ GeoDash.Chart.prototype.drawChart = function(){
       .ticks(1)
       .tickFormat(this.formatPercent);
 
-  this.svg = d3.select('.chart1').append("svg")
+  this.svg = d3.select(this.el).append("svg")
       .attr("width", this.width + this.margin.left + this.margin.right)
       .attr("height", this.height + this.margin.top + this.margin.bottom)
     .append("g")
