@@ -8,7 +8,7 @@ Requirements
 
 #### Bar Chart
 ```javascript
-var barchart = new GeoDash.BarChart('.chart2', {
+var barchart = new GeoDash.BarChart('.chart', {
   x: 'county',
   y: 'popchange',
   barColor: '#A8DBA8'
@@ -17,7 +17,7 @@ var barchart = new GeoDash.BarChart('.chart2', {
 
 #### Line Chart
 ```javascript
-var linechart = new GeoDash.LineChart("#line-chart .chart", {
+var linechart = new GeoDash.LineChart(".chart", {
   x: 'date',
   y: 'stat',
   width: 'auto',
@@ -39,7 +39,7 @@ var data = [{
     'score': 3
 }];
 
-var barchart = new GeoDash.BarChart('#chart', {
+var barchart = new GeoDash.BarChart('.chart', {
   x: 'name',
   y: 'score',
   barColor: '#f00'
