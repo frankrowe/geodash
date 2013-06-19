@@ -11,8 +11,8 @@ GeoDash.BarChart.prototype.constructor = GeoDash.BarChart;
 GeoDash.BarChart.prototype.drawChart = function(){
   var self = this;
   this.margin = {top: 20, right: 20, bottom: 30, left: 40},
-      this.width = $(this.el).width() - this.margin.left - this.margin.right,
-      this.height = $(this.el).height() - this.margin.top - this.margin.bottom;
+      this.width = (this.options.width === 'auto'  || this.options.width === undefined ? $(this.el).width() : this.options.width) - this.margin.left - this.margin.right,
+      this.height = (this.options.height === 'auto'  || this.options.height === undefined ? $(this.el).height() : this.options.height) - this.margin.top - this.margin.bottom;
 
   this.formatPercent = d3.format(".0%");
 
