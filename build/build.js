@@ -2,7 +2,7 @@ var fs = require('fs'),
     UglifyJS = require('uglify-js'),
     lesscss = require('less');
 
-var result = UglifyJS.minify(["../src/GeoDash.js", "../src/Chart/Chart.js", "../src/Chart/BarChart.js", "../src/Chart/LineChart.js"], {
+var result = UglifyJS.minify(["../src/GeoDash.js", "../src/Chart/Chart.js", "../src/Chart/BarChart.js", "../src/Chart/LineChart.js", "../src/Chart/PieChart.js"], {
   outSourceMap: "GeoDash.js.map",
   output: { beautify: true}
 });
