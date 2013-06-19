@@ -13,7 +13,6 @@ GeoDash.PieChart.prototype.drawChart = function(){
   this.width = (this.options.width === 'auto' || this.options.width === undefined ? $(this.el).width() : this.options.width),
   this.height = (this.options.height === 'auto' || this.options.width === undefined ? $(this.el).height() : this.options.height),
   this.radius = Math.min(this.width, this.height) / 2;
-  console.log(this.width, this.height);
 
   this.color = d3.scale.ordinal()
       .range(this.options.colors);
@@ -48,7 +47,6 @@ GeoDash.PieChart.prototype.update = function(data){
     .attr("d", this.arc)
     .style("fill", function(d) { return self.color(d.data[self.options.label]); })
     .on('mouseover', function(d,i){
-      console.log(d);
       $(self.el).parent().find('.hover-box').html(d.value + '%');
     })
     .on('mouseout', function(d,i){
