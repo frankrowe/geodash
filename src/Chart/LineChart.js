@@ -20,7 +20,7 @@ GeoDash.LineChart.prototype.constructor = GeoDash.LineChart;
 
 GeoDash.LineChart.prototype.drawChart = function(){
   var self = this;
-  this.margin = {top: 50, right: 20, bottom: 30, left: 50};
+  this.margin = {top: 10, right: 20, bottom: 30, left: 50};
   this.width = (this.options.width === 'auto'  || this.options.width === undefined ? $(this.el).width() : this.options.width) - this.margin.left - this.margin.right;
   this.height = (this.options.height === 'auto'  || this.options.height === undefined ? $(this.el).height() : this.options.height) - this.margin.top - this.margin.bottom;
 
@@ -110,6 +110,8 @@ GeoDash.LineChart.prototype.update = function(data) {
   ]);
 
   var svg = d3.select(this.el + " svg g");
+
+  this.xAxis.ticks(data.length);
 
   svg.select(".y.axis").transition()
     .call(this.yAxis);

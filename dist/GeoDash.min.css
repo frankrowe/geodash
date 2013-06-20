@@ -1,6 +1,16 @@
 .axis path,
 .axis line {
   fill: none;
-  stroke: #dedede;
+  stroke: #c5c5c5;
   shape-rendering: crispEdges;
+}
+.axis text {
+  font-size: 10px;
+  fill: #b8b8b8;
+}
+.line {
+  fill: none;
+}
+.arc {
+  stroke: #b8b8b8;
 }

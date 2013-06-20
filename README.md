@@ -35,7 +35,7 @@ var linechart = new GeoDash.LineChart(".linechart", {
   y: 'numCats',
   width: 'auto',
   height: 255,
-  colors: ['#d80000', '#006200']
+  colors: ['#d80000', '#006200'],
   interpolate: 'monotone',
   dotRadius: 3
 });

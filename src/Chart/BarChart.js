@@ -4,7 +4,10 @@ GeoDash.BarChart = function(el, options) {
   this.defaults = {
     x: 'x',
     y: 'y',
-    barColor: '#f00'
+    barColor: '#f00',
+    opacity: 0.8,
+    drawX: true,
+    percent: false
   };
   GeoDash.Chart.call(this, el, options);
 }
@@ -15,14 +18,15 @@ GeoDash.BarChart.prototype.constructor = GeoDash.BarChart;
 
 GeoDash.BarChart.prototype.drawChart = function(){
   var self = this;
-  this.margin = {top: 20, right: 20, bottom: 30, left: 40},
+  var padding = 10;
+  this.margin = {top: 20, right: 10, bottom: 20, left: 40},
       this.width = (this.options.width === 'auto'  || this.options.width === undefined ? $(this.el).width() : this.options.width) - this.margin.left - this.margin.right,
       this.height = (this.options.height === 'auto'  || this.options.height === undefined ? $(this.el).height() : this.options.height) - this.margin.top - this.margin.bottom;
 
   this.formatPercent = d3.format(".0%");
 
   this.x = d3.scale.ordinal()
-      .rangeRoundBands([0, this.width], 0.05);
+      .rangeRoundBands([0, this.width], 0.05, 0.5);
 
   this.y = d3.scale.linear()
       .range([this.height, 0]);
@@ -37,8 +41,12 @@ GeoDash.BarChart.prototype.drawChart = function(){
   this.yAxis = d3.svg.axis()
       .scale(this.y)
       .orient("left")
-      .ticks(1)
-      .tickFormat(this.formatPercent);
+      .ticks(4)
+      .tickSize(this.width*-1, 0, 0);
+
+  if(this.options.percent) {
+    this.yAxis.tickFormat(this.formatPercent);
+  }
 
   this.svg = d3.select(this.el).append("svg")
       .attr("width", this.width + this.margin.left + this.margin.right)
@@ -59,20 +67,16 @@ GeoDash.BarChart.prototype.update = function(data){
   this.x.domain(data.map(function(d) { return d[x]; }));
   this.y.domain([0, d3.max(data, function(d) { return d[y]; })]);
 
-  this.svg.append("g")
-      .attr("class", "x axis")
-      .attr("transform", "translate(0," + this.height + ")")
-      .call(this.xAxis);
+  if(this.options.drawX) {
+    this.svg.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + this.height + ")")
+        .call(this.xAxis);
+  }
 
   this.svg.append("g")
       .attr("class", "y axis")
-      .call(this.yAxis)
-    .append("text")
-      .attr("transform", "rotate(-90)")
-      .attr("y", 6)
-      .attr("dy", ".71em")
-      .style("text-anchor", "end")
-      .text("Frequency");
+      .call(this.yAxis);
 
   this.svg.selectAll(".bar")
       .data(data)
@@ -82,5 +86,11 @@ GeoDash.BarChart.prototype.update = function(data){
       .attr("width", self.x.rangeBand())
       .attr("y", function(d) { return self.y(d[y]); })
       .attr("height", function(d) { return self.height - self.y(d[y]); })
-      .style("fill", this.options.barColor);
+      .style("fill-opacity", this.options.opacity)
+      .style("fill", this.options.barColor)
+      .on('mouseover', function(d, i){
+        d3.select(this).style('fill-opacity', 1);
+      }).on('mouseout', function(d, i){
+        d3.select(this).style('fill-opacity', self.options.opacity);
+      });
 }
