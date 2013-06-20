@@ -36,6 +36,8 @@ var linechart = new GeoDash.LineChart(".linechart", {
   width: 'auto',
   height: 255,
   colors: ['#d80000', '#006200']
+  interpolate: 'monotone',
+  dotRadius: 3
 });
 
 var data = [{
@@ -57,7 +59,8 @@ linechart.update(data);
 var piechart = new GeoDash.PieChart('.piechart', {
   label: 'source',
   value: 'percent',
-  colors: ["#d80000", "#0B6909", "#EDD70A"]
+  colors: ["#d80000", "#0B6909", "#EDD70A"],
+  innerRadius: 10
 });
 
 var data = [{
