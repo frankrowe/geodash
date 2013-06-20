@@ -10,25 +10,18 @@ GeoDash.BarChart = function(el, options) {
     percent: false,
     title: false
   };
-  GeoDash.Chart.call(this, el, options);
+  GeoDash.Chart.prototype.initialize.call(this, el, options);
 }
 
-var F = function(){};
-F.prototype = GeoDash.Chart.prototype;
-GeoDash.BarChart.prototype = new F();
-GeoDash.BarChart.prototype.constructor = GeoDash.BarChart;
+GeoDash.BarChart = GeoDash.Class.inherit(GeoDash.BarChart, GeoDash.Chart);
+
 
 GeoDash.BarChart.prototype.drawChart = function(){
   var self = this;
   var padding = 10;
 
-  this.makeTitle();
 
   this.margin = {top: 20, right: 10, bottom: 20, left: 40};
-  // if(this.options.title) {
-  //   this.margin.top -= 10;
-  //   this.margin.bottom += 10;
-  // }
   this.width = (this.options.width === 'auto'  || this.options.width === undefined ? $(this.el).width() : this.options.width) - this.margin.left - this.margin.right,
   this.height = (this.options.height === 'auto'  || this.options.height === undefined ? $(this.el).height() : this.options.height) - this.margin.top - this.margin.bottom;
   if(this.options.title) {

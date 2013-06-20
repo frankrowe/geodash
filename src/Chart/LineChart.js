@@ -12,18 +12,13 @@ GeoDash.LineChart = function(el, options) {
     dotRadius: 3,
     title: false
   };
-  GeoDash.Chart.call(this, el, options);
+  GeoDash.Chart.prototype.initialize.call(this, el, options);
 }
 
-var F = function(){};
-F.prototype = GeoDash.Chart.prototype;
-GeoDash.LineChart.prototype = new F();
-GeoDash.LineChart.prototype.constructor = GeoDash.LineChart;
+GeoDash.LineChart = GeoDash.Class.inherit(GeoDash.LineChart, GeoDash.Chart);
 
 GeoDash.LineChart.prototype.drawChart = function(){
   var self = this;
-
-  this.makeTitle();
 
   this.margin = {top: 10, right: 20, bottom: 30, left: 50};
   this.width = (this.options.width === 'auto'  || this.options.width === undefined ? $(this.el).width() : this.options.width) - this.margin.left - this.margin.right;
@@ -31,7 +26,7 @@ GeoDash.LineChart.prototype.drawChart = function(){
   if(this.options.title) {
     this.height  = this.height - 21;
   }
-  
+
   this.x = d3.time.scale()
       .range([0, this.width]);
 

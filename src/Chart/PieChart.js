@@ -12,18 +12,13 @@ GeoDash.PieChart = function(el, options) {
     title: false,
     padding: 10
   };
-  GeoDash.Chart.call(this, el, options);
+  GeoDash.Chart.prototype.initialize.call(this, el, options);
 }
 
-var F = function(){};
-F.prototype = GeoDash.Chart.prototype;
-GeoDash.PieChart.prototype = new F();
-GeoDash.PieChart.prototype.constructor = GeoDash.PieChart;
+GeoDash.PieChart = GeoDash.Class.inherit(GeoDash.PieChart, GeoDash.Chart);
 
 GeoDash.PieChart.prototype.drawChart = function(){
   var self = this;
-
-  this.makeTitle();
 
   this.width = (this.options.width === 'auto' || this.options.width === undefined ? $(this.el).width() : this.options.width);
   this.height = (this.options.height === 'auto' || this.options.width === undefined ? $(this.el).height() : this.options.height);
