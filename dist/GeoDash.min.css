@@ -15,6 +15,11 @@
   stroke: #b8b8b8;
 }
 .title {
-  background: red;
-  color: blue;
+  height: 20px;
+  background: none;
+  color: #b1b1b1;
+  font-size: 12px;
+}
+svg {
+  fill: blue;
 }

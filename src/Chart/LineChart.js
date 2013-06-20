@@ -24,11 +24,14 @@ GeoDash.LineChart.prototype.drawChart = function(){
   var self = this;
 
   this.makeTitle();
-  
+
   this.margin = {top: 10, right: 20, bottom: 30, left: 50};
   this.width = (this.options.width === 'auto'  || this.options.width === undefined ? $(this.el).width() : this.options.width) - this.margin.left - this.margin.right;
   this.height = (this.options.height === 'auto'  || this.options.height === undefined ? $(this.el).height() : this.options.height) - this.margin.top - this.margin.bottom;
-
+  if(this.options.title) {
+    this.height  = this.height - 21;
+  }
+  
   this.x = d3.time.scale()
       .range([0, this.width]);
 

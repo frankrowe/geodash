@@ -23,11 +23,17 @@ GeoDash.BarChart.prototype.drawChart = function(){
   var padding = 10;
 
   this.makeTitle();
-  
-  this.margin = {top: 20, right: 10, bottom: 20, left: 40},
-      this.width = (this.options.width === 'auto'  || this.options.width === undefined ? $(this.el).width() : this.options.width) - this.margin.left - this.margin.right,
-      this.height = (this.options.height === 'auto'  || this.options.height === undefined ? $(this.el).height() : this.options.height) - this.margin.top - this.margin.bottom;
 
+  this.margin = {top: 20, right: 10, bottom: 20, left: 40};
+  // if(this.options.title) {
+  //   this.margin.top -= 10;
+  //   this.margin.bottom += 10;
+  // }
+  this.width = (this.options.width === 'auto'  || this.options.width === undefined ? $(this.el).width() : this.options.width) - this.margin.left - this.margin.right,
+  this.height = (this.options.height === 'auto'  || this.options.height === undefined ? $(this.el).height() : this.options.height) - this.margin.top - this.margin.bottom;
+  if(this.options.title) {
+    this.height  = this.height - 21;
+  }
   this.formatPercent = d3.format(".0%");
 
   this.x = d3.scale.ordinal()

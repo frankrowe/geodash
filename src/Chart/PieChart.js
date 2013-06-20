@@ -9,7 +9,8 @@ GeoDash.PieChart = function(el, options) {
     opacity: 1,
     drawX: true,
     drawY: true,
-    title: false
+    title: false,
+    padding: 10
   };
   GeoDash.Chart.call(this, el, options);
 }
@@ -21,13 +22,19 @@ GeoDash.PieChart.prototype.constructor = GeoDash.PieChart;
 
 GeoDash.PieChart.prototype.drawChart = function(){
   var self = this;
-  
+
   this.makeTitle();
 
-  this.width = (this.options.width === 'auto' || this.options.width === undefined ? $(this.el).width() : this.options.width),
-  this.height = (this.options.height === 'auto' || this.options.width === undefined ? $(this.el).height() : this.options.height),
+  this.width = (this.options.width === 'auto' || this.options.width === undefined ? $(this.el).width() : this.options.width);
+  this.height = (this.options.height === 'auto' || this.options.width === undefined ? $(this.el).height() : this.options.height);
+  this.width = this.width - this.options.padding*2;
+  this.height = this.height - this.options.padding*2;
+  if(this.options.title) {
+    this.height  = this.height - 21;
+  }
+
   this.radius = Math.min(this.width, this.height) / 2.2;
-  console.log(this.radius);
+
   this.color = d3.scale.ordinal()
       .range(this.options.colors);
 
