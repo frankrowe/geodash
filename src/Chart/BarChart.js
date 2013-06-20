@@ -1,6 +1,11 @@
 //BarChart extends Chart
 
 GeoDash.BarChart = function(el, options) {
+  this.defaults = {
+    x: 'x',
+    y: 'y',
+    barColor: '#f00'
+  };
   GeoDash.Chart.call(this, el, options);
 }
 

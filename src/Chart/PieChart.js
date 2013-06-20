@@ -1,6 +1,12 @@
 //PieChart extends Chart
 
 GeoDash.PieChart = function(el, options) {
+  this.defaults = {
+    label: 'label',
+    value: 'value',
+    colors: ["#f00", "#0f0", "#00f"],
+    innerRadius: 10
+  };
   GeoDash.Chart.call(this, el, options);
 }
 
@@ -18,8 +24,8 @@ GeoDash.PieChart.prototype.drawChart = function(){
       .range(this.options.colors);
 
   this.arc = d3.svg.arc()
-      .outerRadius(this.radius - 10)
-      .innerRadius(25);
+      .outerRadius(this.radius)
+      .innerRadius(this.options.innerRadius);
 
   this.pie = d3.layout.pie()
       .sort(null)

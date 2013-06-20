@@ -2,6 +2,15 @@
 //LineChart extends Chart
 
 GeoDash.LineChart = function(el, options) {
+  this.defaults = {
+    x: 'x',
+    y: 'y',
+    width: 'auto',
+    height: 'auto',
+    colors: ['#d80000', '#006200'],
+    interpolate: 'monotone',
+    dotRadius: 3
+  };
   GeoDash.Chart.call(this, el, options);
 }
 
@@ -14,7 +23,6 @@ GeoDash.LineChart.prototype.drawChart = function(){
   this.margin = {top: 50, right: 20, bottom: 30, left: 50};
   this.width = (this.options.width === 'auto'  || this.options.width === undefined ? $(this.el).width() : this.options.width) - this.margin.left - this.margin.right;
   this.height = (this.options.height === 'auto'  || this.options.height === undefined ? $(this.el).height() : this.options.height) - this.margin.top - this.margin.bottom;
-  this.dotRadius = 3;
 
   this.x = d3.time.scale()
       .range([0, this.width]);
@@ -36,7 +44,7 @@ GeoDash.LineChart.prototype.drawChart = function(){
      .range(this.options.colors);
 
   this.line = d3.svg.line()
-      .interpolate('monotone')
+      .interpolate(this.options.interpolate)
       .x(function(d) { return self.x(d.date); })
       .y(function(d) { return self.y(d.value); });
 
@@ -63,7 +71,7 @@ GeoDash.LineChart.prototype.hoverOnDot = function(d, i, dot){
   var stat = this.formatComma(d.value);
   var x = 55 + this.x(d.date);
   var y = 45 + this.y(d.value);
-  d3.select(dot).transition().attr('r', this.dotRadius + 3);
+  d3.select(dot).transition().attr('r', this.options.dotRadius + 3);
   
   //get width of x-axis, so labels don't go off the edge
   var w = $('.line').get(0).getBBox().width;
@@ -77,7 +85,7 @@ GeoDash.LineChart.prototype.hoverOnDot = function(d, i, dot){
 
 GeoDash.LineChart.prototype.hoverOffDot = function(d, i, dot){
   $('.hoverbox').fadeOut(200);
-  d3.select(dot).transition().attr('r', this.dotRadius);
+  d3.select(dot).transition().attr('r', this.options.dotRadius);
 }
 
 GeoDash.LineChart.prototype.update = function(data) {
@@ -140,7 +148,7 @@ GeoDash.LineChart.prototype.update = function(data) {
     dots
       .enter().append("circle")
         .attr("class", "dot dotset" + i)
-        .attr("r", this.dotRadius)
+        .attr("r", this.options.dotRadius)
         .style("fill", function(d) { return self.color(linedata[i].name); })
         .attr("data", function(d){ return d.value; })
         .on('mouseover', function(d, i) {self.hoverOnDot(d, i, this); })
