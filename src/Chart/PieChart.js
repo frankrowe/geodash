@@ -8,17 +8,22 @@ GeoDash.PieChart = function(el, options) {
     innerRadius: 10,
     opacity: 1,
     drawX: true,
-    drawY: true
+    drawY: true,
+    title: false
   };
   GeoDash.Chart.call(this, el, options);
 }
 
-GeoDash.PieChart.prototype = new GeoDash.Chart();
-
+var F = function(){};
+F.prototype = GeoDash.Chart.prototype;
+GeoDash.PieChart.prototype = new F();
 GeoDash.PieChart.prototype.constructor = GeoDash.PieChart;
 
 GeoDash.PieChart.prototype.drawChart = function(){
   var self = this;
+  
+  this.makeTitle();
+
   this.width = (this.options.width === 'auto' || this.options.width === undefined ? $(this.el).width() : this.options.width),
   this.height = (this.options.height === 'auto' || this.options.width === undefined ? $(this.el).height() : this.options.height),
   this.radius = Math.min(this.width, this.height) / 2.2;

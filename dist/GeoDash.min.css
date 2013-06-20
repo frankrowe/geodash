@@ -14,3 +14,7 @@
 .arc {
   stroke: #b8b8b8;
 }
+.title {
+  background: red;
+  color: blue;
+}

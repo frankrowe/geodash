@@ -7,18 +7,23 @@ GeoDash.BarChart = function(el, options) {
     barColor: '#f00',
     opacity: 0.8,
     drawX: true,
-    percent: false
+    percent: false,
+    title: false
   };
   GeoDash.Chart.call(this, el, options);
 }
 
-GeoDash.BarChart.prototype = new GeoDash.Chart();
-
+var F = function(){};
+F.prototype = GeoDash.Chart.prototype;
+GeoDash.BarChart.prototype = new F();
 GeoDash.BarChart.prototype.constructor = GeoDash.BarChart;
 
 GeoDash.BarChart.prototype.drawChart = function(){
   var self = this;
   var padding = 10;
+
+  this.makeTitle();
+  
   this.margin = {top: 20, right: 10, bottom: 20, left: 40},
       this.width = (this.options.width === 'auto'  || this.options.width === undefined ? $(this.el).width() : this.options.width) - this.margin.left - this.margin.right,
       this.height = (this.options.height === 'auto'  || this.options.height === undefined ? $(this.el).height() : this.options.height) - this.margin.top - this.margin.bottom;
