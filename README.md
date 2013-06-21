@@ -3,6 +3,9 @@ GeoDash
 
 A modern charting and mapping library for the web.
 
+![Image](test/geodashbarchart.png?raw=true)
+
+
 Requirements
  - D3.js
 
