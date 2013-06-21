@@ -1,17 +1,18 @@
 //BarChart extends Chart
-GeoDash.BarChart = GeoDash.Class({
+GeoDash.BarChart = GeoDash.Class.extend({
     className: 'BarChart',
     extend: GeoDash.Chart,
+    defaults: {
+      x: 'x',
+      y: 'y',
+      barColor: '#f00',
+      opacity: 0.3,
+      drawX: true,
+      percent: false,
+      title: false
+    },
     initialize: function (el, options) {
-        this.defaults = {
-            x: 'x',
-            y: 'y',
-            barColor: '#f00',
-            opacity: 0.8,
-            drawX: true,
-            percent: false,
-            title: false
-        };
+
     },
     drawChart: function () {
         var self = this;

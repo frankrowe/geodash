@@ -2,10 +2,14 @@
 Class name: Class
 Description: implements inheritance
 */
-GeoDash.Class = function (child) {
+
+GeoDash.Class =  function () {};
+
+GeoDash.Class.extend = function (child) {
     var ch = child;
     var p = ch.extend;
     var _class_ = null;
+    var self = this;
     if (p == null || typeof p == 'undefined') {
         _class_ = function () {
             if (typeof this.initialize != 'undefined')
@@ -34,20 +38,20 @@ GeoDash.Class = function (child) {
                 init.apply(this, arguments);
             }
         };
-        extend(_class_, p); //inherit prototype
-        extend2(_class_.prototype, ch); //augment prototype
+        self.inheritPrototype(_class_, p); //inherit prototype
+        self.augmentPrototype(_class_.prototype, ch); //augment prototype
     }
     return _class_;
 };
 
-extend = function (child, parent) {
+GeoDash.Class.inheritPrototype = function (child, parent) {
     var F = function () { };
     F.prototype = parent.prototype;
     child.prototype = new F();
     child.prototype.constructor = child;
     child.parent = parent.prototype;
 };
-extend2 = function (child, parent) {
+GeoDash.Class.augmentPrototype = function (child, parent) {
     child = child || {};
     if (parent) {
         for (var property in parent) {
