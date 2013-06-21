@@ -27,7 +27,7 @@ GeoDash.Chart = GeoDash.Class({
             var html = '<div class="title">';
             html += this.options.title;
             html += '</div>';
-            $(this.el).append(html);
+            d3.select(this.el).html(html);
         }
     }
 });
