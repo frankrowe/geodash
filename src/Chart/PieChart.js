@@ -1,6 +1,6 @@
 //PieChart extends Chart
 
-GeoDash.PieChart = GeoDash.Class.extend({
+GeoDash.PieChart = GeoDash.Class({
   className: 'PieChart',
   extend: GeoDash.Chart,
   defaults: {

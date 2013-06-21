@@ -1,7 +1,7 @@
 /*
 Chart base class
 */
-GeoDash.Chart = GeoDash.Class.extend({
+GeoDash.Chart = GeoDash.Class({
     className: 'Chart',
     initialize: function (el, options) {
         this.el = el;
