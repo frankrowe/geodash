@@ -3,13 +3,11 @@ Class name: Class
 Description: implements inheritance
 */
 
-GeoDash.Class =  function () {};
-
-GeoDash.Class.extend = function (child) {
+GeoDash.Class = function (child) {
     var ch = child;
     var p = ch.extend;
     var _class_ = null;
-    var self = this;
+    var self = GeoDash.Class;
     if (p == null || typeof p == 'undefined') {
         _class_ = function () {
             if (typeof this.initialize != 'undefined')
@@ -26,7 +24,7 @@ GeoDash.Class.extend = function (child) {
                 (for example: bad name or typo makes parent class not exist, therefore, 
                 p has 'undefined' value which does not have a prototype
             */
-            if (typeof p.prototype != null) {
+            if (typeof p.prototype != 'undefined') {
                 var parentInit = p.prototype.initialize;
                 if (typeof parentInit == 'function') {
                     parentInit.apply(this, arguments);
