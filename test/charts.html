@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>GeoDash</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <link rel="stylesheet" href="../dist/GeoDash.min.css" />
+  <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.0.1/d3.v3.min.js"></script>
+  <script src="../dist/GeoDash.min.js"></script>
+  <style>
+  .charts {
+    margin: 20px auto;
+    width: 1000px;
+    text-align: center;
+  }
+    .barchart {
+      width: 300px;
+      height: 300px;
+    }
+    .piechart {
+      width: 300px;
+      height: 300px;
+    }
+    .linechart {
+      width: 300px;
+      height: 300px;
+    }
+    .chart {
+      float: left;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="charts">
+    <div class="barchart chart"></div>
+    <div class="piechart chart"></div>
+    <div class="linechart chart"></div>
+  </div>
+
+  <script type="text/javascript">
+    var barchart = new GeoDash.BarChart('.barchart', {
+      x: 'name',
+      y: 'score',
+      barColor: '#f00',
+      title: 'Test Bar Chart'
+    });
+
+    var data = [{
+        'name': 'steve',
+        'score': 21
+      },{
+        'name': 'woz',
+        'score': 4
+      },{
+        'name': 'jonny',
+        'score': 3
+    }];
+
+    barchart.update(data);
+
+    var piechart = new GeoDash.PieChart('.piechart', {
+      label: 'source',
+      value: 'percent',
+      colors: ["#d80000", "#0B6909", "#EDD70A"],
+      opacity: 0.7,
+      innerRadius: 10
+    });
+
+    var data = [{
+        "source":"lol",
+        "percent":40
+      },{
+        "source":"cats",
+        "percent":15
+      },{
+        "source":"#woah",
+        "percent":45
+    }];
+
+    piechart.update(data);
+
+    var parseDate = d3.time.format("%Y").parse;
+    var linechart = new GeoDash.LineChart(".linechart", {
+      x: 'date',
+      y: 'numCats',
+      width: 'auto',
+      height: 'auto',
+      colors: ['#f00'],
+      title: 'Number of Cats',
+      interpolate: 'monotone',
+      dotRadius: 3
+    });
+
+    var data = [{
+        "date":parseDate("2007"),
+        "numCats":92817
+      },{
+        "date":parseDate("2008"),
+        "numCats":81039
+      },{
+        "date":parseDate("2009"),
+        "numCats":75920
+      },{
+        "date":parseDate("2010"),
+        "numCats":76920
+      },{
+        "date":parseDate("2011"),
+        "numCats":84123
+      },{
+        "date":parseDate("2012"),
+        "numCats":96109
+      },{
+        "date":parseDate("2013"),
+        "numCats":145897
+    }];
+
+    linechart.update(data);
+  </script>
+</body>
+</html>
