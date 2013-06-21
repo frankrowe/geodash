@@ -1,9 +1,8 @@
 
 //LineChart extends Chart
 
-GeoDash.LineChart = GeoDash.Class({
+GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
   className: 'LineChart',
-  extend: GeoDash.Chart,
   defaults: {
     x: 'x',
     y: 'y',

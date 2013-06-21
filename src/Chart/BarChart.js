@@ -1,7 +1,6 @@
 //BarChart extends Chart
-GeoDash.BarChart = GeoDash.Class({
+GeoDash.BarChart = ezoop.ExtendedClass(GeoDash.Chart, {
     className: 'BarChart',
-    extend: GeoDash.Chart,
     defaults: {
       x: 'x',
       y: 'y',

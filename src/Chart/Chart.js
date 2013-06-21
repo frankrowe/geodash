@@ -1,7 +1,7 @@
 /*
 Chart base class
 */
-GeoDash.Chart = GeoDash.Class({
+GeoDash.Chart = ezoop.BaseClass({
     className: 'Chart',
     initialize: function (el, options) {
         this.el = el;

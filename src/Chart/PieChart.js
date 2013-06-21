@@ -1,8 +1,7 @@
 //PieChart extends Chart
 
-GeoDash.PieChart = GeoDash.Class({
+GeoDash.PieChart = ezoop.ExtendedClass(GeoDash.Chart, {
   className: 'PieChart',
-  extend: GeoDash.Chart,
   defaults: {
     label: 'label',
     value: 'value',
