@@ -77,3 +77,13 @@ extend2 = function (child, parent) {
     }
 };
 
+<<<<<<< HEAD
+=======
+GeoDash.Class.inherit = function(c, p){
+  var f = function(){};
+  f.prototype = p.prototype;
+  c.prototype = new f();
+  c.prototype.constructor = c;
+  return c;
+}
+>>>>>>> 4c2d0fe93bd9d0242cce4db0b8246ae0955de1ca
