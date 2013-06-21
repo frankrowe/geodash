@@ -15,7 +15,6 @@ GeoDash.BarChart = function(el, options) {
 
 GeoDash.BarChart = GeoDash.Class.inherit(GeoDash.BarChart, GeoDash.Chart);
 
-
 GeoDash.BarChart.prototype.drawChart = function(){
   var self = this;
   var padding = 10;
