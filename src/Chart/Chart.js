@@ -30,6 +30,7 @@ GeoDash.Chart.prototype.makeTitle = function() {
     var html = '<div class="title">';
     html += this.options.title;
     html += '</div>';
-    $(this.el).append(html);
+    var domel = document.querySelectorAll(this.el)[0];
+    domel.innerHTML += html;
   }
 };

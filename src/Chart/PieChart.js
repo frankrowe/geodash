@@ -20,8 +20,8 @@ GeoDash.PieChart = GeoDash.Class.inherit(GeoDash.PieChart, GeoDash.Chart);
 GeoDash.PieChart.prototype.drawChart = function(){
   var self = this;
 
-  this.width = (this.options.width === 'auto' || this.options.width === undefined ? $(this.el).width() : this.options.width);
-  this.height = (this.options.height === 'auto' || this.options.width === undefined ? $(this.el).height() : this.options.height);
+  this.width = (this.options.width === 'auto' || this.options.width === undefined ? parseInt(d3.select(this.el).style('width')) : this.options.width);
+  this.height = (this.options.height === 'auto' || this.options.width === undefined ? parseInt(d3.select(this.el).style('height')) : this.options.height);
   this.width = this.width - this.options.padding*2;
   this.height = this.height - this.options.padding*2;
   if(this.options.title) {
@@ -110,11 +110,11 @@ GeoDash.PieChart.prototype.update = function(data){
     .style("fill", function(d) { return self.color(d.data[self.options.label]); })
     .style("fill-opacity", this.options.opacity)
     .on('mouseover', function(d,i){
-      $(self.el).parent().find('.hover-box').html(d.value + '%');
+      d3.select(self.el).select('.hoverbox').html(d.value + '%');
       d3.select(this).style('fill-opacity', 1);
     })
     .on('mouseout', function(d,i){
-      $(self.el).parent().find('.hover-box').html('');
+      d3.select(self.el).select('.hoverbox').html('');
       d3.select(this).style('fill-opacity', self.options.opacity  );
     });
 

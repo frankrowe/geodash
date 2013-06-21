@@ -7,7 +7,6 @@
 
   <link rel="stylesheet" href="../dist/GeoDash.min.css" />
   <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.0.1/d3.v3.min.js"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
   <script src="../dist/GeoDash.min.js"></script>
   <style>
     .barchart {
@@ -25,7 +24,8 @@
     var barchart = new GeoDash.BarChart('.barchart', {
       x: 'name',
       y: 'score',
-      barColor: '#f00'
+      barColor: '#f00',
+      title: 'Test Bar Chart'
     });
 
     var data = [{
