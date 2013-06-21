@@ -1,7 +1,7 @@
 
 //LineChart extends Chart
 
-GeoDash.LineChart = GeoDash.Class.extend({
+GeoDash.LineChart = GeoDash.Class({
   className: 'LineChart',
   extend: GeoDash.Chart,
   defaults: {

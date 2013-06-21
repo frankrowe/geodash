@@ -1,5 +1,5 @@
 //BarChart extends Chart
-GeoDash.BarChart = GeoDash.Class.extend({
+GeoDash.BarChart = GeoDash.Class({
     className: 'BarChart',
     extend: GeoDash.Chart,
     defaults: {
