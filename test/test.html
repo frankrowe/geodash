@@ -1,0 +1,37 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Testing</title>
+    <script src="../src/GeoDash.js" type="text/javascript"></script>
+    <script src="../src/Class.js" type="text/javascript"></script>
+
+</head>
+<body>
+    <script type="text/javascript">
+        var Parent = GeoDash.Class({
+            somefunction: function () { },
+            someProperty: 'blah blah',
+            initialize: function (options) {
+                log('this is parent initialize running!!!!! Watch it');
+            }
+        });
+        var NewClass = GeoDash.Class({
+            extend: Parent,
+            name: 'child',
+            childFunction: function () {
+                log('running childFunction when initialized');
+            },
+            //this class takes options as init params
+            initialize: function (options) {
+                this.childFunction();
+            }
+        });
+        var c = new NewClass();
+        var p = new Parent();
+        log(c);
+        log('--------');
+        log(p);
+    </script>
+</body>
+</html>
