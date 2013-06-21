@@ -3,7 +3,7 @@ GeoDash
 
 A modern charting and mapping library for the web.
 
-![Image](test/geodashbarchart.png?raw=true)
+![Image](test/geodashcharts.png?raw=true)
 
 
 Requirements
