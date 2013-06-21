@@ -1,4 +1,6 @@
-GeoDash.Class = {};
+GeoDash.Class = {
+
+};
 
 GeoDash.Class.inherit = function(c, p){
   var f = function(){};
