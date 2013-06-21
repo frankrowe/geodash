@@ -21,8 +21,8 @@ GeoDash.LineChart.prototype.drawChart = function(){
   var self = this;
 
   this.margin = {top: 10, right: 20, bottom: 30, left: 50};
-  this.width = (this.options.width === 'auto'  || this.options.width === undefined ? $(this.el).width() : this.options.width) - this.margin.left - this.margin.right;
-  this.height = (this.options.height === 'auto'  || this.options.height === undefined ? $(this.el).height() : this.options.height) - this.margin.top - this.margin.bottom;
+  this.width = (this.options.width === 'auto'  || this.options.width === undefined ? parseInt(d3.select(this.el).style('width')) : this.options.width) - this.margin.left - this.margin.right;
+  this.height = (this.options.height === 'auto'  || this.options.height === undefined ? parseInt(d3.select(this.el).style('height')) : this.options.height) - this.margin.top - this.margin.bottom;
   if(this.options.title) {
     this.height  = this.height - 21;
   }
@@ -77,17 +77,20 @@ GeoDash.LineChart.prototype.hoverOnDot = function(d, i, dot){
   d3.select(dot).transition().attr('r', this.options.dotRadius + 3);
   
   //get width of x-axis, so labels don't go off the edge
-  var w = $('.line').get(0).getBBox().width;
+  var w = d3.select('.line')[0][0].getBBox().width;
   if(this.x(d.date) >= w) x -= 55;
 
-  $('.hoverbox').css('left', x);
-  $('.hoverbox').css('top', y);
-  $('.hoverbox').html(stat);
-  $('.hoverbox').fadeIn(200);
+  d3.select(self.el).select('.hoverbox').style('left', x + 'px');
+  d3.select(self.el).select('.hoverbox').style('top', y + 'px');
+  d3.select(self.el).select('.hoverbox').html(stat);
+  d3.select(self.el).select('.hoverbox').transition().style('display', 'block');
+  //d3.select(self.el).select('.hoverbox').transition().style('opacity', '1');
 }
 
 GeoDash.LineChart.prototype.hoverOffDot = function(d, i, dot){
-  $('.hoverbox').fadeOut(200);
+  var self = this;
+  d3.select(self.el).select('.hoverbox').transition().style('display', 'none');
+  //d3.select(self.el).select('.hoverbox').transition().style('opacity', '0');
   d3.select(dot).transition().attr('r', this.options.dotRadius);
 }
 
