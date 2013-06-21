@@ -8,17 +8,15 @@ ezoop.noConflict = function () {
 
 window.ezoop = ezoop;
 
-ezoop.SubClass = function(parentClass, properties) {
-  ezoop.Class(parentClass, properties);
+ezoop.ExtendedClass = function(parentClass, properties) {
+  return ezoop.Class(parentClass, properties);
 }
 
 ezoop.BaseClass = function(properties) {
-  ezoop.Class(null, properties);
+  return ezoop.Class(null, properties);
 }
 
 ezoop.Class = function (parentClass, childClass) {
-  var ch = childClass;
-  var p = parentClass;
   var _class_ = null;
   var self = ezoop.Class;
   if (parentClass == null || typeof parentClass == 'undefined') {
@@ -51,7 +49,7 @@ ezoop.Class = function (parentClass, childClass) {
 ezoop.Class.inheritPrototype = function (child, parent) {
   var f = function () { };
   f.prototype = parent.prototype;
-  child.prototype = new F();
+  child.prototype = new f();
   child.prototype.constructor = child;
   child.parent = parent.prototype;
 }
