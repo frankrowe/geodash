@@ -9,3 +9,12 @@ GeoDash.noConflict = function () {
 };
 
 window.GeoDash = GeoDash;
+
+/*
+Helper functions
+*/
+//console log
+function log(msg) {
+    if (typeof console != 'undefined')
+        console.log(msg);
+}
