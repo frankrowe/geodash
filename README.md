@@ -1,7 +1,7 @@
 GeoDash
 =======
 
-A modern charting and mapping library for the web.
+A modern charting and mapping library for the web. (A D3 wrapper for lazy charts.)
 
 ![Image](test/geodashcharts.png?raw=true)
 
