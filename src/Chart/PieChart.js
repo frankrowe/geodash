@@ -30,42 +30,42 @@ GeoDash.PieChart = ezoop.ExtendedClass(GeoDash.Chart, {
     this.radius = Math.min(this.width, this.height) / 2.2;
 
     this.color = d3.scale.ordinal()
-        .range(this.options.colors);
+      .range(this.options.colors);
 
     this.x = d3.scale.ordinal()
-        .range([0, this.width-2]);
+      .range([0, this.width-2]);
 
     this.y = d3.scale.linear()
-        .range([this.height-2, 0]);
+      .range([this.height-2, 0]);
 
     this.xAxis = d3.svg.axis()
-        .scale(this.x)
-        .orient("bottom")
-        .tickSize(11,0,0)
-        .tickFormat(function(d){
-          return '';
-        });
+      .scale(this.x)
+      .orient("bottom")
+      .tickSize(11,0,0)
+      .tickFormat(function(d){
+        return '';
+      });
 
     this.yAxis = d3.svg.axis()
-        .scale(this.y)
-        .orient("left")
-        //.ticks(0)
-        .tickSize(11, 0, 0)
-        .tickFormat(function(d){
-          return '';
-        });
+      .scale(this.y)
+      .orient("left")
+      //.ticks(0)
+      .tickSize(11, 0, 0)
+      .tickFormat(function(d){
+        return '';
+      });
 
     this.arc = d3.svg.arc()
-        .outerRadius(this.radius)
-        .innerRadius(this.options.innerRadius);
+      .outerRadius(this.radius)
+      .innerRadius(this.options.innerRadius);
 
     this.pie = d3.layout.pie()
-        .sort(null)
-        .value(function(d) { return d[self.options.value]; });
+      .sort(null)
+      .value(function(d) { return d[self.options.value]; });
 
     this.svg = d3.select(this.el).append("svg")
-        .attr("width", this.width)
-        .attr("height", this.height)
+      .attr("width", this.width)
+      .attr("height", this.height)
       .append("g")
         .attr("transform", "translate(" + this.width / 2 + "," + this.height / 2 + ")");
   },
@@ -86,7 +86,8 @@ GeoDash.PieChart = ezoop.ExtendedClass(GeoDash.Chart, {
         .attr("class", "x axis")
         .attr("transform", "translate(" + (this.width/2)*-1 + "," + 0 + ")")
         .call(this.xAxis);
-      this.svg.select('.x.axis').selectAll(".tick").attr("transform", "translate(0,-5)");
+      this.svg.select('.x.axis').selectAll(".tick")
+        .attr("transform", "translate(0,-5)");
     }
 
 
@@ -95,13 +96,14 @@ GeoDash.PieChart = ezoop.ExtendedClass(GeoDash.Chart, {
         .attr("class", "y axis")
         .attr("transform", "translate(" + 0 + "," + (this.height/2)*-1 + ")")
         .call(this.yAxis);
-      this.svg.select('.y.axis').selectAll(".tick").attr("transform", "translate(5,0)");
+      this.svg.select('.y.axis').selectAll(".tick")
+        .attr("transform", "translate(5,0)");
     }
 
     var g = this.svg.selectAll(".arc")
         .data(this.pie(data))
-      .enter().append("g")
-        .attr("class", "arc");
+        .enter().append("g")
+          .attr("class", "arc");
 
     g.append("path")
       .attr("d", this.arc)

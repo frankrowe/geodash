@@ -27,45 +27,45 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
     }
 
     this.x = d3.time.scale()
-        .range([0, this.width]);
+      .range([0, this.width]);
 
     this.y = d3.scale.linear()
-        .range([this.height, 0]);
+      .range([this.height, 0]);
 
     this.xAxis = d3.svg.axis()
-        .scale(this.x)
-        .tickSize(this.height*-1)
-        .orient("bottom");
+      .scale(this.x)
+      .tickSize(this.height*-1)
+      .orient("bottom");
 
     this.yAxis = d3.svg.axis()
-        .scale(this.y)
-        .tickSize(this.width*-1)
-        .orient("left");
+      .scale(this.y)
+      .tickSize(this.width*-1)
+      .orient("left");
 
     this.color = d3.scale.ordinal()
-       .range(this.options.colors);
+    .range(this.options.colors);
 
     this.line = d3.svg.line()
-        .interpolate(this.options.interpolate)
-        .x(function(d) { return self.x(d.date); })
-        .y(function(d) { return self.y(d.value); });
+      .interpolate(this.options.interpolate)
+      .x(function(d) { return self.x(d.date); })
+      .y(function(d) { return self.y(d.value); });
 
     this.formatComma = d3.format(",");
 
     var svg = d3.select(this.el).append("svg")
         .attr("width", this.width + this.margin.left + this.margin.right)
         .attr("height", this.height + this.margin.top + this.margin.bottom)
-      .append("g")
-        .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
+        .append("g")
+          .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
 
     svg.append("g")
-        .attr("class", "x axis")
-        .attr("transform", "translate(0," + (this.height) + ")")
-        .call(this.xAxis);
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + (this.height) + ")")
+      .call(this.xAxis);
 
     svg.append("g")
-        .attr("class", "y axis")
-        .call(this.yAxis);
+      .attr("class", "y axis")
+      .call(this.yAxis);
   },
   hoverOnDot: function(d, i, dot){
     var self = this;
@@ -73,8 +73,7 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
     var x = 55 + this.x(d.date);
     var y = 45 + this.y(d.value);
     d3.select(dot).transition().attr('r', this.options.dotRadius + 3);
-    
-    //get width of x-axis, so labels don't go off the edge
+
     var w = d3.select('.line')[0][0].getBBox().width;
     if(this.x(d.date) >= w) x -= 55;
 
@@ -82,12 +81,10 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
     d3.select(self.el).select('.hoverbox').style('top', y + 'px');
     d3.select(self.el).select('.hoverbox').html(stat);
     d3.select(self.el).select('.hoverbox').transition().style('display', 'block');
-    //d3.select(self.el).select('.hoverbox').transition().style('opacity', '1');
   },
   hoverOffDot: function(d, i, dot){
     var self = this;
     d3.select(self.el).select('.hoverbox').transition().style('display', 'none');
-    //d3.select(self.el).select('.hoverbox').transition().style('opacity', '0');
     d3.select(dot).transition().attr('r', this.options.dotRadius);
   },
   update: function(data) {
@@ -127,15 +124,13 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
     var lines = svg.selectAll(".line")
       .data(linedata);
 
-    lines
-      .transition().duration(500).delay(delay)
+    lines.transition().duration(500).delay(delay)
       .attr("d", function(d) { return self.line(d.values); });
 
-    lines
-      .enter().append('path')
-        .attr("class", "line")
-        .attr("d", function(d) { return self.line(d.values); })
-        .style("stroke", function(d) { return self.color(d.name); });
+    lines.enter().append('path')
+      .attr("class", "line")
+      .attr("d", function(d) { return self.line(d.values); })
+      .style("stroke", function(d) { return self.color(d.name); });
 
     //dots
     for(var i = 0; i < linedata.length; i++) {
@@ -143,22 +138,20 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
       var dots = svg.selectAll(".dotset" + i)
           .data(one_line);
 
-      dots
-        .transition().duration(500).delay(delay)
+      dots.transition().duration(500).delay(delay)
         .attr("data", function(d){ return d.value; })
         .attr("cx", function(d) { return self.x(d[self.options.x]); })
         .attr("cy", function(d) { return self.y(d.value); });
 
-      dots
-        .enter().append("circle")
-          .attr("class", "dot dotset" + i)
-          .attr("r", this.options.dotRadius)
-          .style("fill", function(d) { return self.color(linedata[i].name); })
-          .attr("data", function(d){ return d.value; })
-          .on('mouseover', function(d, i) {self.hoverOnDot(d, i, this); })
-          .on('mouseout', function(d, i) {self.hoverOffDot(d, i, this); })
-          .attr("cx", function(d) { return self.x(d[self.options.x]); })
-          .attr("cy", function(d) { return self.y(d.value); });
+      dots.enter().append("circle")
+        .attr("class", "dot dotset" + i)
+        .attr("r", this.options.dotRadius)
+        .style("fill", function(d) { return self.color(linedata[i].name); })
+        .attr("data", function(d){ return d.value; })
+        .on('mouseover', function(d, i) {self.hoverOnDot(d, i, this); })
+        .on('mouseout', function(d, i) {self.hoverOffDot(d, i, this); })
+        .attr("cx", function(d) { return self.x(d[self.options.x]); })
+        .attr("cy", function(d) { return self.y(d.value); });
     }
   }
 });
