@@ -1,4 +1,4 @@
-GeoDash
+GeoDash.js
 =======
 
 A modern charting and mapping library for the web. (A D3 wrapper for lazy charts.)
