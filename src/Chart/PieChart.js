@@ -41,7 +41,7 @@ GeoDash.PieChart = ezoop.ExtendedClass(GeoDash.Chart, {
     this.xAxis = d3.svg.axis()
       .scale(this.x)
       .orient("bottom")
-      .tickSize(11,0,0)
+      .tickSize(10,0,0)
       .tickFormat(function(d){
         return '';
       });
@@ -50,7 +50,7 @@ GeoDash.PieChart = ezoop.ExtendedClass(GeoDash.Chart, {
       .scale(this.y)
       .orient("left")
       //.ticks(0)
-      .tickSize(11, 0, 0)
+      .tickSize(10, 0, 0)
       .tickFormat(function(d){
         return '';
       });
@@ -79,7 +79,7 @@ GeoDash.PieChart = ezoop.ExtendedClass(GeoDash.Chart, {
     this.y.domain([0, 1]);
 
     this.xAxis.tickValues([0, 1]);
-    this.yAxis.tickValues([0, 0]);
+    this.yAxis.tickValues([0, 1]);
 
     if(this.options.drawX){
       this.svg.append("g")
