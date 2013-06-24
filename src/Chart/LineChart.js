@@ -11,7 +11,9 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
     colors: ['#d80000', '#006200'],
     interpolate: 'monotone',
     dotRadius: 3,
-    title: false
+    title: false,
+    opacity: 0.5,
+    strokeWidth: 2
   },
   initialize: function (el, options) {
 
@@ -130,7 +132,9 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
     lines.enter().append('path')
       .attr("class", "line")
       .attr("d", function(d) { return self.line(d.values); })
-      .style("stroke", function(d) { return self.color(d.name); });
+      .style("stroke", function(d) { return self.color(d.name); })
+      .style("stroke-width", self.options.strokeWidth)
+      .style("stroke-opacity", self.options.opacity);
 
     //dots
     for(var i = 0; i < linedata.length; i++) {
@@ -147,6 +151,7 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
         .attr("class", "dot dotset" + i)
         .attr("r", this.options.dotRadius)
         .style("fill", function(d) { return self.color(linedata[i].name); })
+        .style("fill-opacity", self.options.opacity)
         .attr("data", function(d){ return d.value; })
         .on('mouseover', function(d, i) {self.hoverOnDot(d, i, this); })
         .on('mouseout', function(d, i) {self.hoverOffDot(d, i, this); })
