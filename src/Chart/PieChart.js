@@ -66,6 +66,7 @@ GeoDash.PieChart = ezoop.ExtendedClass(GeoDash.Chart, {
     this.svg = d3.select(this.el).append("svg")
       .attr("width", this.width)
       .attr("height", this.height)
+      .attr("class", "piechart-svg")
       .append("g")
         .attr("transform", "translate(" + this.width / 2 + "," + this.height / 2 + ")");
   },

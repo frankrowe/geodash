@@ -50,6 +50,7 @@ GeoDash.BarChart = ezoop.ExtendedClass(GeoDash.Chart, {
     this.svg = d3.select(this.el).append("svg")
       .attr("width", this.width + this.margin.left + this.margin.right)
       .attr("height", this.height + this.margin.top + this.margin.bottom)
+      .attr("class", "barchart-svg")
       .append("g")
       .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
   },
