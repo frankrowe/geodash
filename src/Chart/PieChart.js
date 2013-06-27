@@ -141,7 +141,7 @@ GeoDash.PieChart = ezoop.ExtendedClass(GeoDash.Chart, {
       var block = {width: 10, height: 10, padding: 5};
       var container = d3.select(this.options.legend).select('svg');
       var legend = container.selectAll(".legend-item")
-          .data(this.color.domain().slice().reverse());
+          .data(this.color.domain().slice());
 
       legend.select(".legend-item").select("text").text(function(d) { return d; });
 
