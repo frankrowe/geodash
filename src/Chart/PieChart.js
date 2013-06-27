@@ -11,7 +11,8 @@ GeoDash.PieChart = ezoop.ExtendedClass(GeoDash.Chart, {
     drawX: true,
     drawY: true,
     title: false,
-    padding: 10
+    padding: 10,
+    legend: false
   },
   initialize: function (el, options) {
 
@@ -118,5 +119,29 @@ GeoDash.PieChart = ezoop.ExtendedClass(GeoDash.Chart, {
         d3.select(self.el).select('.hoverbox').html('');
         d3.select(this).style('fill-opacity', self.options.opacity  );
       });
+
+    if(this.options.legend) {
+      var lWidth = parseInt(d3.select(this.options.legend).style('width'));
+      var block = {width: 10, height: 10, padding: 5};
+      var container = d3.select(this.options.legend).append('svg');
+      var legend = container.selectAll(".legend-item")
+          .data(this.color.domain().slice().reverse())
+        .enter().append("g")
+          .attr("class", "legend-item")
+          .attr("transform", function(d, i) { return "translate(0," + i * (block.height + block.padding) + ")"; });
+
+      legend.append("rect")
+        .attr("x", 0)
+        .attr("width", block.width)
+        .attr("height", block.height)
+        .style("fill", this.color);
+
+      legend.append("text")
+        .attr("x", (block.width + block.padding))
+        .attr("y", 4)
+        .attr("dy", ".35em")
+        .style("text-anchor", "start")
+        .text(function(d) { return d; });
+    }
   }
 });
