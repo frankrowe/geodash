@@ -37,12 +37,14 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
     this.xAxis = d3.svg.axis()
       .scale(this.x)
       .tickSize(this.height*-1)
+      .tickPadding(10)
       .orient("bottom");
 
     this.yAxis = d3.svg.axis()
       .scale(this.y)
       .tickSize(this.width*-1)
       .tickFormat(d3.format("s"))
+      .tickPadding(10)
       .orient("left");
 
     this.color = d3.scale.ordinal()
@@ -108,6 +110,7 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
     });
 
     this.x.domain(d3.extent(data, function(d) { return d[self.options.x]; }));
+    console.log(this.x.domain());
 
     this.y.domain([
       d3.min(linedata, function(c) { return d3.min(c.values, function(v) { return v.value; }); }),
