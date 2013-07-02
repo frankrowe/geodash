@@ -27,6 +27,8 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
     if(this.options.title) {
       this.height  = this.height - 21;
     }
+    this.formatComma = d3.format(",f.2");
+    this.formatLarge = d3.format("s");
 
     this.x = d3.time.scale()
       .range([0, this.width]);
@@ -43,9 +45,12 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
     this.yAxis = d3.svg.axis()
       .scale(this.y)
       .tickSize(this.width*-1)
-      .tickFormat(d3.format("s"))
       .tickPadding(10)
-      .orient("left");
+      .orient("left")
+      .tickFormat(function(d){
+        console.log(d);
+        return self.formatLarge(d);
+      });
 
     this.color = d3.scale.ordinal()
     .range(this.options.colors);
@@ -54,8 +59,6 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
       .interpolate(this.options.interpolate)
       .x(function(d) { return self.x(d.date); })
       .y(function(d) { return self.y(d.value); });
-
-    this.formatComma = d3.format(",f.2");
 
     var svg = d3.select(this.el).append("svg")
         .attr("width", this.width + this.margin.left + this.margin.right)
@@ -110,11 +113,16 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
     });
 
     this.x.domain(d3.extent(data, function(d) { return d[self.options.x]; }));
-    console.log(this.x.domain());
 
     this.y.domain([
       d3.min(linedata, function(c) { return d3.min(c.values, function(v) { return v.value; }); }),
       d3.max(linedata, function(c) { return d3.max(c.values, function(v) { return v.value; }); })
+    ]);
+
+    var ydomain = this.y.domain();
+    this.y.domain([
+      ydomain[0] - ydomain[0]*.10,
+      ydomain[1] + ydomain[1]*.10
     ]);
 
     var svg = d3.select(this.el + " svg g");
