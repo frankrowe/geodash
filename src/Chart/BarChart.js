@@ -8,7 +8,8 @@ GeoDash.BarChart = ezoop.ExtendedClass(GeoDash.Chart, {
     opacity: 0.7,
     drawX: true,
     percent: false,
-    title: false
+    title: false,
+    roundRadius: 3
   },
   initialize: function (el, options) {
 
@@ -66,25 +67,21 @@ GeoDash.BarChart = ezoop.ExtendedClass(GeoDash.Chart, {
     this.x.domain(data.map(function (d) { return d[x]; }));
     this.y.domain([0, d3.max(data, function (d) { return d[y]; })]);
 
-    if (this.options.drawX) {
-      this.svg.append("g")
-        .attr("class", "x axis")
-        .attr("transform", "translate(0," + this.height + ")")
-        .call(this.xAxis);
-    }
-
     this.svg.append("g")
       .attr("class", "y axis")
       .call(this.yAxis);
 
-    this.svg.selectAll(".bar")
+    this.svg.append("g")
+      .attr("class", "bars")
+      .selectAll(".bar")
       .data(data)
       .enter().append("rect")
       .attr("class", "bar")
       .attr("x", function (d) { return self.x(d[x]); })
       .attr("width", self.x.rangeBand())
       .attr("y", function (d) { return self.y(d[y]); })
-      .attr("height", function (d) { return self.height - self.y(d[y]); })
+      .attr("rx", self.options.roundRadius)
+      .attr("height", function (d) { return self.height - self.y(d[y]) + self.options.roundRadius; })
       .style("fill-opacity", this.options.opacity)
       .style("fill", this.options.barColor)
       .on('mouseover', function (d, i) {
@@ -92,5 +89,20 @@ GeoDash.BarChart = ezoop.ExtendedClass(GeoDash.Chart, {
       }).on('mouseout', function (d, i) {
         d3.select(this).style('fill-opacity', self.options.opacity);
       });
+
+    var xAxisElement = this.svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + this.height + ")");
+
+    var bgcolor = d3.rgb(d3.select(this.el).style("background-color")).toString();
+    xAxisElement.append('rect')
+      .attr("width", this.width)
+      .attr("height", this.height)
+      .attr("transform", "translate(0,1)")
+      .style("fill", bgcolor);
+
+    if (this.options.drawX) {
+      xAxisElement.call(this.xAxis);
+    }
   }
 });
