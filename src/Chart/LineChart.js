@@ -48,7 +48,6 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
       .tickPadding(10)
       .orient("left")
       .tickFormat(function(d){
-        console.log(d);
         return self.formatLarge(d);
       });
 
