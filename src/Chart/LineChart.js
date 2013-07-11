@@ -13,7 +13,8 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
     dotRadius: 3,
     title: false,
     opacity: 0.5,
-    strokeWidth: 2
+    strokeWidth: 2,
+    axisLabels: false
   },
   initialize: function (el, options) {
 
@@ -75,6 +76,16 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
       .attr("class", "y axis")
       .call(this.yAxis);
 
+    if(self.options.axisLabels) {
+      svg.select(".y.axis").append("text")
+        .attr("class", "axis-label")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 6)
+        .attr("dy", ".71em")
+        .style("text-anchor", "end")
+        .text(self.options.yAxisLabel)
+    }
+
     d3.select(self.el).append('div').attr('class', 'linehoverbox');
   },
   hoverOnDot: function(d, i, dot){
@@ -96,6 +107,10 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
     var self = this;
     d3.select(self.el).select('.linehoverbox').transition().style('display', 'none');
     d3.select(dot).transition().attr('r', this.options.dotRadius);
+  },
+  setYAxisLabel: function(label) {
+    var self = this;
+    d3.select(self.el).select(".y.axis .axis-label").text(label);
   },
   update: function(data) {
     var self = this;
