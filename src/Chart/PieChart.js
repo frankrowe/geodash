@@ -12,7 +12,8 @@ GeoDash.PieChart = ezoop.ExtendedClass(GeoDash.Chart, {
     drawY: true,
     title: false,
     padding: 10,
-    legend: false
+    legend: false,
+    hover: false
   },
   initialize: function (el, options) {
 
@@ -64,6 +65,9 @@ GeoDash.PieChart = ezoop.ExtendedClass(GeoDash.Chart, {
       .sort(null)
       .value(function(d) { return d[self.options.value]; });
 
+    this.formatHover = d3.format(',.0f');
+    this.formatPercent = d3.format('.2f');
+
     this.svg = d3.select(this.el).append("svg")
       .attr("width", this.width)
       .attr("height", this.height)
@@ -96,8 +100,10 @@ GeoDash.PieChart = ezoop.ExtendedClass(GeoDash.Chart, {
   },
   update: function(data){
     var self = this;
+    self.total = 0;
     data.forEach(function(d) {
       d[self.options.value] = +d[self.options.value];
+      self.total += +d[self.options.value];
     });
 
     this.x.domain([0, 1]);
@@ -128,8 +134,13 @@ GeoDash.PieChart = ezoop.ExtendedClass(GeoDash.Chart, {
         .style("fill", function(d) { return self.color(d.data[self.options.label]); })
         .style("fill-opacity", this.options.opacity)
         .on('mouseover', function(d,i){
-          d3.select(self.el).select('.hoverbox').html(d.value + '%');
           d3.select(this).style('fill-opacity', 1);
+          if(self.options.hover) {
+            var label = d.data[self.options.label];
+            var total = self.formatHover(d.value);
+            var percent = self.formatPercent((d.value/self.total)*100);
+            d3.select(self.el).select('.hoverbox').html(label + ": " + total + ' (' + percent + '%)');
+          }
         })
         .on('mouseout', function(d,i){
           d3.select(self.el).select('.hoverbox').html('');
