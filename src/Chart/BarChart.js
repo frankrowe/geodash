@@ -54,6 +54,23 @@ GeoDash.BarChart = ezoop.ExtendedClass(GeoDash.Chart, {
       .attr("class", "barchart-svg")
       .append("g")
       .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
+
+    this.svg.append("g")
+      .attr("class", "y axis");
+
+    this.svg.append("g")
+      .attr("class", "bars");
+
+    var xAxisElement = this.svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + this.height + ")");
+
+    var bgcolor = d3.rgb(d3.select(this.el).style("background-color")).toString();
+    xAxisElement.append('rect')
+      .attr("width", this.width)
+      .attr("height", this.height)
+      .attr("transform", "translate(0,1)")
+      .style("fill", bgcolor);
   },
   update: function (data) {
     var self = this;
@@ -67,15 +84,20 @@ GeoDash.BarChart = ezoop.ExtendedClass(GeoDash.Chart, {
     this.x.domain(data.map(function (d) { return d[x]; }));
     this.y.domain([0, d3.max(data, function (d) { return d[y]; })]);
 
-    this.svg.append("g")
-      .attr("class", "y axis")
+    this.svg.select(".y.axis")
       .call(this.yAxis);
 
-    this.svg.append("g")
-      .attr("class", "bars")
+    var bars = this.svg.select(".bars")
       .selectAll(".bar")
-      .data(data)
-      .enter().append("rect")
+      .data(data);
+
+    bars.transition()
+      .attr("x", function (d) { return self.x(d[x]); })
+      .attr("width", self.x.rangeBand())
+      .attr("y", function (d) { return self.y(d[y]); })
+      .attr("height", function (d) { return self.height - self.y(d[y]) + self.options.roundRadius; });
+
+    bars.enter().append("rect")
       .attr("class", "bar")
       .attr("x", function (d) { return self.x(d[x]); })
       .attr("width", self.x.rangeBand())
@@ -90,16 +112,7 @@ GeoDash.BarChart = ezoop.ExtendedClass(GeoDash.Chart, {
         d3.select(this).style('fill-opacity', self.options.opacity);
       });
 
-    var xAxisElement = this.svg.append("g")
-      .attr("class", "x axis")
-      .attr("transform", "translate(0," + this.height + ")");
-
-    var bgcolor = d3.rgb(d3.select(this.el).style("background-color")).toString();
-    xAxisElement.append('rect')
-      .attr("width", this.width)
-      .attr("height", this.height)
-      .attr("transform", "translate(0,1)")
-      .style("fill", bgcolor);
+    bars.exit().remove();
 
     if (this.options.drawX) {
       xAxisElement.call(this.xAxis);
