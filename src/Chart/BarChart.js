@@ -4,12 +4,13 @@ GeoDash.BarChart = ezoop.ExtendedClass(GeoDash.Chart, {
   defaults: {
     x: 'x',
     y: 'y',
-    barColor: '#f00',
+    barColors: ['#f00'],
     opacity: 0.7,
     drawX: true,
     percent: false,
     title: false,
-    roundRadius: 3
+    roundRadius: 3,
+    highlight: false
   },
   initialize: function (el, options) {
 
@@ -24,6 +25,8 @@ GeoDash.BarChart = ezoop.ExtendedClass(GeoDash.Chart, {
       this.height = this.height - 21;
     }
     this.formatPercent = d3.format(".0%");
+    this.formatLarge = d3.format("s");
+    this.formatComma = d3.format(",");
 
     this.x = d3.scale.ordinal()
       .rangeRoundBands([0, this.width], 0.05, 0.5);
@@ -42,7 +45,10 @@ GeoDash.BarChart = ezoop.ExtendedClass(GeoDash.Chart, {
       .scale(this.y)
       .orient("left")
       .ticks(4)
-      .tickSize(this.width * -1, 0, 0);
+      .tickSize(this.width * -1, 0, 0)
+      .tickFormat(function(d){
+        return self.formatLarge(d);
+      });
 
     if (this.options.percent) {
       this.yAxis.tickFormat(this.formatPercent);
@@ -60,6 +66,8 @@ GeoDash.BarChart = ezoop.ExtendedClass(GeoDash.Chart, {
 
     this.svg.append("g")
       .attr("class", "bars");
+
+    d3.select(self.el).append('div').attr('class', 'hoverbox');
 
     var xAxisElement = this.svg.append("g")
       .attr("class", "x axis")
@@ -81,6 +89,9 @@ GeoDash.BarChart = ezoop.ExtendedClass(GeoDash.Chart, {
       d[y] = +d[y];
     });
 
+    this.color = d3.scale.ordinal()
+      .range(this.options.barColors);
+
     this.x.domain(data.map(function (d) { return d[x]; }));
     this.y.domain([0, d3.max(data, function (d) { return d[y]; })]);
 
@@ -93,23 +104,37 @@ GeoDash.BarChart = ezoop.ExtendedClass(GeoDash.Chart, {
 
     bars.transition()
       .attr("x", function (d) { return self.x(d[x]); })
-      .attr("width", self.x.rangeBand())
       .attr("y", function (d) { return self.y(d[y]); })
-      .attr("height", function (d) { return self.height - self.y(d[y]) + self.options.roundRadius; });
+      .attr("width", self.x.rangeBand())
+      .attr("height", function (d) { return self.height - self.y(d[y]) + self.options.roundRadius; })
+      .style("fill", function(d) { return self.color(d[x]); })
+      .style("fill-opacity", function(d){
+        if(d[x] == self.options.highlight) return 1;
+        else return self.options.opacity
+      });
 
     bars.enter().append("rect")
       .attr("class", "bar")
+      .attr("id", function (d) { return d[x]; })
       .attr("x", function (d) { return self.x(d[x]); })
       .attr("width", self.x.rangeBand())
       .attr("y", function (d) { return self.y(d[y]); })
       .attr("rx", self.options.roundRadius)
       .attr("height", function (d) { return self.height - self.y(d[y]) + self.options.roundRadius; })
-      .style("fill-opacity", this.options.opacity)
-      .style("fill", this.options.barColor)
+      .style("fill-opacity", function(d){
+        if(d[x] == self.options.highlight) return 1;
+        else return self.options.opacity
+      })
+      .style("fill", function(d) { return self.color(d[x]); })
       .on('mouseover', function (d, i) {
         d3.select(this).style('fill-opacity', 1);
+        d3.select(self.el).select('.hoverbox').html(d[x] + ': ' + (self.options.percent ? self.formatPercent(d[y]) : self.formatComma(d[y])));
+        d3.select(self.el).select('.hoverbox').transition().style('display', 'block');
       }).on('mouseout', function (d, i) {
-        d3.select(this).style('fill-opacity', self.options.opacity);
+        var opacity = self.options.opacity;
+        if(d[x] == self.options.highlight) opacity =  1;
+        d3.select(this).style('fill-opacity', opacity);
+        d3.select(self.el).select('.hoverbox').transition().style('display', 'none');
       });
 
     bars.exit().remove();
@@ -117,5 +142,8 @@ GeoDash.BarChart = ezoop.ExtendedClass(GeoDash.Chart, {
     if (this.options.drawX) {
       xAxisElement.call(this.xAxis);
     }
+  },
+  setColor: function(colors) {
+    this.options.barColors = colors;
   }
 });
