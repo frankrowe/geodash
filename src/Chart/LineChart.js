@@ -126,6 +126,14 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
       };
     });
 
+    //remove NaNs
+    for(var i = 0; i < linedata.length; i++) {
+      var one_line = _.reject(linedata[i].values, function(x){
+        return _.isNaN(x.value);
+      });
+      linedata[i].values = one_line;
+    }
+
     this.x.domain(d3.extent(data, function(d) { return d[self.options.x]; }));
 
     this.y.domain([
@@ -150,7 +158,6 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
       .call(this.xAxis);
 
     var delay = function(d, i) { return i * 10; }
-
 
     var lines = svg.selectAll(".line")
       .data(linedata);
@@ -186,6 +193,8 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
         .on('mouseout', function(d, i) {self.hoverOffDot(d, i, this); })
         .attr("cx", function(d) { return self.x(d[self.options.x]); })
         .attr("cy", function(d) { return self.y(d.value); });
+
+      dots.exit().remove();
     }
   }
 });
