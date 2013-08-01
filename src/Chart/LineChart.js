@@ -14,7 +14,8 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
     title: false,
     opacity: 0.5,
     strokeWidth: 2,
-    axisLabels: false
+    axisLabels: false,
+    xInterval: 'auto'
   },
   initialize: function (el, options) {
 
@@ -149,7 +150,11 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
 
     var svg = d3.select(this.el + " svg g");
 
-    this.xAxis.ticks(data.length);
+    if(self.options.xInterval == 'auto') {
+      this.xAxis.ticks(data.length);
+    } else {
+      this.xAxis.ticks(self.options.xInterval);
+    }
 
     svg.select(".y.axis").transition()
       .call(this.yAxis);
