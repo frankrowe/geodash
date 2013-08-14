@@ -41,7 +41,7 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
     this.xAxis = d3.svg.axis()
       .scale(this.x)
       .tickSize(this.height*-1)
-      .tickPadding(10)
+      .tickPadding(5)
       .orient("bottom");
 
     this.yAxis = d3.svg.axis()
