@@ -81,10 +81,11 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
       svg.select(".y.axis").append("text")
         .attr("class", "axis-label")
         .attr("transform", "rotate(-90)")
-        .attr("y", 6)
-        .attr("dy", ".71em")
-        .style("text-anchor", "end")
-        .text(self.options.yAxisLabel)
+        .attr("y", 0 - this.margin.left)
+        .attr("x", 0 - this.height / 2)
+        .attr("dy", "1em")
+        .style("text-anchor", "middle")
+        .text(self.options.yAxisLabel);
     }
 
     d3.select(self.el).append('div').attr('class', 'linehoverbox');
