@@ -18,6 +18,10 @@ GeoDash.PieChart = ezoop.ExtendedClass(GeoDash.Chart, {
   initialize: function (el, options) {
 
   },
+  setColors: function(colors){
+    this.color = d3.scale.ordinal()
+      .range(colors);
+  },
   drawChart: function(){
     var self = this;
 
@@ -125,7 +129,9 @@ GeoDash.PieChart = ezoop.ExtendedClass(GeoDash.Chart, {
     var g = this.svg.selectAll(".arc")
         .data(this.pie(data));
 
-    g.select("path").transition().attr("d", this.arc);
+    g.select("path").transition()
+      .style("fill", function(d) { return self.color(d.data[self.options.label]); })
+      .attr("d", this.arc);
 
     g.enter().append("g")
       .attr("class", "arc")
