@@ -8,6 +8,7 @@ GeoDash.Chart = ezoop.BaseClass({
     this.options = {};
     this.setOptions(options);
     this.makeTitle();
+    this.setUpChart();
     this.drawChart();
   },
   setOptions: function (options) {
@@ -19,6 +20,9 @@ GeoDash.Chart = ezoop.BaseClass({
       }
     }
     this.options = options;
+  },
+  setUpChart: function(){
+    d3.select(this.el).style('position', 'relative');
   },
   drawChart: function () { },
   update: function () { },
