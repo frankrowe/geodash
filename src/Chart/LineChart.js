@@ -88,7 +88,7 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
         .text(self.options.yAxisLabel);
     }
 
-    d3.select(self.el).append('div').attr('class', 'linehoverbox');
+    d3.select(self.el).append('div').attr('class', 'hoverbox');
   },
   hoverOnDot: function(d, i, dot){
     var self = this;
@@ -100,14 +100,15 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
     var w = d3.select('.line')[0][0].getBBox().width;
     if(this.x(d.date) >= w) x -= 55;
 
-    d3.select(self.el).select('.linehoverbox').style('left', x + 'px');
-    d3.select(self.el).select('.linehoverbox').style('top', y + 'px');
-    d3.select(self.el).select('.linehoverbox').html(stat);
-    d3.select(self.el).select('.linehoverbox').transition().style('display', 'block');
+    d3.select(self.el).select('.hoverbox').style('right', 'auto');
+    d3.select(self.el).select('.hoverbox').style('left', x + 'px');
+    d3.select(self.el).select('.hoverbox').style('top', y + 'px');
+    d3.select(self.el).select('.hoverbox').html(stat);
+    d3.select(self.el).select('.hoverbox').transition().style('display', 'inline');
   },
   hoverOffDot: function(d, i, dot){
     var self = this;
-    d3.select(self.el).select('.linehoverbox').transition().style('display', 'none');
+    d3.select(self.el).select('.hoverbox').transition().style('display', 'none');
     d3.select(dot).transition().attr('r', this.options.dotRadius);
   },
   setYAxisLabel: function(label) {

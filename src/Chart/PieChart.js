@@ -79,6 +79,10 @@ GeoDash.PieChart = ezoop.ExtendedClass(GeoDash.Chart, {
       .append("g")
         .attr("transform", "translate(" + this.width / 2 + "," + this.height / 2 + ")");
 
+    if(this.options.hover){
+      d3.select(this.el).append('div').attr('class', 'hoverbox');
+    }
+
     if(this.options.drawX){
       this.svg.append("g")
         .attr("class", "x axis")
@@ -146,10 +150,12 @@ GeoDash.PieChart = ezoop.ExtendedClass(GeoDash.Chart, {
             var total = self.formatHover(d.value);
             var percent = self.formatPercent((d.value/self.total)*100);
             d3.select(self.el).select('.hoverbox').html(label + ": " + total + ' (' + percent + '%)');
+            d3.select(self.el).select('.hoverbox').style('display', 'block');
           }
         })
         .on('mouseout', function(d,i){
           d3.select(self.el).select('.hoverbox').html('');
+          d3.select(self.el).select('.hoverbox').style('display', 'none');
           d3.select(this).style('fill-opacity', self.options.opacity  );
         });
 
