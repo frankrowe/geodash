@@ -130,9 +130,11 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
 
     //remove NaNs
     for(var i = 0; i < linedata.length; i++) {
-      var one_line = _.reject(linedata[i].values, function(x){
-        return _.isNaN(x.value);
-      });
+      var one_line = [];
+      for(var j = 0; j < linedata[i].values.length; j++){
+        var value = linedata[i].values[j].value;
+        if(!isNaN(value)) one_line.push(linedata[i].values[j]);
+      }
       linedata[i].values = one_line;
     }
 
