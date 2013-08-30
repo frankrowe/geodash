@@ -73,7 +73,7 @@ GeoDash.BarChart = ezoop.ExtendedClass(GeoDash.Chart, {
       .attr("class", "x axis")
       .attr("transform", "translate(0," + this.height + ")");
 
-    var bgcolor = d3.rgb(d3.select(this.el).style("background-color")).toString();
+    var bgcolor = d3.rgb(d3.select(this.el).style("background")).toString();
     xAxisElement.append('rect')
       .attr("width", this.width)
       .attr("height", this.height)
