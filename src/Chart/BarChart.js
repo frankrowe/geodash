@@ -6,7 +6,7 @@ GeoDash.BarChart = ezoop.ExtendedClass(GeoDash.Chart, {
     y: 'y',
     barColors: ['#f00'],
     opacity: 0.7,
-    drawX: true,
+    drawX: false,
     percent: false,
     title: false,
     roundRadius: 3,
