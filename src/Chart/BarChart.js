@@ -10,7 +10,8 @@ GeoDash.BarChart = ezoop.ExtendedClass(GeoDash.Chart, {
     percent: false,
     title: false,
     roundRadius: 3,
-    highlight: false
+    highlight: false,
+    verticalX: false
   },
   initialize: function (el, options) {
 
@@ -38,7 +39,7 @@ GeoDash.BarChart = ezoop.ExtendedClass(GeoDash.Chart, {
       .scale(this.x)
       .orient("bottom")
       .tickFormat(function (d) {
-        return '';
+        return d;
       });
 
     this.yAxis = d3.svg.axis()
@@ -69,12 +70,12 @@ GeoDash.BarChart = ezoop.ExtendedClass(GeoDash.Chart, {
 
     d3.select(self.el).append('div').attr('class', 'hoverbox');
 
-    var xAxisElement = this.svg.append("g")
+    this.xAxisElement = this.svg.append("g")
       .attr("class", "x axis")
       .attr("transform", "translate(0," + this.height + ")");
 
     var bgcolor = d3.rgb(d3.select(this.el).style("background")).toString();
-    xAxisElement.append('rect')
+    this.xAxisElement.append('rect')
       .attr("width", this.width)
       .attr("height", this.height)
       .attr("transform", "translate(0,1)")
@@ -140,7 +141,31 @@ GeoDash.BarChart = ezoop.ExtendedClass(GeoDash.Chart, {
     bars.exit().remove();
 
     if (this.options.drawX) {
-      xAxisElement.call(this.xAxis);
+      this.xAxisElement.call(this.xAxis);
+      if(this.options.verticalX){
+        this.xAxisElement.selectAll('.tick').style('display', 'none');
+        this.xAxisElement.selectAll('g').attr('transform', function(d){
+          var translate = d3.select(this).attr('transform');
+          translate = translate.replace('translate(', '');
+          translate = translate.replace(')', '');
+          var values = translate.split(',');
+          var x = values[0] - 8;
+          var y = -12;
+          var new_translate = 'translate(' + x + ',' + y + ')';
+          return new_translate;
+          //d3.select(this).attr('transform', new_translate);
+        });
+        this.xAxisElement.selectAll("text")
+          .style("text-anchor", "start")
+          .style("fill", "#333")
+          .attr("dx", "-.8em")
+          .attr("dy", ".15em")
+          .attr("transform", function(d) {
+            return "rotate(-90)" 
+          });
+      }
+    } else {
+      this.xAxisElement.selectAll('g').remove();
     }
   },
   setColor: function(colors) {
