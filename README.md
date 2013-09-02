@@ -3,6 +3,8 @@ GeoDash.js
 
 A modern charting and mapping library for the web. (A D3 wrapper for lazy charts.)
 
+This is an alpha build under heavy development. Expect API breaks in new versions.
+
 ![Image](test/geodashcharts.png?raw=true)
 
 
