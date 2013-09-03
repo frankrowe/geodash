@@ -9,7 +9,7 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
     drawX: false,
     percent: false,
     title: false,
-    roundRadius: 0,
+    roundRadius: 3,
     highlight: false,
     verticalX: false
   },
@@ -25,18 +25,14 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
     if (this.options.title) {
       this.height = this.height - 21;
     }
+    
     this.formatPercent = d3.format(".0%");
     this.formatLarge = d3.format("s");
     this.formatComma = d3.format(",");
 
-    // this.x = d3.scale.ordinal()
-    //   .rangeRoundBands([0, this.width], 0.05, 0.5);
 
     this.x = d3.scale.linear()
       .range([0, this.width]);
-
-    // this.y = d3.scale.linear()
-    //   .range([this.height, 0]);
 
     this.y = d3.scale.ordinal()
       .rangeRoundBands([0, this.height], 0.05, 0.1);
@@ -81,12 +77,6 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
 
     d3.select(self.el).append('div').attr('class', 'hoverbox');
 
-    // var bgcolor = d3.rgb(d3.select(this.el).style("background")).toString();
-    // this.xAxisElement.append('rect')
-    //   .attr("width", this.width)
-    //   .attr("height", this.height)
-    //   .attr("transform", "translate(0,1)")
-    //   .style("fill", bgcolor);
   },
   update: function (data) {
     var self = this;
@@ -100,7 +90,13 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
     this.color = d3.scale.ordinal()
       .range(this.options.barColors);
 
-    this.x.domain(d3.extent(data, function(d) { return d[y]; }));
+    var extent = d3.extent(data, function(d) { return d[y]; });
+    if(extent[0] < 0){
+      this.x.domain(extent);
+    } else {
+      this.x.domain([0, extent[1]]);
+    }
+    
     this.y.domain(data.map(function(d) { return d[x]; }));
 
     var bars = this.svg.select(".bars")
@@ -108,10 +104,22 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
       .data(data);
 
     bars.transition()
-      .attr("x", function(d) { return self.x(Math.min(0, d[y])); })
-      .attr("y", function(d) { return self.y(d[x]); })
-      .attr("width", function(d) { return Math.abs(self.x(d[y]) - self.x(0)); })
+      .attr("id", function (d) { return d[x]; })
+      .attr("x", function(d) { 
+        var xposition = self.x(Math.min(0, d[y]));
+        if(xposition >= self.x(0)) {
+          xposition -= self.options.roundRadius
+        }
+        return xposition;
+      })
+      .attr("y", function (d) { return self.y(d[y]); })
+      .attr("width", function(d) { 
+        var w = Math.abs(self.x(d[y]) - self.x(0));
+        w += self.options.roundRadius;
+        return w;
+      })
       .attr("height", self.y.rangeBand())
+      .attr("rx", self.options.roundRadius)
       .style("fill", function(d) { return self.color(d[x]); })
       .style("fill-opacity", function(d){
         if(d[x] == self.options.highlight) return 1;
@@ -121,9 +129,19 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
     bars.enter().append("rect")
       .attr("class", "bar")
       .attr("id", function (d) { return d[x]; })
-      .attr("x", function(d) { return self.x(Math.min(0, d[y])); })
-      .attr("width", function(d) { return Math.abs(self.x(d[y]) - self.x(0)); })
+      .attr("x", function(d) { 
+        var xposition = self.x(Math.min(0, d[y]));
+        if(xposition >= self.x(0)) {
+          xposition -= self.options.roundRadius
+        }
+        return xposition;
+      })
       .attr("y", function (d) { return self.y(d[y]); })
+      .attr("width", function(d) {
+        var w = Math.abs(self.x(d[y]) - self.x(0));
+        w += self.options.roundRadius;
+        return w;
+      })
       .attr("rx", self.options.roundRadius)
       .attr("height", self.y.rangeBand())
       .style("fill-opacity", function(d){
@@ -143,6 +161,64 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
       });
 
     bars.exit().remove();
+
+    //cut off rounded corners on one end
+    var bgcolor = d3.rgb(d3.select(this.el).style("background")).toString();
+    var hiders = this.svg.select(".bars")
+      .selectAll(".hider")
+      .data(data);
+
+    hiders.transition()
+      .attr("width", self.options.roundRadius*2)
+      .attr("height", self.y.rangeBand())
+      .attr("x", self.x(0))
+      .attr("y", function (d) { return self.y(d[y]); })
+      .attr('transform', function(d){
+        var xposition = self.x(Math.min(0, d[y]));
+        if(xposition < self.x(0)) {
+          return 'translate(0, 0)';
+        } else {
+          return 'translate(' + self.options.roundRadius*2*-1 + ', 0)';
+        }
+      });
+
+    hiders.enter().append("rect")
+      .attr("class", "hider")
+      .attr("width", self.options.roundRadius*2)
+      .attr("height", self.y.rangeBand())
+      .attr("x", self.x(0))
+      .attr("y", function (d) { return self.y(d[y]); })
+      .style("fill-opacity", 1)
+      .style("fill", bgcolor)
+      .attr('transform', function(d){
+        var xposition = self.x(Math.min(0, d[y]));
+        if(xposition < self.x(0)) {
+          return 'translate(0, 0)';
+        } else {
+          return 'translate(' + self.options.roundRadius*2*-1 + ', 0)';
+        }
+      });
+
+    hiders.exit().remove();
+
+    var lines = this.svg.select(".bars")
+      .selectAll(".line")
+      .data(data);
+
+    lines.transition()
+      .attr("x1", self.x(0))
+      .attr("x2", self.x(0))
+      .attr("y1", function (d) { return self.y(d[y]); })
+      .attr("y2", function (d) { return self.y(d[y]) + self.y.rangeBand(); });
+
+    lines.enter().append("line")
+      .attr("class", "line")
+      .attr("x1", self.x(0))
+      .attr("x2", self.x(0))
+      .attr("y1", function (d) { return self.y(d[y]); })
+      .attr("y2", function (d) { return self.y(d[y]) + self.y.rangeBand(); });
+
+    lines.exit().remove();
 
     if (this.options.drawX) {
       this.xAxisElement.call(this.xAxis);

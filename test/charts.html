@@ -9,9 +9,10 @@
   <script src="d3.v3.min.js"></script>
   <script src="../dist/GeoDash.min.js"></script>
   <style>
+
     .charts {
       margin: 20px auto;
-      width: 1000px;
+      width: 900px;
       text-align: center;
     }
     .barchart {
@@ -19,13 +20,16 @@
       height: 300px;
     }
     .barcharthorizontal {
-      width: 500px;
+      width: 450px;
+      height: 450px;
+    }
+    .barcharthorizontal2 {
+      width: 450px;
       height: 450px;
     }
     .piechart {
-      width: 200px;
-      height: 200px;
-      margin-top: 50px;
+      width: 300px;
+      height: 300px;
     }
     .linechart {
       width: 300px;
@@ -44,6 +48,7 @@
     <div class="piechart chart"></div>
     <div class="linechart chart"></div>
     <div class="barcharthorizontal chart"></div>
+    <div class="barcharthorizontal2 chart"></div>
   </div>
 
   <script type="text/javascript">
@@ -137,6 +142,14 @@
       drawX: true,
       verticalX: true
     });
+    var barcharthorizontal2 = new GeoDash.BarChartHorizontal('.barcharthorizontal2', {
+      x: 'geo',
+      y: 'C054',
+      barColor: '#f00',
+      title: 'Test Bar Chart',
+      drawX: true,
+      verticalX: true
+    });
 
     var data = [
   {
@@ -192,7 +205,7 @@
   {
     "geo": "Dorchester County",
     "geocode": "19",
-    "C002": "32640"
+    "C002": "-32640"
   },
   {
     "geo": "Frederick County",
@@ -212,7 +225,7 @@
   {
     "geo": "Howard County",
     "geocode": "27",
-    "C002": "293142"
+    "C002": "-293142"
   },
   {
     "geo": "Kent County",
@@ -266,7 +279,132 @@
   }
 ];
 
+    var data2 = [
+  {
+    "geo": "Allegany County",
+    "geocode": "1",
+    "C054": "1.0930"
+  },
+  {
+    "geo": "Anne Arundel County",
+    "geocode": "3",
+    "C054": "1.0530"
+  },
+  {
+    "geo": "Baltimore City",
+    "geocode": "510",
+    "C054": "2.3800"
+  },
+  {
+    "geo": "Baltimore County",
+    "geocode": "5",
+    "C054": "1.2120"
+  },
+  {
+    "geo": "Calvert County",
+    "geocode": "9",
+    "C054": "1.0040"
+  },
+  {
+    "geo": "Caroline County",
+    "geocode": "11",
+    "C054": "1.0020"
+  },
+  {
+    "geo": "Carroll County",
+    "geocode": "13",
+    "C054": "1.1300"
+  },
+  {
+    "geo": "Cecil County",
+    "geocode": "15",
+    "C054": "1.1027"
+  },
+  {
+    "geo": "Charles County",
+    "geocode": "17",
+    "C054": "1.2330"
+  },
+  {
+    "geo": "Dorchester County",
+    "geocode": "19",
+    "C054": "1.0880"
+  },
+  {
+    "geo": "Frederick County",
+    "geocode": "21",
+    "C054": "1.0480"
+  },
+  {
+    "geo": "Garrett County",
+    "geocode": "23",
+    "C054": "1.1020"
+  },
+  {
+    "geo": "Harford County",
+    "geocode": "25",
+    "C054": "1.1540"
+  },
+  {
+    "geo": "Howard County",
+    "geocode": "27",
+    "C054": "1.1260"
+  },
+  {
+    "geo": "Kent County",
+    "geocode": "29",
+    "C054": "1.1340"
+  },
+  {
+    "geo": "Montgomery County",
+    "geocode": "31",
+    "C054": "0.8360"
+  },
+  {
+    "geo": "Prince George's County",
+    "geocode": "33",
+    "C054": "1.0720"
+  },
+  {
+    "geo": "Queen Anne's County",
+    "geocode": "35",
+    "C054": "0.9590"
+  },
+  {
+    "geo": "Somerset County",
+    "geocode": "39",
+    "C054": "0.9957"
+  },
+  {
+    "geo": "St. Mary's County",
+    "geocode": "37",
+    "C054": "0.9690"
+  },
+  {
+    "geo": "Talbot County",
+    "geocode": "41",
+    "C054": "0.6030"
+  },
+  {
+    "geo": "Washington County",
+    "geocode": "43",
+    "C054": "1.0600"
+  },
+  {
+    "geo": "Wicomico County",
+    "geocode": "45",
+    "C054": "0.9524"
+  },
+  {
+    "geo": "Worcester County",
+    "geocode": "47",
+    "C054": "0.8820"
+  }
+];
+
+
     barcharthorizontal.update(data);
+    barcharthorizontal2.update(data2);
   </script>
 </body>
 </html>
