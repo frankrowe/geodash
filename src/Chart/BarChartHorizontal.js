@@ -7,6 +7,7 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
     barColors: ['#f00'],
     opacity: 0.7,
     drawX: false,
+    drawY: false,
     percent: false,
     title: false,
     roundRadius: 3,
@@ -30,12 +31,11 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
     this.formatLarge = d3.format("s");
     this.formatComma = d3.format(",");
 
-
     this.x = d3.scale.linear()
       .range([0, this.width]);
 
     this.y = d3.scale.ordinal()
-      .rangeRoundBands([0, this.height], 0.05, 0.1);
+      .rangeRoundBands([0, this.height], 0.05);
 
     this.xAxis = d3.svg.axis()
       .scale(this.x)
@@ -45,18 +45,14 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
         return self.formatLarge(d);
       });
 
-    // this.yAxis = d3.svg.axis()
-    //   .scale(this.y)
-    //   .orient("left")
-    //   .ticks(4)
-    //   .tickSize(this.width * -1, 0, 0)
-    //   .tickFormat(function(d){
-    //     return self.formatLarge(d);
-    //   });
-
-    // if (this.options.percent) {
-    //   this.yAxis.tickFormat(this.formatPercent);
-    // }
+    this.yAxis = d3.svg.axis()
+      .scale(this.y)
+      .orient("left")
+      //.ticks(4)
+      .tickSize(0, 0, 0)
+      .tickFormat(function(d){
+        return d;
+      });
 
     this.svg = d3.select(this.el).append("svg")
       .attr("width", this.width + this.margin.left + this.margin.right)
@@ -65,15 +61,14 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
       .append("g")
       .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
 
-    this.svg.append("g")
-      .attr("class", "y axis");
-
-
     this.xAxisElement = this.svg.append("g")
       .attr("class", "x axis");
 
     this.svg.append("g")
       .attr("class", "bars");
+
+    this.yAxisElement = this.svg.append("g")
+      .attr("class", "y axis");
 
     d3.select(self.el).append('div').attr('class', 'hoverbox');
 
@@ -162,6 +157,7 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
 
     bars.exit().remove();
 
+
     //cut off rounded corners on one end
     var bgcolor = d3.rgb(d3.select(this.el).style("background")).toString();
     var hiders = this.svg.select(".bars")
@@ -201,51 +197,31 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
 
     hiders.exit().remove();
 
-    var lines = this.svg.select(".bars")
-      .selectAll(".line")
-      .data(data);
-
-    lines.transition()
-      .attr("x1", self.x(0))
-      .attr("x2", self.x(0))
-      .attr("y1", function (d) { return self.y(d[y]); })
-      .attr("y2", function (d) { return self.y(d[y]) + self.y.rangeBand(); });
-
-    lines.enter().append("line")
+    //draw zero line
+    this.yAxisElement
+      .append("line")
       .attr("class", "line")
       .attr("x1", self.x(0))
       .attr("x2", self.x(0))
-      .attr("y1", function (d) { return self.y(d[y]); })
-      .attr("y2", function (d) { return self.y(d[y]) + self.y.rangeBand(); });
-
-    lines.exit().remove();
+      .attr("y2", self.height);
 
     if (this.options.drawX) {
       this.xAxisElement.call(this.xAxis);
-      // if(this.options.verticalX){
-      //   this.xAxisElement.selectAll('.tick').style('display', 'none');
-      //   this.xAxisElement.selectAll('g').attr('transform', function(d){
-      //     var translate = d3.select(this).attr('transform');
-      //     translate = translate.replace('translate(', '');
-      //     translate = translate.replace(')', '');
-      //     var values = translate.split(',');
-      //     var x = values[0] - 8;
-      //     var y = -12;
-      //     var new_translate = 'translate(' + x + ',' + y + ')';
-      //     return new_translate;
-      //     //d3.select(this).attr('transform', new_translate);
-      //   });
-      //   this.xAxisElement.selectAll("text")
-      //     .style("text-anchor", "start")
-      //     .style("fill", "#333")
-      //     .attr("dx", "-.8em")
-      //     .attr("dy", ".15em")
-      //     .attr("transform", function(d) {
-      //       return "rotate(-90)" 
-      //     });
-      // }
     } else {
       this.xAxisElement.selectAll('g').remove();
+    }
+
+    if(this.options.drawY){
+      this.y.domain(data.map(function(d) { return d[x]; }));
+      console.log(this.y.domain());
+      this.yAxisElement.call(this.yAxis);
+      this.yAxisElement.selectAll("text")
+        .style("text-anchor", "start")
+        .style("fill", "#333")
+        .attr("x", "2")
+        .attr("y", "2");
+    } else {
+      this.yAxisElement.selectAll('g').remove();
     }
   },
   setColor: function(colors) {

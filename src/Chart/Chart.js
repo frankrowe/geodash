@@ -28,7 +28,7 @@ GeoDash.Chart = ezoop.BaseClass({
   update: function () { },
   makeTitle: function () {
     if (this.options.title) {
-      var html = '<div class="title">';
+      var html = '<div class="geodash-title">';
       html += this.options.title;
       html += '</div>';
       d3.select(this.el).html(html);
