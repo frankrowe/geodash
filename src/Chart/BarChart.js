@@ -144,7 +144,7 @@ GeoDash.BarChart = ezoop.ExtendedClass(GeoDash.Chart, {
     if (this.options.drawX) {
       this.xAxisElement.call(this.xAxis);
       if(this.options.verticalX){
-        this.xAxisElement.selectAll('.tick').style('display', 'none');
+        this.xAxisElement.selectAll('line').style('display', 'none');
         this.xAxisElement.selectAll('g').attr('transform', function(d){
           var translate = d3.select(this).attr('transform');
           translate = translate.replace('translate(', '');
