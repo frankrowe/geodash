@@ -11,7 +11,8 @@ GeoDash.BarChart = ezoop.ExtendedClass(GeoDash.Chart, {
     title: false,
     roundRadius: 3,
     highlight: false,
-    verticalX: false
+    verticalX: false,
+    invert: false
   },
   initialize: function (el, options) {
 

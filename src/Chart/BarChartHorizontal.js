@@ -12,7 +12,8 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
     title: false,
     roundRadius: 3,
     highlight: false,
-    verticalX: false
+    verticalX: false,
+    invert: false
   },
   initialize: function (el, options) {
 
@@ -20,7 +21,7 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
   drawChart: function () {
     var self = this;
     var padding = 10;
-    this.margin = { top: 20, right: 10, bottom: 20, left: 40 };
+    this.margin = { top: 20, right: 10, bottom: 20, left: 10 };
     this.width = (this.options.width === 'auto' || this.options.width === undefined ? parseInt(d3.select(this.el).style('width')) : this.options.width) - this.margin.left - this.margin.right,
     this.height = (this.options.height === 'auto' || this.options.height === undefined ? parseInt(d3.select(this.el).style('height')) : this.options.height) - this.margin.top - this.margin.bottom;
     if (this.options.title) {
@@ -53,6 +54,10 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
       .tickFormat(function(d){
         return d;
       });
+
+    if (this.options.percent) {
+      this.xAxis.tickFormat(this.formatPercent);
+    }
 
     this.svg = d3.select(this.el).append("svg")
       .attr("width", this.width + this.margin.left + this.margin.right)
@@ -213,13 +218,18 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
 
     if(this.options.drawY){
       this.y.domain(data.map(function(d) { return d[x]; }));
-      console.log(this.y.domain());
       this.yAxisElement.call(this.yAxis);
       this.yAxisElement.selectAll("text")
         .style("text-anchor", "start")
-        .style("fill", "#333")
+        .style("fill", function(d){
+          if(self.options.invert) {
+            return "#fff";
+          } else {
+            return "#333";
+          }
+        })
         .attr("x", "2")
-        .attr("y", "2");
+        .attr("y", "0");
     } else {
       this.yAxisElement.selectAll('g').remove();
     }
