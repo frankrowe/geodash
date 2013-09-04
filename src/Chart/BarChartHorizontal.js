@@ -164,7 +164,7 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
 
 
     //cut off rounded corners on one end
-    var bgcolor = d3.rgb(d3.select(this.el).style("background")).toString();
+    var bgcolor = d3.rgb(d3.select(this.el).style("background-color")).toString();
     var hiders = this.svg.select(".bars")
       .selectAll(".hider")
       .data(data);
