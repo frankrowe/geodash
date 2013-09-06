@@ -103,33 +103,47 @@
       y: 'numCats',
       width: 'auto',
       height: 'auto',
-      colors: ['#f00'],
+      colors: ["#f00", "#00f"],
       title: 'Number of Cats',
       interpolate: 'monotone',
-      dotRadius: 3
+      dotRadius: 3,
+      dashed: [{
+        line: 1,
+        span: [{
+          start: 0,
+          end: 2
+        }]
+      }]
     });
 
     var data = [{
         "date":parseDate("2007"),
-        "numCats":92817
+        "numCats":92817,
+        "goalCats": 100000
       },{
         "date":parseDate("2008"),
-        "numCats":81039
+        "numCats":81039,
+        "goalCats": 100000
       },{
         "date":parseDate("2009"),
-        "numCats":75920
+        "numCats":75920,
+        "goalCats": 100000
       },{
         "date":parseDate("2010"),
-        "numCats":76920
+        "numCats":76920,
+        "goalCats": 100000
       },{
         "date":parseDate("2011"),
-        "numCats":84123
+        "numCats":84123,
+        "goalCats": 100000
       },{
         "date":parseDate("2012"),
-        "numCats":96109
+        "numCats":96109,
+        "goalCats": 100000
       },{
         "date":parseDate("2013"),
-        "numCats":145897
+        "numCats":145897,
+        "goalCats": 100000
     }];
 
     linechart.update(data);

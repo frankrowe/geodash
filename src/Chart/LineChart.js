@@ -15,7 +15,8 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
     opacity: 0.5,
     strokeWidth: 2,
     axisLabels: false,
-    xInterval: 'auto'
+    xInterval: 'auto',
+    dashed: false
   },
   initialize: function (el, options) {
 
@@ -94,7 +95,7 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
     var self = this;
     var stat = this.formatComma(d.value);
     var x = 55 + this.x(d.date);
-    var y = 45 + this.y(d.value);
+    var y = 25 + this.y(d.value);
     d3.select(dot).transition().attr('r', this.options.dotRadius + 3);
 
     var w = d3.select('.line')[0][0].getBBox().width;
@@ -129,12 +130,51 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
       };
     });
 
+    /*
+      dashed: [{
+        line: 0,
+        span: [{
+          start: 0,
+          end: 1
+        }]
+      },{
+        line: 1,
+        span: [{
+          start: 0,
+          end: 2
+        }]
+      }]
+    */
+    if(this.options.dashed){
+      var dashedlines = [];
+      this.options.dashed.forEach(function(dash_options, idx){
+        var line = linedata[dash_options.line];
+        var dashedline = {};
+        dashedline.name = JSON.parse(JSON.stringify(line.name));
+        dashedline.values = [];
+        dashedline.dashed = true;
+        dash_options.span.forEach(function(span, idx){
+          for(var i = span.start; i <= span.end; i++){
+            dashedline.values.push({
+              date: line.values[i].date,
+              value: JSON.parse(JSON.stringify(line.values[i].value))
+            });
+            if(i !== span.end) line.values[i].value = null;
+          }
+        });
+        dashedlines.push(dashedline);
+      });
+      dashedlines.forEach(function(dashedline){
+        linedata.push(dashedline);
+      });
+    }
+
     //remove NaNs
     for(var i = 0; i < linedata.length; i++) {
       var one_line = [];
       for(var j = 0; j < linedata[i].values.length; j++){
         var value = linedata[i].values[j].value;
-        if(!isNaN(value)) one_line.push(linedata[i].values[j]);
+        if(!isNaN(value) && value !== null) one_line.push(linedata[i].values[j]);
       }
       linedata[i].values = one_line;
     }
@@ -179,6 +219,10 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
       .attr("d", function(d) { return self.line(d.values); })
       .style("stroke", function(d) { return self.color(d.name); })
       .style("stroke-width", self.options.strokeWidth)
+      .style("stroke-dasharray", function(d){
+        if(d.dashed) return "5, 5";
+        else return "0,0";
+      })
       .style("stroke-opacity", self.options.opacity);
 
     //dots
