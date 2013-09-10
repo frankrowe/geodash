@@ -221,7 +221,7 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
       .style("stroke-width", self.options.strokeWidth)
       .style("stroke-dasharray", function(d){
         if(d.dashed) return "5, 5";
-        else return "0,0";
+        else return "none";
       })
       .style("stroke-opacity", self.options.opacity);
 
