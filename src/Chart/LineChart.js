@@ -125,7 +125,14 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
       return {
         name: name,
         values: data.map(function(d) {
-          return {date: d[self.options.x], value: +d[name]};
+          var date = d[self.options.x];
+          var value;
+          if(d[name] === null) {
+            value = null;
+          } else {
+            value = +d[name];
+          }
+          return {date: date, value: value};
         })
       };
     });
