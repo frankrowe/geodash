@@ -11,26 +11,30 @@ var result = UglifyJS.minify([
     "../src/Chart/TableChart.js",
     "../src/Chart/LineChart.js",
     "../src/Chart/PieChart.js",
-    "../src/Chart/BarChartHorizontal.js"
+    "../src/Chart/BarChartHorizontal.js",
+    "../src/Chart/BarChartHTML.js"
   ],{
     outSourceMap: "GeoDash.js.map",
     output: { beautify: true}
 });
 fs.writeFile('../dist/GeoDash.min.js', result.code, function (err) {
   if (err) throw err;
-  console.log('It\'s saved!');
+  console.log('../dist/GeoDash.min.js saved!');
 });
 
-fs.writeFile('../dist/GeoDash.js.map', result.map, function (err) {
-  if (err) throw err;
-  console.log('It\'s saved!');
+//LESS
+
+var parser = new(lesscss.Parser)({
+    paths: ['../src/Styles'], // Specify search paths for @import directives
 });
 
 fs.readFile('../src/Styles/chart.less', 'utf8', function(err, less){
-  lesscss.render(less, function (e, css) {
+  parser.parse(less, function (err, tree) {
+    if (err) { return console.error(err) }
+    var css = tree.toCSS({ compress: true });
     fs.writeFile('../dist/GeoDash.min.css', css, function (err) {
       if (err) throw err;
-      console.log('It\'s saved!');
+      console.log('../dist/GeoDash.min.css saved!');
     });
   });
 })

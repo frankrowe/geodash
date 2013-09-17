@@ -1,55 +1,15 @@
-.axis path,
-.axis line {
-  fill: none;
-  opacity: 0.6;
-  stroke: #c5c5c5;
-  shape-rendering: crispEdges;
-}
-.axis text {
-  font-size: 10px;
-  fill: #b8b8b8;
-  font-family: 'arial', sans-serif;
-}
-.axis text.axis-label {
-  fill: #a4a4a4;
-}
-.line {
-  fill: none;
-  stroke: #c5c5c5;
-}
-.geodash-title {
-  height: 20px;
-  background: none;
-  color: #b1b1b1;
-  font-size: 12px;
-  font-family: 'arial', sans-serif;
-}
-svg {
-  fill: blue;
-}
-.linechart-svg path.domain {
-  display: none;
-}
-.piechart-svg .arc {
-  stroke: #fff;
-  stroke-width: 3;
-}
-.legend-item {
-  font-size: 11px;
-  fill: #333;
-}
-.hoverbox {
-  font-family: 'arial', sans-serif;
-  font-size: 12px;
-  position: absolute;
-  right: 5px;
-  top: 5px;
-  display: none;
-  opacity: 0.8;
-  background: black;
-  color: white;
-  padding: 2px 5px 2px 5px;
-  -webkit-border-radius: 4px;
-  -moz-border-radius: 4px;
-  border-radius: 4px;
-}
+.barchart-html{position:relative;overflow:hidden}.barchart-html .bars{z-index:1;position:relative}.barchart-html .bars .bar{position:relative}
+.barchart-html .axis{position:absolute;overflow:hidden;width:100%;height:100%}.barchart-html .axis.x{z-index:0}
+.barchart-html .axis.y{z-index:2}.barchart-html .axis.y .gd-label{color:#333;text-align:left}
+.barchart-html .axis .tick{position:absolute}
+.barchart-html .axis .line{width:1px;background:#ccc;position:absolute}.barchart-html .axis .line.zero{margin-top:10px}
+.barchart-html .axis .gd-label{font-size:10px;color:#b8b8b8;font-family:'arial',sans-serif}
+.axis path,.axis line{fill:none;opacity:0.6;stroke:#c5c5c5;shape-rendering:crispEdges}
+.axis text{font-size:10px;fill:#b8b8b8;font-family:'arial',sans-serif}.axis text.axis-label{fill:#a4a4a4}
+.line{fill:none;stroke:#c5c5c5}
+.geodash-title{padding-top:10px;background:none;color:#b1b1b1;font-size:12px;font-family:'arial',sans-serif}
+svg{fill:blue}
+.linechart-svg path.domain{display:none}
+.piechart-svg .arc{stroke:#fff;stroke-width:3}
+.legend-item{font-size:11px;fill:#333}
+.hoverbox{font-family:'arial',sans-serif;font-size:12px;position:absolute;right:5px;top:5px;display:none;opacity:0.8;background:black;color:white;padding:2px 5px 2px 5px;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px;z-index:4;pointer-events:none}
