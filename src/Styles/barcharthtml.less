@@ -1,0 +1,44 @@
+
+.barchart-html {
+  position: relative;
+  overflow: hidden;
+  .bars {
+    z-index: 1;
+    position: relative;
+    .bar {
+      position: relative;
+    }
+  }
+  .axis {
+    position: absolute;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    &.x {
+      z-index: 0;
+    }
+    &.y {
+      z-index: 2;
+      .gd-label {
+        color: #333;
+        text-align: left;
+      }
+    }
+    .tick {
+      position: absolute;
+    }
+    .line {
+      width: 1px;
+      background: #ccc;
+      position: absolute;
+      &.zero {
+        margin-top: 10px;
+      }
+    }
+    .gd-label {
+      font-size: 10px;
+      color: #b8b8b8;
+      font-family: 'arial', sans-serif;
+    }
+  }
+}
