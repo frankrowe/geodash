@@ -70,7 +70,6 @@ GeoDash.BarChartHTML = ezoop.ExtendedClass(GeoDash.Chart, {
     var y = this.options.y;
     var x = this.options.x;
     data.forEach(function (d) {
-      console.log(d[y]);
       d[x] = +d[x];
     });
 
