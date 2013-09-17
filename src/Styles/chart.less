@@ -1,3 +1,5 @@
+@import "barcharthtml.less";
+
 .axis path,
 .axis line {
   fill: none;
@@ -21,7 +23,7 @@
 }
 
 .geodash-title {
-  height: 20px;
+  padding-top: 10px;
   background: none;
   color: #b1b1b1;
   font-size: 12px;
@@ -64,4 +66,6 @@ svg {
   -webkit-border-radius: 4px;
   -moz-border-radius: 4px;
   border-radius: 4px;
+  z-index: 4;
+  pointer-events: none;
 }
