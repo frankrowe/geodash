@@ -25,7 +25,7 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
     this.width = (this.options.width === 'auto' || this.options.width === undefined ? parseInt(d3.select(this.el).style('width')) : this.options.width) - this.margin.left - this.margin.right,
     this.height = (this.options.height === 'auto' || this.options.height === undefined ? parseInt(d3.select(this.el).style('height')) : this.options.height) - this.margin.top - this.margin.bottom;
     if (this.options.title) {
-      this.height = this.height - 21;
+      this.height = this.height - 30;
     }
     
     this.formatPercent = d3.format(".0%");
@@ -36,7 +36,7 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
       .range([0, this.width]);
 
     this.y = d3.scale.ordinal()
-      .rangeRoundBands([0, this.height], 0.05);
+      .rangeRoundBands([0, this.height], 0.05, .5);
 
     this.xAxis = d3.svg.axis()
       .scale(this.x)

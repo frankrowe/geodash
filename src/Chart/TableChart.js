@@ -14,7 +14,7 @@ GeoDash.TableChart = ezoop.ExtendedClass(GeoDash.Chart, {
     this.width = (this.options.width === 'auto' || this.options.width === undefined ? parseInt(d3.select(this.el).style('width')) : this.options.width) - this.margin.left - this.margin.right,
     this.height = (this.options.height === 'auto' || this.options.height === undefined ? parseInt(d3.select(this.el).style('height')) : this.options.height) - this.margin.top - this.margin.bottom;
     if (this.options.title) {
-      this.height = this.height - 21;
+      this.height = this.height - 30;
     }
     this.formatPercent = d3.format(".0%");
     this.formatLarge = d3.format("s");

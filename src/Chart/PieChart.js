@@ -30,7 +30,7 @@ GeoDash.PieChart = ezoop.ExtendedClass(GeoDash.Chart, {
     this.width = this.width - this.options.padding*2;
     this.height = this.height - this.options.padding*2;
     if(this.options.title) {
-      this.height  = this.height - 21;
+      this.height  = this.height - 30;
     }
 
     this.radius = Math.min(this.width, this.height) / 2.2;
