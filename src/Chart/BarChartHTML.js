@@ -15,7 +15,7 @@ GeoDash.BarChartHTML = ezoop.ExtendedClass(GeoDash.Chart, {
     verticalX: false,
     invert: false,
     barHeight: 0,
-    padding: 2,
+    padding: 1,
     numberTicks: 10
   },
   initialize: function (el, options) {
@@ -66,10 +66,11 @@ GeoDash.BarChartHTML = ezoop.ExtendedClass(GeoDash.Chart, {
   },
   update: function (data) {
     var self = this;
-
+    this.data = data;
     var y = this.options.y;
     var x = this.options.x;
     data.forEach(function (d) {
+      console.log(d[y]);
       d[x] = +d[x];
     });
 
@@ -268,6 +269,7 @@ GeoDash.BarChartHTML = ezoop.ExtendedClass(GeoDash.Chart, {
           return d;
         });
 
+
       labelElements.enter().append('div')
         .attr("class", "gd-label")
         .style("margin-top", function (d, i) { 
@@ -284,7 +286,7 @@ GeoDash.BarChartHTML = ezoop.ExtendedClass(GeoDash.Chart, {
         })
         .on('mouseover', function (d, i) {
           var label = d;
-          var value = data[i][x];
+          var value = self.data[i][x];
           var bar = d3.select(self.el).selectAll('.bar')[0][i];
           d3.select(bar).style('opacity', 1);
           d3.select(self.el).select('.hoverbox').html(label + ': ' + (self.options.percent ? self.formatPercent(value) : self.formatComma(value)));
