@@ -1,6 +1,6 @@
 .barchart-html{position:relative;overflow:hidden}.barchart-html .bars{z-index:1;position:relative}.barchart-html .bars .bar{position:relative}
-.barchart-html .axis{position:absolute;overflow:hidden;width:100%;height:100%}.barchart-html .axis.x{z-index:0}
-.barchart-html .axis.y{z-index:2}.barchart-html .axis.y .gd-label{color:#333;text-align:left}
+.barchart-html .axis{overflow:hidden;width:100%;height:100%}.barchart-html .axis.x{position:absolute;z-index:0}.barchart-html .axis.x .gd-label{line-height:11px}
+.barchart-html .axis.y{position:absolute;z-index:2}.barchart-html .axis.y .gd-label{position:relative;color:#333;text-align:right}
 .barchart-html .axis .tick{position:absolute}
 .barchart-html .axis .line{width:1px;background:#ccc;position:absolute}.barchart-html .axis .line.zero{margin-top:10px}
 .barchart-html .axis .gd-label{font-size:10px;color:#b8b8b8;font-family:'arial',sans-serif}

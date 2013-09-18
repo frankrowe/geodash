@@ -29,13 +29,15 @@ GeoDash.BarChartHTML = ezoop.ExtendedClass(GeoDash.Chart, {
     if (this.options.title) {
       this.height = this.height - 30;
     }
+    //TODO: make this variable
+    this.yWidth = 80;
 
     this.formatPercent = d3.format(".0%");
     this.formatLarge = d3.format("s");
     this.formatComma = d3.format(",");
 
     this.x = d3.scale.linear()
-      .range([10, this.width]);
+      .range([10, this.width - this.yWidth]);
 
     this.y = d3.scale.ordinal()
       .rangeRoundBands([0, this.height], 0.05, 0);
@@ -48,16 +50,17 @@ GeoDash.BarChartHTML = ezoop.ExtendedClass(GeoDash.Chart, {
       .style("margin-left", this.margin.left + "px");
 
     this.xAxisElement = this.svg.append("div")
-      .attr("class", "x axis");
+      .attr("class", "x axis")
+      .style("margin-left", this.yWidth + "px");
 
     this.yAxisElement = this.svg.append("div")
       .attr("class", "y axis")
-      .style("padding-left", "15px")
       .style("padding-bottom", this.options.padding + "px")
       .style("padding-top", this.options.padding + 15 + "px");
 
     this.svg.append("div")
       .attr("class", "bars")
+      .style("margin-left", this.yWidth + "px")
       .style("padding-bottom", this.options.padding + "px")
       .style("padding-top", this.options.padding + 15 + "px");
 
@@ -264,6 +267,14 @@ GeoDash.BarChartHTML = ezoop.ExtendedClass(GeoDash.Chart, {
         .style("line-height", function(d){
           return self.options.barHeight + "px";
         })
+        .style("padding-right", function(d, i){
+          var value = self.data[i][x];
+          var width = parseInt(d3.select(self.el).select('.bars').style("width"));
+          var barw = Math.abs(self.x(value) - self.x(0));
+          var left = self.x(Math.min(0, value));
+          var p = (width - left) + 2;
+          return p + "px";
+        })
         .text(function(d){
           return d;
         });
@@ -280,6 +291,14 @@ GeoDash.BarChartHTML = ezoop.ExtendedClass(GeoDash.Chart, {
         .style("line-height", function(d){
           return self.options.barHeight + "px";
         })
+        .style("padding-right", function(d, i){
+          var value = self.data[i][x];
+          var width = parseInt(d3.select(self.el).select('.bars').style("width"));
+          var barw = Math.abs(self.x(value) - self.x(0));
+          var left = self.x(Math.min(0, value));
+          var p = (width - left) + 2;
+          return p + "px";
+        })
         .text(function(d){
           return d;
         })
@@ -287,7 +306,7 @@ GeoDash.BarChartHTML = ezoop.ExtendedClass(GeoDash.Chart, {
           var label = d;
           var value = self.data[i][x];
           var bar = d3.select(self.el).selectAll('.bar')[0][i];
-          d3.select(bar).style('opacity', 1);
+          d3.select(bar).style('opacity', 0.9);
           d3.select(self.el).select('.hoverbox').html(label + ': ' + (self.options.percent ? self.formatPercent(value) : self.formatComma(value)));
           d3.select(self.el).select('.hoverbox').transition().style('display', 'block');
         }).on('mouseout', function (d, i) {
