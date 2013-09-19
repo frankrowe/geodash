@@ -53,6 +53,9 @@ GeoDash.TableChart = ezoop.ExtendedClass(GeoDash.Chart, {
           display = d.value; //value is string
         } else {
           display = self.formatComma(d.value); //value is number
+          if(self.options.money){
+            display = '$' + display;
+          }
         }
         return display;
       });
@@ -67,6 +70,9 @@ GeoDash.TableChart = ezoop.ExtendedClass(GeoDash.Chart, {
             display = d.value; //value is string
           } else {
             display = self.formatComma(d.value); //value is number
+            if(self.options.money){
+              display = '$' + display;
+            }
           }
           return display;
         });

@@ -9,6 +9,7 @@ GeoDash.BarChartHTML = ezoop.ExtendedClass(GeoDash.Chart, {
     drawX: false,
     drawY: false,
     percent: false,
+    money: false,
     title: false,
     roundRadius: 3,
     highlight: false,
@@ -32,12 +33,13 @@ GeoDash.BarChartHTML = ezoop.ExtendedClass(GeoDash.Chart, {
     }
 
     this.formatPercent = d3.format(".2%");
-    this.formatPercentAxisLabel = d3.format(".0%");
+    this.formatPercentAxisLabel = d3.format("p");
+    this.formatMoney = d3.format("$");
     this.formatLarge = d3.format("s");
     this.formatComma = d3.format(",");
 
     this.x = d3.scale.linear()
-      .range([10, this.width - this.options.yWidth]);
+      .range([10, this.width - this.options.yWidth]).nice();
 
     this.y = d3.scale.ordinal()
       .rangeRoundBands([0, this.height], 0.05, 0);
@@ -233,10 +235,21 @@ GeoDash.BarChartHTML = ezoop.ExtendedClass(GeoDash.Chart, {
         .append('div')
         .attr("class", "gd-label")
         .text(function(d){
+          var label = '';
           if (self.options.percent) {
-            return self.formatPercentAxisLabel(d);
+            label = self.formatPercentAxisLabel(d);
+            var x = parseFloat(label);
+            if(x%1 < .001 && x%1 > 0){
+              x = x.toFixed(0);
+              label = x + "%";
+            }
+          } else {
+            label = self.formatLarge(d);
+            if (self.options.money) {
+              label = '$' + label;
+            }
           }
-          else return self.formatLarge(d);
+          return label;
         })
         .style("margin-left", function(d){
           //center labels using negative left margin
@@ -307,7 +320,16 @@ GeoDash.BarChartHTML = ezoop.ExtendedClass(GeoDash.Chart, {
           var value = self.data[i][x];
           var bar = d3.select(self.el).selectAll('.bar')[0][i];
           d3.select(bar).style('opacity', 0.9);
-          d3.select(self.el).select('.hoverbox').html(label + ': ' + (self.options.percent ? self.formatPercent(value) : self.formatComma(value)));
+          var format = '';
+          if (self.options.percent) {
+            format = self.formatPercentAxisLabel(value);
+          } else {
+            format = self.formatLarge(value);
+            if (self.options.money) {
+              format = '$' + format;
+            }
+          }
+          d3.select(self.el).select('.hoverbox').html(label + ': ' + format);
           d3.select(self.el).select('.hoverbox').transition().style('display', 'block');
         }).on('mouseout', function (d, i) {
           var opacity = self.options.opacity;
