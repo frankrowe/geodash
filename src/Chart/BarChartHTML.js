@@ -16,7 +16,8 @@ GeoDash.BarChartHTML = ezoop.ExtendedClass(GeoDash.Chart, {
     invert: false,
     barHeight: 0,
     padding: 1,
-    numberTicks: 10
+    numberTicks: 10,
+    yWidth: 80
   },
   initialize: function (el, options) {
 
@@ -29,15 +30,13 @@ GeoDash.BarChartHTML = ezoop.ExtendedClass(GeoDash.Chart, {
     if (this.options.title) {
       this.height = this.height - 30;
     }
-    //TODO: make this variable
-    this.yWidth = 80;
 
     this.formatPercent = d3.format(".0%");
     this.formatLarge = d3.format("s");
     this.formatComma = d3.format(",");
 
     this.x = d3.scale.linear()
-      .range([10, this.width - this.yWidth]);
+      .range([10, this.width - this.options.yWidth]);
 
     this.y = d3.scale.ordinal()
       .rangeRoundBands([0, this.height], 0.05, 0);
@@ -51,7 +50,7 @@ GeoDash.BarChartHTML = ezoop.ExtendedClass(GeoDash.Chart, {
 
     this.xAxisElement = this.svg.append("div")
       .attr("class", "x axis")
-      .style("margin-left", this.yWidth + "px");
+      .style("margin-left", this.options.yWidth + "px");
 
     this.yAxisElement = this.svg.append("div")
       .attr("class", "y axis")
@@ -60,7 +59,7 @@ GeoDash.BarChartHTML = ezoop.ExtendedClass(GeoDash.Chart, {
 
     this.svg.append("div")
       .attr("class", "bars")
-      .style("margin-left", this.yWidth + "px")
+      .style("margin-left", this.options.yWidth + "px")
       .style("padding-bottom", this.options.padding + "px")
       .style("padding-top", this.options.padding + 15 + "px");
 
