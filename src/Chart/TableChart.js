@@ -16,7 +16,8 @@ GeoDash.TableChart = ezoop.ExtendedClass(GeoDash.Chart, {
     if (this.options.title) {
       this.height = this.height - 30;
     }
-    this.formatPercent = d3.format(".0%");
+    this.formatPercent = d3.format(".2%");
+    this.formatPercentAxisLabel = d3.format(".0%");
     this.formatLarge = d3.format("s");
     this.formatComma = d3.format(",");
     this.table = d3.select(this.el).append("table")

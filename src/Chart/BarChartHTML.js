@@ -31,7 +31,8 @@ GeoDash.BarChartHTML = ezoop.ExtendedClass(GeoDash.Chart, {
       this.height = this.height - 30;
     }
 
-    this.formatPercent = d3.format(".0%");
+    this.formatPercent = d3.format(".2%");
+    this.formatPercentAxisLabel = d3.format(".0%");
     this.formatLarge = d3.format("s");
     this.formatComma = d3.format(",");
 
@@ -233,7 +234,7 @@ GeoDash.BarChartHTML = ezoop.ExtendedClass(GeoDash.Chart, {
         .attr("class", "gd-label")
         .text(function(d){
           if (self.options.percent) {
-            return self.formatPercent(d);
+            return self.formatPercentAxisLabel(d);
           }
           else return self.formatLarge(d);
         })
