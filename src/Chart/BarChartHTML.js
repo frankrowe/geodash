@@ -322,9 +322,9 @@ GeoDash.BarChartHTML = ezoop.ExtendedClass(GeoDash.Chart, {
           d3.select(bar).style('opacity', 0.9);
           var format = '';
           if (self.options.percent) {
-            format = self.formatPercentAxisLabel(value);
+            format = self.formatPercent(value);
           } else {
-            format = self.formatLarge(value);
+            format = self.formatComma(value);
             if (self.options.money) {
               format = '$' + format;
             }
