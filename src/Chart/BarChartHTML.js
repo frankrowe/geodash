@@ -36,7 +36,7 @@ GeoDash.BarChartHTML = ezoop.ExtendedClass(GeoDash.Chart, {
     this.formatPercentAxisLabel = d3.format("p");
     this.formatMoney = d3.format("$");
     this.formatLarge = d3.format("s");
-    this.formatComma = d3.format(",");
+    this.formatComma = d3.format(",.2f");
 
     this.x = d3.scale.linear()
       .range([10, this.width - this.options.yWidth]).nice();
@@ -325,9 +325,14 @@ GeoDash.BarChartHTML = ezoop.ExtendedClass(GeoDash.Chart, {
             format = self.formatPercent(value);
           } else {
             format = self.formatComma(value);
+            var f = parseFloat(format);
+            if(f%1 === 0){
+              format = format.split(".")[0];
+            }
             if (self.options.money) {
               format = '$' + format;
             }
+
           }
           d3.select(self.el).select('.hoverbox').html(label + ': ' + format);
           d3.select(self.el).select('.hoverbox').transition().style('display', 'block');
