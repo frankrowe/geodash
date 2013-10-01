@@ -19,7 +19,7 @@ GeoDash.TableChart = ezoop.ExtendedClass(GeoDash.Chart, {
     this.formatPercent = d3.format(".2%");
     this.formatPercentAxisLabel = d3.format(".0%");
     this.formatLarge = d3.format("s");
-    this.formatComma = d3.format(",");
+    this.formatComma = d3.format(",.2f");
     this.table = d3.select(this.el).append("table")
       .attr("width", this.width + this.margin.left + this.margin.right)
       //.attr("height", this.height + this.margin.top + this.margin.bottom)
@@ -46,39 +46,36 @@ GeoDash.TableChart = ezoop.ExtendedClass(GeoDash.Chart, {
 
     cells.transition()
       .text(function(d) { 
-        var display = '';
-        if(parseFloat(d.value) > 0 && parseFloat(d.value) <= 1 && self.options.percent) {
-          display = self.formatPercent(d.value); //value is percent
-        } else if(isNaN(parseFloat(d.value))){
-          display = d.value; //value is string
-        } else {
-          display = self.formatComma(d.value); //value is number
-          if(self.options.money){
-            display = '$' + display;
-          }
-        }
-        return display;
+        return self.format(d);
       });
 
     cells.enter()
       .append("td")
         .text(function(d) { 
-          var display = '';
-          if(parseFloat(d.value) > 0 && parseFloat(d.value) <= 1 && self.options.percent) {
-            display = self.formatPercent(d.value); //value is percent
-          } else if(isNaN(parseFloat(d.value))){
-            display = d.value; //value is string
-          } else {
-            display = self.formatComma(d.value); //value is number
-            if(self.options.money){
-              display = '$' + display;
-            }
-          }
-          return display;
+          return self.format(d);
         });
 
     cells.exit().remove();
     
     return this;
+  },
+  format: function(d){
+    var display = '';
+    var self = this;
+    if(parseFloat(d.value) > 0 && parseFloat(d.value) <= 1 && self.options.percent) {
+      display = self.formatPercent(d.value); //value is percent
+    } else if(isNaN(parseFloat(d.value))){
+      display = d.value; //value is string
+    } else {
+      display = self.formatComma(d.value);
+      var f = parseFloat(display);
+      if(f%1 === 0){
+        display = display.split(".")[0];
+      }
+      if (self.options.money) {
+        display = '$' + display;
+      }
+    }
+    return display;
   }
 });
