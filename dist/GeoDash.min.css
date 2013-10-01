@@ -13,3 +13,4 @@ svg{fill:blue}
 .piechart-svg .arc{stroke:#fff;stroke-width:3}
 .legend-item{font-size:11px;fill:#333}
 .hoverbox{font-family:'arial',sans-serif;font-size:12px;position:absolute;right:5px;top:5px;display:none;opacity:0.8;background:black;color:white;padding:2px 5px 2px 5px;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px;z-index:4;pointer-events:none}
+.gd-table td{text-align:right}

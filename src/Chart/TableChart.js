@@ -23,7 +23,7 @@ GeoDash.TableChart = ezoop.ExtendedClass(GeoDash.Chart, {
     this.table = d3.select(this.el).append("table")
       .attr("width", this.width + this.margin.left + this.margin.right)
       //.attr("height", this.height + this.margin.top + this.margin.bottom)
-      .attr("class", "table table-condensed table-bordered tablechart-svg");
+      .attr("class", "table table-condensed table-bordered gd-table");
 
     this.tbody = this.table.append("tbody");
   },
