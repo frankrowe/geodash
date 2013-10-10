@@ -75,7 +75,9 @@ GeoDash.BarChartHTML = ezoop.ExtendedClass(GeoDash.Chart, {
     var y = this.options.y;
     var x = this.options.x;
     data.forEach(function (d) {
-      d[x] = +d[x];
+      if(d[x] != null){
+        d[x] = +d[x];
+      }
     });
 
     this.color = d3.scale.ordinal()
@@ -321,18 +323,21 @@ GeoDash.BarChartHTML = ezoop.ExtendedClass(GeoDash.Chart, {
           var bar = d3.select(self.el).selectAll('.bar')[0][i];
           d3.select(bar).style('opacity', 0.9);
           var format = '';
-          if (self.options.percent) {
-            format = self.formatPercent(value);
+          if(value !== null){
+            if (self.options.percent) {
+              format = self.formatPercent(value);
+            } else {
+              format = self.formatComma(value);
+              var f = parseFloat(format);
+              if(f%1 === 0){
+                format = format.split(".")[0];
+              }
+              if (self.options.money) {
+                format = '$' + format;
+              }
+            }
           } else {
-            format = self.formatComma(value);
-            var f = parseFloat(format);
-            if(f%1 === 0){
-              format = format.split(".")[0];
-            }
-            if (self.options.money) {
-              format = '$' + format;
-            }
-
+            format = 'No Data';
           }
           d3.select(self.el).select('.hoverbox').html(label + ': ' + format);
           d3.select(self.el).select('.hoverbox').transition().style('display', 'block');
