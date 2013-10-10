@@ -12,7 +12,7 @@ GeoDash.BarChartHTML = ezoop.ExtendedClass(GeoDash.Chart, {
     money: false,
     title: false,
     roundRadius: 3,
-    highlight: false,
+    highlight: [],
     verticalX: false,
     invert: false,
     barHeight: 0,
@@ -116,8 +116,10 @@ GeoDash.BarChartHTML = ezoop.ExtendedClass(GeoDash.Chart, {
         return self.options.barHeight + "px";
       })
       .style("opacity", function(d){
-        if(d[y] == self.options.highlight) return 1;
-        else return self.options.opacity
+        for(var i = 0; i < self.options.highlight.length; i++){
+          if(self.options.highlight[i] == d[y]) return 1;
+        }
+        return self.options.opacity;
       })
       .style("border-top-right-radius", function(d){
         var r = 0;
@@ -174,8 +176,10 @@ GeoDash.BarChartHTML = ezoop.ExtendedClass(GeoDash.Chart, {
         return self.options.barHeight + "px";
       })
       .style("opacity", function(d){
-        if(d[y] == self.options.highlight) return 1;
-        else return self.options.opacity
+        for(var i = 0; i < self.options.highlight.length; i++){
+          if(self.options.highlight[i] == d[y]) return 1;
+        }
+        return self.options.opacity;
       })
       .style("border-top-right-radius", function(d){
         var r = 0;
@@ -343,7 +347,9 @@ GeoDash.BarChartHTML = ezoop.ExtendedClass(GeoDash.Chart, {
           d3.select(self.el).select('.hoverbox').transition().style('display', 'block');
         }).on('mouseout', function (d, i) {
           var opacity = self.options.opacity;
-          if(d == self.options.highlight) opacity =  1;
+          for(var j = 0; j < self.options.highlight.length; j++){
+            if(self.options.highlight[j] == d[y]) opacity =  1;
+          }
           var bar = d3.select(self.el).selectAll('.bar')[0][i];
           d3.select(bar).style('opacity', opacity);
           d3.select(self.el).select('.hoverbox').transition().style('display', 'none');

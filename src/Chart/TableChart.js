@@ -2,7 +2,7 @@
 GeoDash.TableChart = ezoop.ExtendedClass(GeoDash.Chart, {
   className: 'TableChart',
   defaults: {
-
+    highlight: []
   },
   initialize: function (el, options) {
 
@@ -30,10 +30,28 @@ GeoDash.TableChart = ezoop.ExtendedClass(GeoDash.Chart, {
   update: function (data) {
     var self = this;
     var rows = this.tbody.selectAll("tr")
-      .data(data);
+      .data(data)
+      .attr("style", function(d){
+        var name = d[self.options.columns[0]];
+        for(var i = 0; i < self.options.highlight.length; i++){
+          if(self.options.highlight[i] == name) {
+            return 'background:' + self.options.color;
+          }
+        }
+        return '';
+      });
 
     rows.enter()
-      .append("tr");
+      .append("tr")
+      .attr("style", function(d){
+        var name = d[self.options.columns[0]];
+        for(var i = 0; i < self.options.highlight.length; i++){
+          if(self.options.highlight[i] == name) {
+            return 'background:' + self.options.color;
+          }
+        }
+        return '';
+      });
 
     rows.exit().remove();
 
@@ -51,9 +69,9 @@ GeoDash.TableChart = ezoop.ExtendedClass(GeoDash.Chart, {
 
     cells.enter()
       .append("td")
-        .text(function(d) { 
-          return self.format(d);
-        });
+      .text(function(d) { 
+        return self.format(d);
+      });
 
     cells.exit().remove();
     
