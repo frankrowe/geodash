@@ -348,7 +348,7 @@ GeoDash.BarChartHTML = ezoop.ExtendedClass(GeoDash.Chart, {
         }).on('mouseout', function (d, i) {
           var opacity = self.options.opacity;
           for(var j = 0; j < self.options.highlight.length; j++){
-            if(self.options.highlight[j] == d[y]) opacity =  1;
+            if(self.options.highlight[j] == d) opacity =  1;
           }
           var bar = d3.select(self.el).selectAll('.bar')[0][i];
           d3.select(bar).style('opacity', opacity);
