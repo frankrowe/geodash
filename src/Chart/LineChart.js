@@ -119,6 +119,9 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
   update: function(data) {
     var self = this;
 
+    this.color = d3.scale.ordinal()
+    .range(this.options.colors);
+    
     this.color.domain(d3.keys(data[0]).filter(function(key) { return key !== self.options.x; }));
 
     var linedata = this.color.domain().map(function(name) {
@@ -136,7 +139,7 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
         })
       };
     });
-
+    
     /*
       dashed: [{
         line: 0,
@@ -154,8 +157,8 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
     */
     if(this.options.dashed){
       var dashedlines = [];
-      this.options.dashed.forEach(function(dash_options, idx){
-        var line = linedata[dash_options.line];
+      _.each(linedata, function(line, idx){
+        var dash_options = self.options.dashed[idx];
         var dashedline = {};
         dashedline.name = JSON.parse(JSON.stringify(line.name));
         dashedline.values = [];
@@ -175,7 +178,7 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
         linedata.push(dashedline);
       });
     }
-
+    
     //remove NaNs
     for(var i = 0; i < linedata.length; i++) {
       var one_line = [];
@@ -215,13 +218,26 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
 
     var delay = function(d, i) { return i * 10; }
 
+    var line_groups = svg.selectAll(".line_group")
+      .data(linedata);
+
     var lines = svg.selectAll(".line")
       .data(linedata);
 
     lines.transition().duration(500).delay(delay)
+      .style("stroke", function(d) { return self.color(d.name); })
+      .style("stroke-dasharray", function(d){
+        if(d.dashed) return "5, 5";
+        else return "none";
+      })
       .attr("d", function(d) { return self.line(d.values); });
 
-    lines.enter().append('path')
+    lines.enter()
+      .append("g")
+      .attr('class', function(d, i){
+        return 'line_group line_group' + i;
+      })
+      .append('path')
       .attr("class", "line")
       .attr("d", function(d) { return self.line(d.values); })
       .style("stroke", function(d) { return self.color(d.name); })
@@ -232,19 +248,24 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
       })
       .style("stroke-opacity", self.options.opacity);
 
+    var exitdots = lines.exit().selectAll('.dot');
+    lines.exit().remove();
+    line_groups.exit().remove();
+
     //dots
     for(var i = 0; i < linedata.length; i++) {
       var one_line = linedata[i].values;
-      var dots = svg.selectAll(".dotset" + i)
+      var dots = svg.select(".line_group" + i).selectAll('.dot')
           .data(one_line);
 
       dots.transition().duration(500).delay(delay)
         .attr("data", function(d){ return d.value; })
+        .style("fill", function(d) { return self.color(linedata[i].name); })
         .attr("cx", function(d) { return self.x(d[self.options.x]); })
         .attr("cy", function(d) { return self.y(d.value); });
 
       dots.enter().append("circle")
-        .attr("class", "dot dotset" + i)
+        .attr("class", "dot")
         .attr("r", this.options.dotRadius)
         .style("fill", function(d) { return self.color(linedata[i].name); })
         .style("fill-opacity", self.options.opacity)
@@ -256,5 +277,6 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
 
       dots.exit().remove();
     }
+
   }
 });
