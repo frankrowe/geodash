@@ -80,6 +80,10 @@ GeoDash.TableChart = ezoop.ExtendedClass(GeoDash.Chart, {
   format: function(d){
     var display = '';
     var self = this;
+    if(d.value === null) {
+      display = 'No Data';
+      return display;
+    }
     if(parseFloat(d.value) > 0 && parseFloat(d.value) <= 1 && self.options.percent) {
       display = self.formatPercent(d.value); //value is percent
     } else if(isNaN(parseFloat(d.value))){
