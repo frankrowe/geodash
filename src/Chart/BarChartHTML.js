@@ -271,6 +271,10 @@ GeoDash.BarChartHTML = ezoop.ExtendedClass(GeoDash.Chart, {
     }
 
     if (this.options.drawY) {
+      var w = parseInt(d3.select(self.el).select('.bars').style("width"));
+      if(!isNaN(w)) {
+        barWidth = w;
+      }
       var labels = this.y.domain();
       var labelElements = this.yAxisElement
         .selectAll(".gd-label")
@@ -288,10 +292,10 @@ GeoDash.BarChartHTML = ezoop.ExtendedClass(GeoDash.Chart, {
         })
         .style("padding-right", function(d, i){
           var value = self.data[i][x];
-          var width = parseInt(d3.select(self.el).select('.bars').style("width"));
           var barw = Math.abs(self.x(value) - self.x(0));
           var left = self.x(Math.min(0, value));
-          var p = (width - left) + 2;
+          var p = (barWidth - left) + 2;
+          console.log(p);
           return p + "px";
         })
         .text(function(d){
@@ -312,10 +316,9 @@ GeoDash.BarChartHTML = ezoop.ExtendedClass(GeoDash.Chart, {
         })
         .style("padding-right", function(d, i){
           var value = self.data[i][x];
-          var width = parseInt(d3.select(self.el).select('.bars').style("width"));
           var barw = Math.abs(self.x(value) - self.x(0));
           var left = self.x(Math.min(0, value));
-          var p = (width - left) + 2;
+          var p = (barWidth - left) + 2;
           return p + "px";
         })
         .text(function(d){
