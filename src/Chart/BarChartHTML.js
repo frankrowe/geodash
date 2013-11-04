@@ -295,7 +295,6 @@ GeoDash.BarChartHTML = ezoop.ExtendedClass(GeoDash.Chart, {
           var barw = Math.abs(self.x(value) - self.x(0));
           var left = self.x(Math.min(0, value));
           var p = (barWidth - left) + 2;
-          console.log(p);
           return p + "px";
         })
         .text(function(d){

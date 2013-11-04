@@ -157,22 +157,24 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
     */
     if(this.options.dashed){
       var dashedlines = [];
-      _.each(linedata, function(line, idx){
-        var dash_options = self.options.dashed[idx];
-        var dashedline = {};
-        dashedline.name = JSON.parse(JSON.stringify(line.name));
-        dashedline.values = [];
-        dashedline.dashed = true;
-        dash_options.span.forEach(function(span, idx){
-          for(var i = span.start; i <= span.end; i++){
-            dashedline.values.push({
-              date: line.values[i].date,
-              value: JSON.parse(JSON.stringify(line.values[i].value))
-            });
-            if(i !== span.end) line.values[i].value = null;
-          }
-        });
-        dashedlines.push(dashedline);
+      this.options.dashed.forEach(function(dash_options, idx){
+        var line = linedata[dash_options.line];
+        if(typeof line !== 'undefined'){
+          var dashedline = {};
+          dashedline.name = JSON.parse(JSON.stringify(line.name));
+          dashedline.values = [];
+          dashedline.dashed = true;
+          dash_options.span.forEach(function(span, idx){
+            for(var i = span.start; i <= span.end; i++){
+              dashedline.values.push({
+                date: line.values[i].date,
+                value: JSON.parse(JSON.stringify(line.values[i].value))
+              });
+              if(i !== span.end) line.values[i].value = null;
+            }
+          });
+          dashedlines.push(dashedline);
+        }
       });
       dashedlines.forEach(function(dashedline){
         linedata.push(dashedline);
