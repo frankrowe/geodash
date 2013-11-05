@@ -74,11 +74,13 @@ GeoDash.BarChartHTML = ezoop.ExtendedClass(GeoDash.Chart, {
     this.data = data;
     var y = this.options.y;
     var x = this.options.x;
-    data.forEach(function (d) {
+    for(var i = 0; i < data.length; i++){
+    //data.forEach(function (d) {
+      var d = data[i];
       if(d[x] != null){
         d[x] = +d[x];
       }
-    });
+    }
 
     this.color = d3.scale.ordinal()
       .range(this.options.barColors);
@@ -153,7 +155,7 @@ GeoDash.BarChartHTML = ezoop.ExtendedClass(GeoDash.Chart, {
         }
         return r + 'px';
       })
-      .style("background-color", function(d) { return self.color(d[y]); })
+      .style("background-color", function(d) { return self.color(d[y]); }, 'important');
 
     bars.enter().append("div")
       .attr("class", "bar")
@@ -213,7 +215,8 @@ GeoDash.BarChartHTML = ezoop.ExtendedClass(GeoDash.Chart, {
         }
         return r + 'px';
       })
-      .style("background-color", function(d) { return self.color(d[y]); });
+      .style("-webkit-print-color-adjust", "exact")
+      .style("background-color", function(d) { return self.color(d[y]); }, 'important');
 
     bars.exit().remove();
 
