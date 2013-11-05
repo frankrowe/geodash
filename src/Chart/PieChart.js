@@ -13,7 +13,8 @@ GeoDash.PieChart = ezoop.ExtendedClass(GeoDash.Chart, {
     title: false,
     padding: 10,
     legend: false,
-    hover: false
+    hover: false,
+    arclabels: false
   },
   initialize: function (el, options) {
 
@@ -109,6 +110,7 @@ GeoDash.PieChart = ezoop.ExtendedClass(GeoDash.Chart, {
   update: function(data){
     var self = this;
     self.total = 0;
+
     data.forEach(function(d) {
       d[self.options.value] = +d[self.options.value];
       self.total += +d[self.options.value];
@@ -130,6 +132,7 @@ GeoDash.PieChart = ezoop.ExtendedClass(GeoDash.Chart, {
         .call(this.yAxis);
     }
 
+    
     var g = this.svg.selectAll(".arc")
         .data(this.pie(data));
 
@@ -158,6 +161,25 @@ GeoDash.PieChart = ezoop.ExtendedClass(GeoDash.Chart, {
           d3.select(self.el).select('.hoverbox').style('display', 'none');
           d3.select(this).style('fill-opacity', self.options.opacity  );
         });
+
+    if(this.options.arclabels) {
+      var t = self.svg.selectAll(".arc-text")
+            .data(this.pie(data));
+
+      t.select("text")
+        .attr("transform", function(d) { return "translate(" + self.arc.centroid(d) + ")"; })
+        .text(function(d) { return d.data[self.options.label] + ' (' + d.value + ')'; });
+
+      t.enter().append("g")
+        .attr("class", "arc-text")
+        .append("text")
+        .attr("transform", function(d) { return "translate(" + self.arc.centroid(d) + ")"; })
+        .attr("dy", ".35em")
+        .style("text-anchor", "middle")
+        .text(function(d) { return d.data[self.options.label] + ' (' + d.value + ')'; });
+
+      t.exit().remove();
+    }
 
     if(this.options.legend) {
       var lWidth = parseInt(d3.select(this.options.legend).style('width'));
