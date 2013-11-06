@@ -162,6 +162,8 @@ GeoDash.PieChart = ezoop.ExtendedClass(GeoDash.Chart, {
           d3.select(this).style('fill-opacity', self.options.opacity  );
         });
 
+    g.exit().remove();
+
     if(this.options.arclabels) {
       var t = self.svg.selectAll(".arc-text")
             .data(this.pie(data));
