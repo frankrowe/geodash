@@ -16,7 +16,8 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
     strokeWidth: 2,
     axisLabels: false,
     xInterval: 'auto',
-    dashed: false
+    dashed: false,
+    time: true
   },
   initialize: function (el, options) {
 
@@ -33,8 +34,13 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
     this.formatComma = d3.format(",f.2");
     this.formatLarge = d3.format("s");
 
-    this.x = d3.time.scale()
-      .range([0, this.width]);
+    if(this.options.time){
+      this.x = d3.time.scale()
+        .range([0, this.width]);
+    } else {
+      this.x = d3.scale.linear()
+        .range([0, this.width]);
+    }
 
     this.y = d3.scale.linear()
       .range([this.height, 0]);
@@ -263,7 +269,7 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
       dots.transition().duration(500).delay(delay)
         .attr("data", function(d){ return d.value; })
         .style("fill", function(d) { return self.color(linedata[i].name); })
-        .attr("cx", function(d) { return self.x(d[self.options.x]); })
+        .attr("cx", function(d) { return self.x(d.date); })
         .attr("cy", function(d) { return self.y(d.value); });
 
       dots.enter().append("circle")
@@ -274,7 +280,7 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
         .attr("data", function(d){ return d.value; })
         .on('mouseover', function(d, i) {self.hoverOnDot(d, i, this); })
         .on('mouseout', function(d, i) {self.hoverOffDot(d, i, this); })
-        .attr("cx", function(d) { return self.x(d[self.options.x]); })
+        .attr("cx", function(d) { return self.x(d.date); })
         .attr("cy", function(d) { return self.y(d.value); });
 
       dots.exit().remove();
