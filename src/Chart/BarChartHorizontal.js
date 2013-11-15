@@ -83,10 +83,14 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
 
     var y = this.options.y;
     var x = this.options.x;
-    data.forEach(function (d) {
-      d[x] = +d[x];
-    });
-
+    for(var i = 0; i < data.length; i++){
+      var d = data[i];
+      if(d[x] != null){
+        if(typeof d[x] === 'string') {
+          d[x] = +d[x].replace(",", "");
+        }
+      }
+    }
     this.color = d3.scale.ordinal()
       .range(this.options.barColors);
 

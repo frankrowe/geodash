@@ -87,9 +87,15 @@ GeoDash.BarChart = ezoop.ExtendedClass(GeoDash.Chart, {
 
     var y = this.options.y;
     var x = this.options.x;
-    data.forEach(function (d) {
-      d[y] = +d[y];
-    });
+    for(var i = 0; i < data.length; i++){
+      var d = data[i];
+      if(d[y] != null){
+        if(typeof d[y] === 'string') {
+          d[y] = +d[y].replace(",", "");
+        }
+      }
+    }
+
 
     this.color = d3.scale.ordinal()
       .range(this.options.barColors);

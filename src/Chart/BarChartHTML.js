@@ -1,6 +1,6 @@
 //BarChart extends Chart
 GeoDash.BarChartHTML = ezoop.ExtendedClass(GeoDash.Chart, {
-  className: 'BarChartHorizontal',
+  className: 'BarChartHTML',
   defaults: {
     x: 'x',
     y: 'y',
@@ -18,7 +18,9 @@ GeoDash.BarChartHTML = ezoop.ExtendedClass(GeoDash.Chart, {
     barHeight: 0,
     padding: 1,
     numberTicks: 10,
-    yWidth: 80
+    yWidth: 80,
+    round: true,
+    format: false
   },
   initialize: function (el, options) {
 
@@ -36,7 +38,7 @@ GeoDash.BarChartHTML = ezoop.ExtendedClass(GeoDash.Chart, {
     this.formatPercentAxisLabel = d3.format("p");
     this.formatMoney = d3.format("$");
     this.formatLarge = d3.format("s");
-    this.formatComma = d3.format(",.2f");
+    this.formatComma = d3.format(",");
 
     this.x = d3.scale.linear()
       .range([10, this.width - this.options.yWidth]).nice();
@@ -75,10 +77,11 @@ GeoDash.BarChartHTML = ezoop.ExtendedClass(GeoDash.Chart, {
     var y = this.options.y;
     var x = this.options.x;
     for(var i = 0; i < data.length; i++){
-    //data.forEach(function (d) {
       var d = data[i];
       if(d[x] != null){
-        d[x] = +d[x];
+        if(typeof d[x] === 'string') {
+          d[x] = +d[x].replace(",", "");
+        }
       }
     }
 
@@ -244,19 +247,12 @@ GeoDash.BarChartHTML = ezoop.ExtendedClass(GeoDash.Chart, {
         .append('div')
         .attr("class", "gd-label")
         .text(function(d){
-          var label = '';
+          var label = self.formatLarge(d);
+          if (self.options.money) {
+            label = '$' + label;
+          }
           if (self.options.percent) {
-            label = self.formatPercentAxisLabel(d);
-            var x = parseFloat(label);
-            if(x%1 < .001 && x%1 > 0){
-              x = x.toFixed(0);
-              label = x + "%";
-            }
-          } else {
-            label = self.formatLarge(d);
-            if (self.options.money) {
-              label = '$' + label;
-            }
+            label = label + '%';
           }
           return label;
         })
@@ -333,20 +329,20 @@ GeoDash.BarChartHTML = ezoop.ExtendedClass(GeoDash.Chart, {
           d3.select(bar).style('opacity', 0.9);
           var format = '';
           if(value !== null){
-            if (self.options.percent) {
-              format = self.formatPercent(value);
+            if(self.options.format){
+              var formatter =  d3.format(",." + self.options.format.precision + "f");
+              format = formatter(value);
             } else {
               format = self.formatComma(value);
-              var f = parseFloat(format);
-              if(f%1 === 0){
-                format = format.split(".")[0];
-              }
-              if (self.options.money) {
-                format = '$' + format;
-              }
+            }
+            if (self.options.money) {
+              format = '$' + format;
+            }
+            if (self.options.percent) {
+              format = format + '%';
             }
           } else {
-            format = 'No Data';
+            format = 'NA';
           }
           d3.select(self.el).select('.hoverbox').html(label + ': ' + format);
           d3.select(self.el).select('.hoverbox').transition().style('display', 'block');

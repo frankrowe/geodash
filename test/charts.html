@@ -52,6 +52,9 @@
     .barcharthtml {
       width: 460px;
     }
+    .barcharthtml2 {
+      width: 460px;
+    }
     .chart {
       float: left;
       background: #fff;
@@ -80,6 +83,7 @@
     </div>
     <div class="row">
       <div class="barchart2 chart"></div>
+      <div class="barcharthtml2 chart"></div>
     </div>
   </div>
 </div>
@@ -193,7 +197,7 @@
     {
       "geo": "Allegany County",
       "geocode": "1",
-      "C002": "74692"
+      "C002": "74,692"
     },
     {
       "geo": "Anne Arundel County",
@@ -334,9 +338,46 @@
       drawX: true,
       drawY: true,
       verticalX: true,
-      barHeight: 15
+      barHeight: 15,
+      money: true
     });
     barcharthtml.update(data);
+
+    var barcharthtml2 = new GeoDash.BarChartHTML('.barcharthtml2', {
+      x: 'C002',
+      y: 'geo',
+      barColors: ['#f00'],
+      title: 'Horizontal Bar Chart (HTML)',
+      drawX: true,
+      drawY: true,
+      verticalX: true,
+      barHeight: 15,
+      percent: true,
+      format: {
+        precision: 3
+      }
+    });
+    barcharthtml2.update([
+      {
+        "geo": "Talbot County",
+        "geocode": "41",
+        "C002": "45.7"
+      },
+      {
+        "geo": "Washington County",
+        "geocode": "43",
+        "C002": "23.8"
+      },
+      {
+        "geo": "Wicomico County",
+        "geocode": "45",
+        "C002": "67.3"
+      },
+      {
+        "geo": "Worcester County",
+        "C002": "12.0"
+      }
+    ]);
   </script>
 </body>
 </html>

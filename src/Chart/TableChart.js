@@ -2,7 +2,8 @@
 GeoDash.TableChart = ezoop.ExtendedClass(GeoDash.Chart, {
   className: 'TableChart',
   defaults: {
-    highlight: []
+    highlight: [],
+    format: false
   },
   initialize: function (el, options) {
 
@@ -81,21 +82,23 @@ GeoDash.TableChart = ezoop.ExtendedClass(GeoDash.Chart, {
     var display = '';
     var self = this;
     if(d.value === null) {
-      display = 'No Data';
+      display = 'NA';
       return display;
     }
-    if(parseFloat(d.value) > 0 && parseFloat(d.value) <= 1 && self.options.percent) {
-      display = self.formatPercent(d.value); //value is percent
-    } else if(isNaN(parseFloat(d.value))){
+    if(isNaN(parseFloat(d.value))){
       display = d.value; //value is string
     } else {
-      display = self.formatComma(d.value);
-      var f = parseFloat(display);
-      if(f%1 === 0){
-        display = display.split(".")[0];
+      if(self.options.format){
+        var formatter =  d3.format(",." + self.options.format.precision + "f");
+        display = formatter(d.value);
+      } else {
+        display = self.formatComma(d.value);
       }
       if (self.options.money) {
         display = '$' + display;
+      }
+      if (self.options.percent) {
+        display = display + '%';
       }
     }
     return display;
