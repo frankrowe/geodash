@@ -5,7 +5,7 @@ A modern charting and mapping library for the web. (A D3 wrapper for lazy charts
 
 This is an alpha build under heavy development. Expect API breaks in new versions.
 
-![Image](test/geodashcharts.png?raw=true)
+![Image](test/geodashcharts2.png?raw=true)
 
 
 Requirements
@@ -13,10 +13,17 @@ Requirements
 
 #### Bar Chart
 ```javascript
-var barchart = new GeoDash.BarChart('.barchart', {
+var barchart = new GeoDash.BarChartVertical('.barchart', {
   x: 'name',
   y: 'score',
-  barColor: '#f00'
+  barColors: ['#f00'],
+  title: 'Horizontal Bar Chart',
+  drawX: true,
+  drawY: true,
+  verticalX: true,
+  money: true,
+  numberTicks: 5,
+  yWidth: 60
 });
 
 var data = [{
@@ -39,21 +46,26 @@ var linechart = new GeoDash.LineChart(".linechart", {
   x: 'date',
   y: 'numCats',
   width: 'auto',
-  height: 255,
-  colors: ['#d80000', '#006200'],
+  height: 'auto',
+  colors: ["#f00", "#00f"],
+  title: 'Line Chart',
   interpolate: 'monotone',
-  dotRadius: 3
+  dotRadius: 3,
+  xInterval: 5
 });
 
 var data = [{
-    "date":"2011-01-01T05:00:00.000Z",
-    "numCats":159773
+    "date":"2011-01-01T05:00:00.000Z"
+    , "numCats":159773
+    , "goalCats": 100000
   },{
-    "date":"2012-01-01T05:00:00.000Z",
-    "numCats":70920
+    "date":"2012-01-01T05:00:00.000Z"
+    , "numCats":70920
+    , "goalCats": 100000
   },{
-    "date":"2013-01-01T05:00:00.000Z",
-    "numCats":97755
+    "date":"2013-01-01T05:00:00.000Z"
+    , "numCats":97755
+    , "goalCats": 100000
 }];
 
 linechart.update(data);
@@ -64,8 +76,11 @@ linechart.update(data);
 var piechart = new GeoDash.PieChart('.piechart', {
   label: 'source',
   value: 'percent',
-  colors: ["#d80000", "#0B6909", "#EDD70A"],
-  innerRadius: 10
+  colors: ["#b30000", "#e60000", "#ff4d4d"],
+  opacity: 0.7,
+  innerRadius: 10,
+  title: 'Pie Chart',
+  hover: true
 });
 
 var data = [{
