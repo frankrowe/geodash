@@ -20,12 +20,10 @@ var result = UglifyJS.minify([
 fs.writeFile('../dist/GeoDash.min.js', result.code, function (err) {
   if (err) throw err
   console.log('../dist/GeoDash.min.js saved!')
-});
-
-//LESS
+})
 
 var parser = new(lesscss.Parser)({
-    paths: ['../src/Styles'] // Specify search paths for @import directives
+    paths: ['../src/Styles']
 })
 
 fs.readFile('../src/Styles/chart.less', 'utf8', function(err, less){
