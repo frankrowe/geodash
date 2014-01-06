@@ -12,7 +12,7 @@
 
     .wrapper {
       margin: 20px auto;
-      width: 1000px;
+      width: 700px;
     }
     .wrapper h1 {
       margin: 0;
@@ -29,34 +29,20 @@
       border-radius: 5px;
       display: inline-block;
     }
-    .barchart {
-      width: 300px;
-      height: 300px;
-    }
     .barcharthorizontal {
-      width: 460px;
+      width: 320px;
       height: 300px;
     }
-    .barchart2 {
-      width: 460px;
-      height: 450px;
+    .barchartvertical {
+      width: 310px;
+      height: 300px;
     }
     .piechart {
       width: 300px;
       height: 300px;
     }
     .linechart {
-      width: 300px;
-      height: 300px;
-    }
-    .barcharthtml {
-      width: 460px;
-    }
-    .barcharthtml2 {
-      width: 460px;
-    }
-    .barchartvertical {
-      width: 460px;
+      width: 330px;
       height: 300px;
     }
     .chart {
@@ -76,41 +62,17 @@
 <div class="wrapper">
 <h1>GeoDash</h1>
   <div class="charts">
-  <div class="row">
-      <div class="barchart chart"></div>
+    <div class="row">
+      <div class="barchartvertical chart"></div>
+      <div class="barcharthorizontal chart"></div>
+    </div>
+    <div class="row">
       <div class="piechart chart"></div>
       <div class="linechart chart"></div>
-    </div>
-    <div class="row">
-      <div class="barcharthorizontal chart"></div>
-      <div class="barchartvertical chart"></div>
-    </div>
-    <div class="row">
-
     </div>
   </div>
 </div>
   <script type="text/javascript">
-    var barchart = new GeoDash.BarChart('.barchart', {
-      x: 'name',
-      y: 'score',
-      barColors: ['#f00'],
-      title: 'Bar Chart',
-      drawX: true
-    });
-
-    var data = [{
-        'name': 'steve',
-        'score': 21
-      },{
-        'name': 'woz',
-        'score': 16
-      },{
-        'name': 'jonny',
-        'score': 7
-    }];
-
-    barchart.update(data);
 
     var piechart = new GeoDash.PieChart('.piechart', {
       label: 'source',
@@ -142,9 +104,10 @@
       width: 'auto',
       height: 'auto',
       colors: ["#f00", "#00f"],
-      title: 'Number of Cats',
+      title: 'Line Chart',
       interpolate: 'monotone',
       dotRadius: 3,
+      xInterval: 5,
       dashed: [{
         line: 1,
         span: [{
@@ -160,7 +123,7 @@
         "goalCats": 100000
       },{
         "date":parseDate("2008"),
-        "numCats":81039,
+        "numCats":82705,
         "goalCats": 100000
       },{
         "date":parseDate("2009"),
@@ -176,7 +139,7 @@
         "goalCats": 100000
       },{
         "date":parseDate("2012"),
-        "numCats":96109,
+        "numCats":99109,
         "goalCats": 100000
       },{
         "date":parseDate("2013"),
@@ -188,12 +151,12 @@
 
     var data = [
     {
-      "geo": "Allegany County",
+      "geo": "Allegany",
       "geocode": "1",
       "C002": "74,692"
     },
     {
-      "geo": "Anne Arundel County",
+      "geo": "Anne Arundel",
       "geocode": "3",
       "C002": "544403"
     },
@@ -203,47 +166,47 @@
       "C002": "619493"
     },
     {
-      "geo": "Baltimore County",
+      "geo": "Baltimore",
       "geocode": "5",
       "C002": "809941"
     },
     {
-      "geo": "Calvert County",
+      "geo": "Calvert",
       "geocode": "9",
       "C002": "89256"
     },
     {
-      "geo": "Caroline County",
+      "geo": "Caroline",
       "geocode": "11",
       "C002": "-32985"
     },
     {
-      "geo": "Carroll County",
+      "geo": "Carroll",
       "geocode": "13",
       "C002": "167288"
     },
     {
-      "geo": "Cecil County",
+      "geo": "Cecil",
       "geocode": "15",
       "C002": "101694"
     },
     {
-      "geo": "Charles County",
+      "geo": "Charles",
       "geocode": "17",
       "C002": "149130"
     },
     {
-      "geo": "Dorchester County",
+      "geo": "Dorchester",
       "geocode": "19",
       "C002": "-32640"
     },
     {
-      "geo": "Frederick County",
+      "geo": "Frederick",
       "geocode": "21",
       "C002": "236745"
     },
     {
-      "geo": "Garrett County",
+      "geo": "Garrett",
       "geocode": "23",
       "C002": "30051"
     }
@@ -257,30 +220,30 @@
       drawX: true,
       drawY: true,
       verticalX: true,
-      barHeight: 15,
       money: true,
-      numberTicks: 5
+      numberTicks: 5,
+      yWidth: 60
     });
     barcharthtml.update(data);
 
     var data = [
       {
-        "geo": "Talbot County",
+        "geo": "Talbot",
         "geocode": "41",
         "C002": "45.7"
       },
       {
-        "geo": "Washington County",
+        "geo": "Washington",
         "geocode": "43",
         "C002": "23.8"
       },
       {
-        "geo": "Wicomico County",
+        "geo": "Wicomico",
         "geocode": "45",
         "C002": "67.3"
       },
       {
-        "geo": "Worcester County",
+        "geo": "Worcester",
         "C002": "12.0"
       }
     ];
