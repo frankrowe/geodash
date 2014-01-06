@@ -20,20 +20,12 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
 
   }
   , setWidth: function () {
-    if(this.options.width === 'auto' || this.options.width === undefined) {
-      this.width = parseInt(d3.select(this.el).style('width'))
-    } else {
-      this.width = this.options.width
-    }
+    this.width = parseInt(d3.select(this.el).style('width'))
     this.width = this.width - this.margin.left - this.margin.right
   }
   , setHeight: function() {
-    if(this.options.height === 'auto' || this.options.height === undefined){
-      this.height = parseInt(d3.select(this.el).style('height'))
-    } else {
-      this.height = this.options.height
-    }
-    this.height = this.height - this.margin.top - this.margin.bottom
+    this.height = parseInt(d3.select(this.el).style('height'))
+    this.height = this.height - this.margin.top
     if (this.options.title) {
       this.height = this.height - 30;
     }
@@ -45,10 +37,10 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
     this.margin = { 
       top: 10
       , right: 10
-      , bottom: 10
+      , bottom: 20
       , left: 10
     }
-    
+
     this.setWidth()
     this.setHeight()
 
@@ -62,15 +54,12 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
     this.y = d3.scale.linear()
       .range([this.height - this.margin.bottom, 0])
 
-      console.log(this.y.range())
-
-
     this.container = d3.select(this.el).append("div")
       .attr("class", "geodash barchart-html vertical")
       .style("width", this.width + "px")
       .style("height", this.height + "px")
       .style("margin-top", this.margin.top + "px")
-      .style("margin-bottom", this.margin.bottom + "px")
+      //.style("margin-bottom", this.margin.bottom + "px")
       .style("margin-left", this.margin.left + "px")
       .style("margin-right", this.margin.right + "px")
 
@@ -114,8 +103,6 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
 
     this.x.domain(data.map(function (d) { return d[x]; }))
     this.y.domain([0, d3.max(data, function (d) { return d[y]; })])
-    console.log(this.y.domain())
-
 
     var bars = this.container.select(".bars")
       .selectAll(".bar")
@@ -151,8 +138,8 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
       .style("border-top-left-radius", function(d){
         return self.options.roundRadius + 'px';
       })
-
       .on('mouseover', function (d, i) {
+        console.log(d)
         d3.select(this).style('opacity', 1)
         var text = d[x] + ': '
         if(self.options.percent) {
@@ -195,7 +182,7 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
         .style("top", function(d) {
           return self.y(d) + 'px'
         })
-        .style("width", "100%");
+        .style("width", "100%")
 
       tickElements.exit().remove()
 
@@ -219,12 +206,44 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
         })
         .style("margin-top", function(d){
           //center labels using negative left margin
-          var h = d3.select(this).style('height');
-          console.log(h)
-          var m = (parseInt(h)/2*-1);
-          return m + 'px';
+          var h = d3.select(this).style('height')
+          var m = (parseInt(h)/2*-1)
+          return m + 'px'
+        })
+    }
+    if (this.options.drawX) {
+      var labels = this.x.domain()
+      var tickElements = this.xAxisElement
+        .selectAll(".gd-label")
+        .data(labels)
+
+      tickElements.transition()
+        .style("left", function (d) { return self.x(d) + 'px' })
+        .style("width", self.x.rangeBand() + 'px')
+
+      var newTicks = tickElements.enter().append('div')
+        .attr("class", "tick")
+        .style("left", function (d) { return self.x(d) + 'px' })
+        .style("width", self.x.rangeBand() + 'px')
+        .style("bottom", function (d) { return '0px' })
+        .style("height", self.margin.bottom + 'px')
+
+      tickElements.exit().remove()
+
+      newTicks
+        .append('div')
+        .attr("class", "line")
+        .style("margin-left", function(d, i){
+          var m = self.x.rangeBand() / 2
+          console.log(m)
+          return m + 'px'
         })
 
+      newTicks.append('div')
+        .attr("class", "gd-label")
+        .text(function(d){
+          return d
+        })
 
     }
   }

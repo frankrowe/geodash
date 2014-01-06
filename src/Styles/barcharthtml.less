@@ -46,7 +46,7 @@
 .barchart-html {
   &.vertical {
     .bars {
-      z-index: 1;
+      z-index: 2;
       position: absolute;
       left: 0;
       top: 0;
@@ -65,12 +65,24 @@
           background: #fff;
           padding-right: 3px;
         }
+        .line {
+          height: 1px;
+        }
       }
       &.x {
-        z-index: 2;
-      }
-      .line {
-        height: 1px;
+        z-index: 1;
+        .tick {
+          text-align: center;
+        }
+        .gd-label {
+          overflow: hidden;
+          height: 12px;
+          padding-top: 7px;
+        }
+        .line {
+          height: 5px;
+          width: 1px;
+        }
       }
     }
   }
