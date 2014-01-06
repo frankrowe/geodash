@@ -5,7 +5,6 @@ var fs = require('fs')
 var result = UglifyJS.minify([
     "../src/ezoop.js"
     , "../src/GeoDash.js"
-    , "../src/Class.js"
     , "../src/Chart/Chart.js"
     , "../src/Chart/TableChart.js"
     , "../src/Chart/LineChart.js"
