@@ -104,7 +104,7 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
     var y = 25 + this.y(d.value);
     d3.select(dot).transition().attr('r', this.options.dotRadius + 3);
 
-    var w = d3.select('.line')[0][0].getBBox().width;
+    var w = d3.select(self.el).select('.line')[0][0].getBBox().width;
     if(this.x(d.date) >= w) x -= 55;
 
     d3.select(self.el).select('.hoverbox').style('right', 'auto');
