@@ -7,7 +7,6 @@ var result = UglifyJS.minify([
     , "../src/GeoDash.js"
     , "../src/Class.js"
     , "../src/Chart/Chart.js"
-    , "../src/Chart/BarChart.js"
     , "../src/Chart/TableChart.js"
     , "../src/Chart/LineChart.js"
     , "../src/Chart/PieChart.js"
