@@ -2,13 +2,6 @@
 .barchart-html {
   position: relative;
   overflow: hidden;
-  .bars {
-    z-index: 1;
-    position: relative;
-    .bar {
-      position: relative;
-    }
-  }
   .axis {
     overflow: hidden;
     width: 100%;
@@ -22,11 +15,8 @@
     }
     &.y {
       position: absolute;
-      z-index: 2;
       .gd-label {
         position: relative;
-        color: #333;
-        text-align: right;
         overflow: hidden;
       }
     }
@@ -34,7 +24,6 @@
       position: absolute;
     }
     .line {
-      width: 1px;
       background: #ccc;
       position: absolute;
       &.zero {
@@ -45,6 +34,70 @@
       font-size: 10px;
       color: #b8b8b8;
       font-family: 'arial', sans-serif;
+    }
+  }
+}
+
+
+/*
+* horiz/vert difference
+*/
+
+.barchart-html {
+  &.vertical {
+    .bars {
+      z-index: 1;
+      position: absolute;
+      left: 0;
+      top: 0;
+      overflow: hidden;
+      width: 100%;
+      height: 100%;
+      .bar {
+        position: absolute;
+      }
+    }
+    .axis {
+      &.y {
+        z-index: 0;
+        .gd-label {
+          float:left;
+          background: #fff;
+          padding-right: 3px;
+        }
+      }
+      &.x {
+        z-index: 2;
+      }
+      .line {
+        height: 1px;
+      }
+    }
+  }
+  &.horizontal {
+    .bars {
+      z-index: 1;
+      position: relative;
+      .bar {
+        position: relative;
+      }
+    }
+    .axis {
+      &.y {
+        z-index: 2;
+        .gd-label {
+          text-align: right;
+          span {
+            background: #fff;
+          }
+        }
+      }
+      &.x {
+        z-index: 0;
+      }
+      .line {
+        width: 1px;
+      }
     }
   }
 }

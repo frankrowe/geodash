@@ -35,7 +35,7 @@
     }
     .barcharthorizontal {
       width: 460px;
-      height: 445px;
+      height: 300px;
     }
     .barchart2 {
       width: 460px;
@@ -54,6 +54,10 @@
     }
     .barcharthtml2 {
       width: 460px;
+    }
+    .barchartvertical {
+      width: 460px;
+      height: 300px;
     }
     .chart {
       float: left;
@@ -79,11 +83,10 @@
     </div>
     <div class="row">
       <div class="barcharthorizontal chart"></div>
-      <div class="barcharthtml chart"></div>
+      <div class="barchartvertical chart"></div>
     </div>
     <div class="row">
-      <div class="barchart2 chart"></div>
-      <div class="barcharthtml2 chart"></div>
+
     </div>
   </div>
 </div>
@@ -183,16 +186,6 @@
 
     linechart.update(data);
 
-    var barcharthorizontal = new GeoDash.BarChartHorizontal('.barcharthorizontal', {
-      x: 'C002',
-      y: 'geo',
-      barColors: ['#f00'],
-      title: 'Horizontal Bar Chart (SVG)',
-      drawX: true,
-      drawY: true,
-      verticalX: true
-    });
-
     var data = [
     {
       "geo": "Allegany County",
@@ -253,111 +246,24 @@
       "geo": "Garrett County",
       "geocode": "23",
       "C002": "30051"
-    },
-    {
-      "geo": "Harford County",
-      "geocode": "25",
-      "C002": "246489"
-    },
-    {
-      "geo": "Howard County",
-      "geocode": "27",
-      "C002": "-293142"
-    },
-    {
-      "geo": "Kent County",
-      "geocode": "29",
-      "C002": "20204"
-    },
-    {
-      "geo": "Montgomery County",
-      "geocode": "31",
-      "C002": "989794"
-    },
-    {
-      "geo": "Prince George's County",
-      "geocode": "33",
-      "C002": "871233"
-    },
-    {
-      "geo": "Queen Anne's County",
-      "geocode": "35",
-      "C002": "48354"
-    },
-    {
-      "geo": "Somerset County",
-      "geocode": "39",
-      "C002": "26339"
-    },
-    {
-      "geo": "St. Mary's County",
-      "geocode": "37",
-      "C002": "107484"
-    },
-    {
-      "geo": "Talbot County",
-      "geocode": "41",
-      "C002": "38025"
-    },
-    {
-      "geo": "Washington County",
-      "geocode": "43",
-      "C002": "148203"
-    },
-    {
-      "geo": "Wicomico County",
-      "geocode": "45",
-      "C002": "99190"
-    },
-    {
-      "geo": "Worcester County",
-      "geocode": "47",
-      "C002": "51514"
     }
   ];
 
-    barcharthorizontal.update(data);
-    var barchart2 = new GeoDash.BarChart('.barchart2', {
-      x: 'geo',
-      y: 'C002',
-      barColors: ['#f00'],
-      title: 'Bar Chart with Labels',
-      drawX: true,
-      verticalX: true
-    });
-
-
-    barchart2.update(data);
-
-
-    var barcharthtml = new GeoDash.BarChartHTML('.barcharthtml', {
+    var barcharthtml = new GeoDash.BarChartHorizontal('.barcharthorizontal', {
       x: 'C002',
       y: 'geo',
       barColors: ['#f00'],
-      title: 'Horizontal Bar Chart (HTML)',
+      title: 'Horizontal Bar Chart',
       drawX: true,
       drawY: true,
       verticalX: true,
       barHeight: 15,
-      money: true
+      money: true,
+      numberTicks: 5
     });
     barcharthtml.update(data);
 
-    var barcharthtml2 = new GeoDash.BarChartHTML('.barcharthtml2', {
-      x: 'C002',
-      y: 'geo',
-      barColors: ['#f00'],
-      title: 'Horizontal Bar Chart (HTML)',
-      drawX: true,
-      drawY: true,
-      verticalX: true,
-      barHeight: 15,
-      percent: true,
-      format: {
-        precision: 3
-      }
-    });
-    barcharthtml2.update([
+    var data = [
       {
         "geo": "Talbot County",
         "geocode": "41",
@@ -377,7 +283,19 @@
         "geo": "Worcester County",
         "C002": "12.0"
       }
-    ]);
+    ];
+
+    var barchartvertical = new GeoDash.BarChartVertical('.barchartvertical', {
+      x: 'geo',
+      y: 'C002',
+      barColors: ['#f00'],
+      title: 'Vertical Bar Chart',
+      drawX: true,
+      drawY: true
+    });
+
+
+    barchartvertical.update(data);
   </script>
 </body>
 </html>

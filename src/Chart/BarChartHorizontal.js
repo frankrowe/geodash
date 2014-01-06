@@ -9,78 +9,71 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
     drawX: false,
     drawY: false,
     percent: false,
+    money: false,
     title: false,
     roundRadius: 3,
-    highlight: false,
+    highlight: [],
     verticalX: false,
-    invert: false
+    invert: false,
+    barHeight: 0,
+    padding: 1,
+    numberTicks: 10,
+    yWidth: 80,
+    round: true,
+    format: false
   },
   initialize: function (el, options) {
 
   },
   drawChart: function () {
     var self = this;
-    var padding = 10;
-    this.margin = { top: 20, right: 10, bottom: 20, left: 10 };
+    this.margin = { top: 10, right: 10, bottom: 10, left: 10 };
     this.width = (this.options.width === 'auto' || this.options.width === undefined ? parseInt(d3.select(this.el).style('width')) : this.options.width) - this.margin.left - this.margin.right,
     this.height = (this.options.height === 'auto' || this.options.height === undefined ? parseInt(d3.select(this.el).style('height')) : this.options.height) - this.margin.top - this.margin.bottom;
     if (this.options.title) {
       this.height = this.height - 30;
     }
-    
-    this.formatPercent = d3.format(".0%");
+
+    this.formatPercent = d3.format(".2%");
+    this.formatPercentAxisLabel = d3.format("p");
+    this.formatMoney = d3.format("$");
     this.formatLarge = d3.format("s");
     this.formatComma = d3.format(",");
 
     this.x = d3.scale.linear()
-      .range([0, this.width]);
+      .range([10, this.width - this.options.yWidth]).nice();
 
     this.y = d3.scale.ordinal()
-      .rangeRoundBands([0, this.height], 0.05, .5);
+      .rangeRoundBands([0, this.height], 0.05, 0);
 
-    this.xAxis = d3.svg.axis()
-      .scale(this.x)
-      .orient("top")
-      .tickSize(this.height * -1, 0, 0)
-      .tickFormat(function(d){
-        return self.formatLarge(d);
-      });
+    this.svg = d3.select(this.el).append("div")
+      .attr("class", "geodash barchart-html horizontal")
+      .style("width", this.width + this.margin.right + "px")
+      .style("margin-top", this.margin.top + "px")
+      .style("margin-bottom", this.margin.bottom + "px")
+      .style("margin-left", this.margin.left + "px");
 
-    this.yAxis = d3.svg.axis()
-      .scale(this.y)
-      .orient("left")
-      //.ticks(4)
-      .tickSize(0, 0, 0)
-      .tickFormat(function(d){
-        return d;
-      });
+    this.xAxisElement = this.svg.append("div")
+      .attr("class", "x axis")
+      .style("margin-left", this.options.yWidth + "px");
 
-    if (this.options.percent) {
-      this.xAxis.tickFormat(this.formatPercent);
-    }
+    this.yAxisElement = this.svg.append("div")
+      .attr("class", "y axis")
+      .style("padding-bottom", this.options.padding + "px")
+      .style("padding-top", this.options.padding + 15 + "px");
 
-    this.svg = d3.select(this.el).append("svg")
-      .attr("width", this.width + this.margin.left + this.margin.right)
-      .attr("height", this.height + this.margin.top + this.margin.bottom)
-      .attr("class", "barchart-svg")
-      .append("g")
-      .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
-
-    this.xAxisElement = this.svg.append("g")
-      .attr("class", "x axis");
-
-    this.svg.append("g")
-      .attr("class", "bars");
-
-    this.yAxisElement = this.svg.append("g")
-      .attr("class", "y axis");
+    this.svg.append("div")
+      .attr("class", "bars")
+      .style("margin-left", this.options.yWidth + "px")
+      .style("padding-bottom", this.options.padding + "px")
+      .style("padding-top", this.options.padding + 15 + "px");
 
     d3.select(self.el).append('div').attr('class', 'hoverbox');
 
   },
   update: function (data) {
     var self = this;
-
+    this.data = data;
     var y = this.options.y;
     var x = this.options.x;
     for(var i = 0; i < data.length; i++){
@@ -91,6 +84,7 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
         }
       }
     }
+
     this.color = d3.scale.ordinal()
       .range(this.options.barColors);
 
@@ -108,134 +102,263 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
       .data(data);
 
     bars.transition()
-      .attr("id", function (d) { return d[y]; })
-      .attr("x", function(d) { 
+      .attr("geodash-id", function (d) { return d[y]; })
+      .style("left", function(d) {
+        var xposition = self.x(Math.min(0, d[x]));
+        if(xposition === self.x(0)) {
+          xposition += 1;
+        }
+        return xposition + 'px';;
+      })
+      .style("margin-top", function (d, i) { 
+        return self.options.padding + 'px';
+      })
+      .style("width", function(d) {
+        var w = Math.abs(self.x(d[x]) - self.x(0));
+        return w + 'px';
+      })
+      .style("height", function(d){
+        return self.options.barHeight + "px";
+      })
+      .style("opacity", function(d){
+        for(var i = 0; i < self.options.highlight.length; i++){
+          if(self.options.highlight[i] == d[y]) return 1;
+        }
+        return self.options.opacity;
+      })
+      .style("border-top-right-radius", function(d){
+        var r = 0;
         var xposition = self.x(Math.min(0, d[x]));
         if(xposition >= self.x(0)) {
-          xposition -= self.options.roundRadius
+          r = self.options.roundRadius;
         }
-        return xposition;
+        return r + 'px';
       })
-      .attr("y", function (d) { return self.y(d[x]); })
-      .attr("width", function(d) { 
-        var w = Math.abs(self.x(d[x]) - self.x(0));
-        w += self.options.roundRadius;
-        return w;
+      .style("border-bottom-right-radius", function(d){
+        var r = 0;
+        var xposition = self.x(Math.min(0, d[x]));
+        if(xposition >= self.x(0)) {
+          r = self.options.roundRadius;
+        }
+        return r + 'px';
       })
-      .attr("height", self.y.rangeBand())
-      .attr("rx", self.options.roundRadius)
-      .style("fill", function(d) { return self.color(d[y]); })
-      .style("fill-opacity", function(d){
-        if(d[y] == self.options.highlight) return 1;
-        else return self.options.opacity
-      });
+      .style("border-top-left-radius", function(d){
+        var r = 0;
+        var xposition = self.x(Math.min(0, d[x]));
+        if(xposition < self.x(0)) {
+          r = self.options.roundRadius;
+        }
+        return r + 'px';
+      })
+      .style("border-bottom-left-radius", function(d){
+        var r = 0;
+        var xposition = self.x(Math.min(0, d[x]));
+        if(xposition < self.x(0)) {
+          r = self.options.roundRadius;
+        }
+        return r + 'px';
+      })
+      .style("background-color", function(d) { return self.color(d[y]); }, 'important');
 
-    bars.enter().append("rect")
+    bars.enter().append("div")
       .attr("class", "bar")
-      .attr("id", function (d) { return d[y]; })
-      .attr("x", function(d) {
+      .attr("geodash-id", function (d) { return d[y]; })
+      .style("left", function(d) {
+        var xposition = self.x(Math.min(0, d[x]));
+        if(xposition === self.x(0)) {
+          xposition += 1;
+        }
+        return xposition + 'px';;
+      })
+      .style("margin-top", function (d, i) { 
+        return self.options.padding + 'px';
+      })
+      .style("width", function(d) {
+        var w = Math.abs(self.x(d[x]) - self.x(0));
+        return w + 'px';
+      })
+      .style("height", function(d){
+        return self.options.barHeight + "px";
+      })
+      .style("opacity", function(d){
+        for(var i = 0; i < self.options.highlight.length; i++){
+          if(self.options.highlight[i] == d[y]) return 1;
+        }
+        return self.options.opacity;
+      })
+      .style("border-top-right-radius", function(d){
+        var r = 0;
         var xposition = self.x(Math.min(0, d[x]));
         if(xposition >= self.x(0)) {
-          xposition -= self.options.roundRadius
+          r = self.options.roundRadius;
         }
-        return xposition;
+        return r + 'px';
       })
-      .attr("y", function (d) { return self.y(d[y]); })
-      .attr("width", function(d) {
-        var w = Math.abs(self.x(d[x]) - self.x(0));
-        w += self.options.roundRadius;
-        return w;
+      .style("border-bottom-right-radius", function(d){
+        var r = 0;
+        var xposition = self.x(Math.min(0, d[x]));
+        if(xposition >= self.x(0)) {
+          r = self.options.roundRadius;
+        }
+        return r + 'px';
       })
-      .attr("rx", self.options.roundRadius)
-      .attr("height", self.y.rangeBand())
-      .style("fill-opacity", function(d){
-        if(d[y] == self.options.highlight) return 1;
-        else return self.options.opacity
+      .style("border-top-left-radius", function(d){
+        var r = 0;
+        var xposition = self.x(Math.min(0, d[x]));
+        if(xposition < self.x(0)) {
+          r = self.options.roundRadius;
+        }
+        return r + 'px';
       })
-      .style("fill", function(d) { return self.color(d[y]); })
-      .on('mouseover', function (d, i) {
-        d3.select(this).style('fill-opacity', 1);
-        d3.select(self.el).select('.hoverbox').html(d[y] + ': ' + (self.options.percent ? self.formatPercent(d[x]) : self.formatComma(d[x])));
-        d3.select(self.el).select('.hoverbox').transition().style('display', 'block');
-      }).on('mouseout', function (d, i) {
-        var opacity = self.options.opacity;
-        if(d[y] == self.options.highlight) opacity =  1;
-        d3.select(this).style('fill-opacity', opacity);
-        d3.select(self.el).select('.hoverbox').transition().style('display', 'none');
-      });
+      .style("border-bottom-left-radius", function(d){
+        var r = 0;
+        var xposition = self.x(Math.min(0, d[x]));
+        if(xposition < self.x(0)) {
+          r = self.options.roundRadius;
+        }
+        return r + 'px';
+      })
+      .style("-webkit-print-color-adjust", "exact")
+      .style("background-color", function(d) { return self.color(d[y]); }, 'important');
 
     bars.exit().remove();
 
+    if(this.options.drawX){
+      var ticks = this.x.ticks(self.options.numberTicks);
+      var tickElements = this.xAxisElement
+        .selectAll(".tick")
+        .data(ticks);
 
-    //cut off rounded corners on one end
-    var bgcolor = d3.rgb(d3.select(this.el).style("background-color")).toString();
-    var hiders = this.svg.select(".bars")
-      .selectAll(".hider")
-      .data(data);
+      tickElements.transition()
+        .style("left", function(d) {
+          return self.x(d) + 'px';
+        });
 
-    hiders.transition()
-      .attr("width", self.options.roundRadius*2)
-      .attr("height", self.y.rangeBand())
-      .attr("x", self.x(0))
-      .attr("y", function (d) { return self.y(d[y]); })
-      .attr('transform', function(d){
-        var xposition = self.x(Math.min(0, d[x]));
-        if(xposition < self.x(0)) {
-          return 'translate(0, 0)';
-        } else {
-          return 'translate(' + self.options.roundRadius*2*-1 + ', 0)';
-        }
-      });
+      var newTicks = tickElements.enter().append('div')
+        .attr("class", "tick")
+        .style("left", function(d) {
+          return self.x(d) + 'px';
+        })
+        .style("height", "100%");
 
-    hiders.enter().append("rect")
-      .attr("class", "hider")
-      .attr("width", self.options.roundRadius*2)
-      .attr("height", self.y.rangeBand())
-      .attr("x", self.x(0))
-      .attr("y", function (d) { return self.y(d[y]); })
-      .style("fill-opacity", 1)
-      .style("fill", bgcolor)
-      .attr('transform', function(d){
-        var xposition = self.x(Math.min(0, d[x]));
-        if(xposition < self.x(0)) {
-          return 'translate(0, 0)';
-        } else {
-          return 'translate(' + self.options.roundRadius*2*-1 + ', 0)';
-        }
-      });
+      tickElements.exit().remove();
 
-    hiders.exit().remove();
+      newTicks
+        .append('div')
+        .attr("class", "gd-label")
+        .text(function(d){
+          var label = self.formatLarge(d);
+          if (self.options.money) {
+            label = '$' + label;
+          }
+          if (self.options.percent) {
+            label = label + '%';
+          }
+          return label;
+        })
+        .style("margin-left", function(d){
+          //center labels using negative left margin
+          var width = d3.select(this).style('width');
+          var m = (parseInt(width)/2*-1);
+          return m + 'px';
+        });
 
-    //draw zero line
-    this.yAxisElement
-      .append("line")
-      .attr("class", "line")
-      .attr("x1", self.x(0))
-      .attr("x2", self.x(0))
-      .attr("y2", self.height);
-
-    if (this.options.drawX) {
-      this.xAxisElement.call(this.xAxis);
-    } else {
-      this.xAxisElement.selectAll('g').remove();
+      newTicks
+        .append('div')
+        .attr("class", "line")
+        .style("height", "100%");
     }
 
-    if(this.options.drawY){
-      this.y.domain(data.map(function(d) { return d[y]; }));
-      this.yAxisElement.call(this.yAxis);
-      this.yAxisElement.selectAll("text")
-        .style("text-anchor", "start")
-        .style("fill", function(d){
-          if(self.options.invert) {
-            return "#fff";
-          } else {
-            return "#333";
-          }
+    if (this.options.drawY) {
+      var w = parseInt(d3.select(self.el).select('.bars').style("width"));
+      if(!isNaN(w)) {
+        barWidth = w;
+      }
+      var labels = this.y.domain();
+      var labelElements = this.yAxisElement
+        .selectAll(".gd-label")
+        .data(labels);
+
+      labelElements.transition()
+        .style("margin-top", function (d, i) { 
+          return self.options.padding + 'px';
         })
-        .attr("x", "2")
-        .attr("y", "0");
-    } else {
-      this.yAxisElement.selectAll('g').remove();
+        .style("height", function(d){
+          return self.options.barHeight + "px";
+        })
+        .style("line-height", function(d){
+          return self.options.barHeight + "px";
+        })
+        .style("padding-right", function(d, i){
+          var value = self.data[i][x];
+          var barw = Math.abs(self.x(value) - self.x(0));
+          var left = self.x(Math.min(0, value));
+          var p = (barWidth - left) + 2;
+          return p + "px";
+        })
+        .select('span')
+          .text(function(d){
+            return d;
+          })
+
+
+      labelElements.enter().append('div')
+        .attr("class", "gd-label")
+        .style("margin-top", function (d, i) { 
+          return self.options.padding + 'px';
+        })
+        .style("height", function(d){
+          return self.options.barHeight + "px";
+        })
+        .style("line-height", function(d){
+          return self.options.barHeight + "px";
+        })
+        .style("padding-right", function(d, i){
+          var value = self.data[i][x];
+          var barw = Math.abs(self.x(value) - self.x(0));
+          var left = self.x(Math.min(0, value));
+          var p = (barWidth - left) + 2;
+          return p + "px";
+        })
+        .on('mouseover', function (d, i) {
+          var label = d;
+          var value = self.data[i][x];
+          var bar = d3.select(self.el).selectAll('.bar')[0][i];
+          d3.select(bar).style('opacity', 0.9);
+          var format = '';
+          if(value !== null){
+            if(self.options.format){
+              var formatter =  d3.format(",." + self.options.format.precision + "f");
+              format = formatter(value);
+            } else {
+              format = self.formatComma(value);
+            }
+            if (self.options.money) {
+              format = '$' + format;
+            }
+            if (self.options.percent) {
+              format = format + '%';
+            }
+          } else {
+            format = 'NA';
+          }
+          d3.select(self.el).select('.hoverbox').html(label + ': ' + format);
+          d3.select(self.el).select('.hoverbox').transition().style('display', 'block');
+        }).on('mouseout', function (d, i) {
+          var opacity = self.options.opacity;
+          for(var j = 0; j < self.options.highlight.length; j++){
+            if(self.options.highlight[j] == d) opacity =  1;
+          }
+          var bar = d3.select(self.el).selectAll('.bar')[0][i];
+          d3.select(bar).style('opacity', opacity);
+          d3.select(self.el).select('.hoverbox').transition().style('display', 'none');
+        })
+        .append('span')
+          .text(function(d){
+            return d
+          })
+
+      labelElements.exit().remove();
     }
   },
   setColor: function(colors) {
