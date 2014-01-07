@@ -101,7 +101,16 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
       .range(this.options.barColors)
 
     this.x.domain(data.map(function (d) { return d[x] }))
-    this.y.domain([0, d3.max(data, function (d) { return d[y] })])
+
+    var extent = d3.extent(data, function(d) { return d[y] })
+    if(extent[0] < 0){
+      this.y.domain(extent)
+    } else {
+      this.y.domain([0, extent[1]])
+    }
+    //this.y.domain([0, d3.max(data, function (d) { return d[y] })])
+
+    console.log(this.y.domain())
 
     var bars = this.container.select(".bars")
       .selectAll(".bar")
@@ -124,21 +133,58 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
       .attr("geodash-id", function (d) { return d[x] })
       .style("left", function (d) { return self.x(d[x]) + 'px' })
       .style("width", self.x.rangeBand() + 'px')
-      .style("bottom", function (d) { return 0 })
-      .style("height", function (d) { return self.height - self.margin.bottom - self.y(d[y]) + 'px'})
+      .style("bottom", function (d) {
+        var bottom = 0
+        if(d[y] > 0){
+          bottom = self.height - self.margin.bottom - self.y(0)
+        } else {
+          bottom = self.height - self.margin.bottom - self.y(d[y])
+        }
+        return bottom + 'px'
+      })
+      .style("height", function (d) {
+        var height = 0
+        if(d[y] > 0) {
+          height = self.y(0) - self.y(d[y])
+        } else {
+          height = self.y(d[y]) - self.y(0)
+        }
+        return height + 'px'
+      })
       .style("opacity", function(d){
         if(d[x] == self.options.highlight) return 1
         else return self.options.opacity
       })
       .style("background-color", function(d) { return self.color(d[x]) })
       .style("border-top-right-radius", function(d){
-        return self.options.roundRadius + 'px'
+        if(d[y] > 0) {
+          return self.options.roundRadius + 'px'
+        } else {
+          return 0
+        }
       })
       .style("border-top-left-radius", function(d){
-        return self.options.roundRadius + 'px'
+        if(d[y] > 0) {
+          return self.options.roundRadius + 'px'
+        } else {
+          return 0
+        }
+      })
+      .style("border-bottom-right-radius", function(d){
+        if(d[y] < 0) {
+          return self.options.roundRadius + 'px'
+        } else {
+          return 0
+        }
+      })
+      .style("border-bottom-left-radius", function(d){
+        if(d[y] < 0) {
+          return self.options.roundRadius + 'px'
+        } else {
+          return 0
+        }
       })
       .on('mouseover', function (d, i) {
-        console.log(d)
         d3.select(this).style('opacity', 1)
         var text = d[x] + ': '
         if(self.options.percent) {
@@ -234,7 +280,6 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
         .attr("class", "line")
         .style("margin-left", function(d, i){
           var m = self.x.rangeBand() / 2
-          console.log(m)
           return m + 'px'
         })
 
