@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>GeoDash</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <link rel="stylesheet" href="./dist/GeoDash.min.css" />
+  <script src="./dist/d3.v3.min.js"></script>
+  <script src="./dist/GeoDash.min.js"></script>
+  <style>
+
+    .wrapper {
+      margin: 20px auto;
+      width: 700px;
+    }
+    .wrapper h1 {
+      margin: 0;
+      font-family: arial, sans-serif;
+    }
+    .charts {
+      width: auto;
+      margin: 20px auto;
+      text-align: center;
+      background: #dfdfdf;
+      overflow: auto;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      display: inline-block;
+    }
+    .barcharthorizontal {
+      width: 315px;
+      height: 315px;
+    }
+    .barchartvertical {
+      width: 315px;
+      height: 315px;
+    }
+    .piechart {
+      width: 315px;
+      height: 315px;
+    }
+    .linechart {
+      width: 315px;
+      height: 315px;
+    }
+    .chart {
+      float: left;
+      background: #fff;
+      margin: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+    .row {
+      overflow: auto;
+    }
+    .barchart2 {
+      width: 630px;
+      height: 315px;
+    }
+    .barcharthorizontal2 {
+      width: 630px;
+      height: 315px;
+    }
+  </style>
+</head>
+<body>
+<div class="wrapper">
+<h1>GeoDash</h1>
+  <div class="charts">
+    <div class="row">
+      <div class="barchartvertical chart"></div>
+      <div class="barcharthorizontal chart"></div>
+    </div>
+    <div class="row">
+      <div class="piechart chart"></div>
+      <div class="linechart chart"></div>
+    </div>
+    <div class="row">
+      <div class="barchart2 chart"></div>
+      <button id="randomize">New Data</button>
+      <button id="sort">Sort</button>
+    </div>
+    <div class="row">
+      <div class="barcharthorizontal2 chart"></div>
+      <button id="randomize2">New Data</button>
+      <button id="sort2">Sort</button>
+    </div>
+  </div>
+</div>
+  <script type="text/javascript">
+
+    function makeid() {
+      var text = ""
+        , possible = "abcdefghijklmnopqrstuvwxyz";
+      for( var i=0; i < 5; i++ ) {
+        text += possible.charAt(Math.floor(Math.random() * possible.length))
+      }
+      return text
+    }
+
+    function randomize() {
+      var datalength = Math.floor((Math.random()*10)+1)
+      var newdata = []
+      for (var i = 0; i <= datalength; i++) {
+        var obj = {}
+        obj.value = Math.floor((Math.random()*100)+1)
+        obj.id = makeid()
+        newdata.push(obj)
+      }
+      var addnegative = Math.floor((Math.random()*4)+1)
+      if(addnegative === 2) {
+        newdata[Math.floor((Math.random()*datalength)+1)].value *= -1
+      }
+      return newdata
+    }
+
+    function sort(data){
+      data.sort(function(a, b) {
+        if (a.value > b.value)
+          return 1
+        if (a.value < b.value)
+          return -1
+        return 0
+      })
+      return data
+    }
+
+
+    var piechart = new GeoDash.PieChart('.piechart', {
+      label: 'source',
+      value: 'percent',
+      colors: ["#b30000", "#e60000", "#ff4d4d"],
+      opacity: 0.7,
+      innerRadius: 10,
+      title: 'Pie Chart',
+      hover: true
+    });
+
+    var data = [{
+        "source":"lol",
+        "percent":33
+      },{
+        "source":"cats",
+        "percent":11
+      },{
+        "source":"#woah",
+        "percent":2
+    }];
+
+    piechart.update(data);
+
+    var parseDate = d3.time.format("%Y").parse;
+    var linechart = new GeoDash.LineChart(".linechart", {
+      x: 'date',
+      y: 'numCats',
+      width: 'auto',
+      height: 'auto',
+      colors: ["#f00", "#00f"],
+      title: 'Line Chart',
+      interpolate: 'monotone',
+      dotRadius: 3,
+      xInterval: 5,
+      dashed: [{
+        line: 1,
+        span: [{
+          start: 0,
+          end: 2
+        }]
+      }]
+    });
+
+    var data = [{
+        "date":parseDate("2007"),
+        "numCats":92817,
+        "goalCats": 100000
+      },{
+        "date":parseDate("2008"),
+        "numCats":82705,
+        "goalCats": 100000
+      },{
+        "date":parseDate("2009"),
+        "numCats":75920,
+        "goalCats": 100000
+      },{
+        "date":parseDate("2010"),
+        "numCats":76920,
+        "goalCats": 100000
+      },{
+        "date":parseDate("2011"),
+        "numCats":84123,
+        "goalCats": 100000
+      },{
+        "date":parseDate("2012"),
+        "numCats":99109,
+        "goalCats": 100000
+      },{
+        "date":parseDate("2013"),
+        "numCats":145897,
+        "goalCats": 100000
+    }];
+
+    linechart.update(data);
+
+    var data = [
+    {
+      "geo": "Allegany",
+      "geocode": "1",
+      "C002": "74,692"
+    },
+    {
+      "geo": "Anne Arundel",
+      "geocode": "3",
+      "C002": "544403"
+    },
+    {
+      "geo": "Baltimore City",
+      "geocode": "510",
+      "C002": "619493"
+    },
+    {
+      "geo": "Baltimore",
+      "geocode": "5",
+      "C002": "809941"
+    },
+    {
+      "geo": "Calvert",
+      "geocode": "9",
+      "C002": "89256"
+    },
+    {
+      "geo": "Caroline",
+      "geocode": "11",
+      "C002": "-32985"
+    },
+    {
+      "geo": "Carroll",
+      "geocode": "13",
+      "C002": "167288"
+    },
+    {
+      "geo": "Cecil",
+      "geocode": "15",
+      "C002": "101694"
+    },
+    {
+      "geo": "Charles",
+      "geocode": "17",
+      "C002": "149130"
+    },
+    {
+      "geo": "Dorchester",
+      "geocode": "19",
+      "C002": "-32640"
+    },
+    {
+      "geo": "Frederick",
+      "geocode": "21",
+      "C002": "236745"
+    },
+    {
+      "geo": "Garrett",
+      "geocode": "23",
+      "C002": "30051"
+    }
+  ];
+
+    var barcharthtml = new GeoDash.BarChartHorizontal('.barcharthorizontal', {
+      x: 'C002',
+      y: 'geo',
+      barColors: ['#f00'],
+      title: 'Horizontal Bar Chart',
+      drawX: true,
+      drawY: true,
+      verticalX: true,
+      money: true,
+      numberTicks: 5,
+      yWidth: 60
+    });
+    barcharthtml.update(data);
+
+    var data = [
+      {
+        "id": "Talbot",
+        "value": "45.7"
+      },
+      {
+        "id": "Washington",
+        "value": "23.8"
+      },
+      {
+        "id": "Wicomico",
+        "geocode": "45",
+        "value": "67.3"
+      },
+      {
+        "id": "Worcester",
+        "value": "12.0"
+      },
+      {
+        "id": "Baltimore",
+        "value": "22.0"
+      },
+      {
+        "id": "Howard",
+        "value": "62.0"
+      }
+    ]
+
+    var barchartvertical = new GeoDash.BarChartVertical('.barchartvertical', {
+      x: 'id',
+      y: 'value',
+      barColors: ['#f00'],
+      title: 'Vertical Bar Chart',
+      drawX: true,
+      drawY: true
+    });
+
+
+    barchartvertical.update(data);
+
+    var barchart2 = new GeoDash.BarChartVertical('.barchart2', {
+      x: 'id',
+      y: 'value',
+      barColors: ['#f00'],
+      title: 'Update Bar Chart',
+      drawX: true,
+      drawY: true
+    });
+    barchart2.update(data);
+    document.getElementById('randomize').onclick = function() {
+      barchart2.update(randomize())
+    }
+    document.getElementById('sort').onclick = function() {
+      var data = barchart2.getData()
+      barchart2.update(sort(data))
+    }
+
+    var barcharthorizontal2 = new GeoDash.BarChartHorizontal('.barcharthorizontal2', {
+      x: 'value',
+      y: 'id',
+      barColors: ['#f00'],
+      title: 'Horizontal Bar Chart',
+      drawX: true,
+      drawY: true,
+      verticalX: true,
+      numberTicks: 5,
+      yWidth: 60
+    });
+    barcharthorizontal2.update(randomize())
+    document.getElementById('randomize2').onclick = function() {
+      barcharthorizontal2.update(randomize())
+    }
+    document.getElementById('sort2').onclick = function() {
+      var data = barcharthorizontal2.getData()
+      barcharthorizontal2.update(sort(data))
+    }
+  </script>
+</body>
+</html>
