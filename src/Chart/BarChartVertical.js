@@ -236,7 +236,6 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
 
     if (this.options.drawY) {
       var ticks = this.y.ticks()
-      console.log(ticks)
       var tickElements = this.yAxisElement
         .selectAll(".tick")
         .data(ticks)
