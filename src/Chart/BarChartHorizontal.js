@@ -302,13 +302,25 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
         .selectAll(".tick")
         .data(ticks)
 
-      tickElements.transition()
+      var ticks = tickElements.transition()
         .style("left", function(d) {
           var left = self.x(d)
           if(self.options.drawY) {
             left += self.options.yWidth
           }
           return left + 'px'
+        })
+
+      ticks.select('.gd-label')
+        .text(function(d){
+          var label = self.formatLarge(d)
+          if (self.options.money) {
+            label = '$' + label
+          }
+          if (self.options.percent) {
+            label = label + '%'
+          }
+          return label
         })
 
       var newTicks = tickElements.enter().append('div')

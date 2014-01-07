@@ -98,7 +98,7 @@
   function randomize() {
     var datalength = Math.floor((Math.random()*10)+1)
     var newdata = []
-    for (var i = 0; i < datalength; i++) {
+    for (var i = 0; i <= datalength; i++) {
       var obj = {}
       obj.value = Math.floor((Math.random()*100)+1)
       obj.id = makeid()
