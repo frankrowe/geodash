@@ -34,4 +34,7 @@ GeoDash.Chart = ezoop.BaseClass({
       d3.select(this.el).html(html)
     }
   }
+  ,getData: function() {
+    return this.data
+  }
 })
