@@ -16,13 +16,14 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
     , verticalX: false
     , invert: false
     , barHeight: 0
-    , padding: 1
+    , padding: 2
+    , topPadding: 15
     , numberTicks: 10
     , yWidth: 0
     , round: true
     , format: false
-  },
-  initialize: function (el, options) {
+  }
+  , initialize: function (el, options) {
 
   }
   , setWidth: function () {
@@ -59,37 +60,43 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
     this.formatLarge = d3.format("s")
     this.formatComma = d3.format(",")
 
+    var xRange = this.width - this.margin.right
+    if(this.options.drawY){
+      xRange -= this.options.yWidth
+    }
     this.x = d3.scale.linear()
-      .range([0, this.width - this.margin.left - this.options.yWidth]).nice()
+      .range([0, xRange]).nice()
 
     this.y = d3.scale.ordinal()
-      .rangeRoundBands([0, this.height], 0.05, 0)
+      .rangeRoundBands([this.height, 0], 0.05, 0.5)
 
-    this.svg = d3.select(this.el).append("div")
+    this.container = d3.select(this.el).append("div")
       .attr("class", "geodash barchart-html horizontal")
       .style("width", this.width + "px")
+      .style("height", this.height + "px")
       .style("margin-top", this.margin.top + "px")
       .style("margin-bottom", this.margin.bottom + "px")
       .style("margin-right", this.margin.right + "px")
       .style("margin-left", this.margin.left + "px")
 
     if(this.options.drawX) {
-      this.xAxisElement = this.svg.append("div")
+      this.xAxisElement = this.container.append("div")
         .attr("class", "x axis")
     }
 
     if(this.options.drawY) {
-      this.yAxisElement = this.svg.append("div")
+      this.yAxisElement = this.container.append("div")
         .attr("class", "y axis")
-        .style("padding-bottom", this.options.padding + "px")
-        .style("padding-top", this.options.padding + 15 + "px")
     }
 
-    this.svg.append("div")
+    var bars = this.container.append("div")
       .attr("class", "bars")
-      .style("margin-left", this.options.yWidth + "px")
-      .style("padding-bottom", this.options.padding + "px")
-      .style("padding-top", this.options.padding + 15 + "px")
+
+    if(this.options.drawY) {
+      bars.style("margin-left", this.options.yWidth + "px")
+      var w = parseInt(d3.select(self.el).select('.bars').style("width")) - this.options.yWidth
+      bars.style("width", w + 'px')
+    }
 
     d3.select(self.el).append('div').attr('class', 'hoverbox')
 
@@ -110,6 +117,14 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
       }
     }
 
+    if(this.options.barHeight !== 0) {
+      var height = this.options.barHeight * data.length
+        + this.options.padding * data.length
+        + this.options.topPadding
+      d3.select(this.el).select('.bars')
+        .style('height', height + 'px')
+    }
+
     this.color = d3.scale.ordinal()
       .range(this.options.barColors)
 
@@ -122,7 +137,7 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
     
     this.y.domain(data.map(function(d) { return d[y] }))
 
-    var bars = this.svg.select(".bars")
+    var bars = this.container.select(".bars")
       .selectAll(".bar")
       .data(data)
 
@@ -135,8 +150,16 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
         }
         return xposition + 'px'
       })
-      .style("margin-top", function (d, i) {
-        return self.options.padding + 'px'
+      .style("top", function(d, i) {
+        var top = 0
+        if(self.options.barHeight !== 0){
+          top = self.options.barHeight * i
+            + self.options.padding * i
+            + self.options.topPadding
+        } else {
+          top = self.y(d[y])
+        }
+        return top + 'px'
       })
       .style("width", function(d) {
         var w = Math.abs(self.x(d[x]) - self.x(0))
@@ -199,8 +222,16 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
         }
         return xposition + 'px'
       })
-      .style("margin-top", function (d, i) {
-        return self.options.padding + 'px'
+      .style("top", function(d, i) {
+        var top = 0
+        if(self.options.barHeight !== 0){
+          top = self.options.barHeight * i
+            + self.options.padding * i
+            + self.options.topPadding
+        } else {
+          top = self.y(d[y])
+        }
+        return top + 'px'
       })
       .style("width", function(d) {
         var w = Math.abs(self.x(d[x]) - self.x(0))
@@ -256,15 +287,14 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
 
     bars.exit().remove()
 
-    if (!this.options.drawY) {
-      barsenter
-        .on('mouseover', function (d, i) {
-          self.barmouseover(d, i)
-        })
-        .on('mouseout', function (d, i) {
-          self.barmouseout(d, i)
-        })
-    }
+    barsenter
+      .on('mouseover', function (d, i) {
+        self.barmouseover(d, i)
+      })
+      .on('mouseout', function (d, i) {
+        self.barmouseout(d, i)
+      })
+
 
     if(this.options.drawX){
       var ticks = this.x.ticks(self.options.numberTicks)
@@ -274,13 +304,21 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
 
       tickElements.transition()
         .style("left", function(d) {
-          return self.x(d) + self.options.yWidth + 'px'
+          var left = self.x(d)
+          if(self.options.drawY) {
+            left += self.options.yWidth
+          }
+          return left + 'px'
         })
 
       var newTicks = tickElements.enter().append('div')
         .attr("class", "tick")
         .style("left", function(d) {
-          return self.x(d) + self.options.yWidth + 'px'
+          var left = self.x(d)
+          if(self.options.drawY) {
+            left += self.options.yWidth
+          }
+          return left + 'px'
         })
         .style("height", "100%")
 
@@ -317,33 +355,45 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
         barWidth = w
       }
       var labels = this.y.domain()
+
       var labelElements = this.yAxisElement
         .selectAll(".gd-label")
         .data(labels)
 
       labelElements.transition()
-        .style("margin-top", function (d, i) { 
-          return self.options.padding + 'px'
-        })
-        .style("height", function(d){
+        .style("top", function(d, i) {
+          var top = 0
           if(self.options.barHeight !== 0){
-            return self.options.barHeight + "px"
+            top = self.options.barHeight * i
+              + self.options.padding * i
+              + self.options.topPadding
           } else {
-            return self.y.rangeBand() + "px"
+            top = self.y(d)
           }
+          return top + 'px'
         })
-        .style("line-height", function(d){
-          if(self.options.barHeight !== 0){
-            return self.options.barHeight + "px"
-          } else {
-            return self.y.rangeBand() + "px"
-          }
+        .style("right", function(d){
+          return '0px'
         })
         .style("padding-right", function(d, i){
           var value = self.data[i][x]
             , left = self.x(Math.min(0, value))
             , p = (barWidth - left) + 2
           return p + "px"
+        })
+        .style("height", function(d){
+          if(self.options.barHeight !== 0) {
+            return self.options.barHeight + "px"
+          } else {
+            return self.y.rangeBand() + "px"
+          }
+        })
+        .style("line-height", function(d){
+          if(self.options.barHeight !== 0) {
+            return self.options.barHeight + "px"
+          } else {
+            return self.y.rangeBand() + "px"
+          }
         })
         .select('span')
           .text(function(d){
@@ -353,8 +403,25 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
 
       labelElements.enter().append('div')
         .attr("class", "gd-label")
-        .style("margin-top", function (d, i) {
-          return self.options.padding + 'px'
+        .style("top", function(d, i) {
+          var top = 0
+          if(self.options.barHeight !== 0){
+            top = self.options.barHeight * i
+              + self.options.padding * i
+              + self.options.topPadding
+          } else {
+            top = self.y(d)
+          }
+          return top + 'px'
+        })
+        .style("right", function(d){
+          return '0px'
+        })
+        .style("padding-right", function(d, i){
+          var value = self.data[i][x]
+            , left = self.x(Math.min(0, value))
+            , p = (barWidth - left) + 2
+          return p + "px"
         })
         .style("height", function(d){
           if(self.options.barHeight !== 0) {
@@ -369,13 +436,6 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
           } else {
             return self.y.rangeBand() + "px"
           }
-        })
-        .style("padding-right", function(d, i){
-          var value = self.data[i][x]
-            , barw = Math.abs(self.x(value) - self.x(0))
-            , left = self.x(Math.min(0, value))
-            , p = (barWidth - left) + 2
-          return p + "px"
         })
         .on('mouseover', function (d, i) {
           self.barmouseover(d, i)

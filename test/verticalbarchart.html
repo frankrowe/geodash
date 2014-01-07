@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>GeoDash</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <link rel="stylesheet" href="../dist/GeoDash.min.css" />
+  <script src="d3.v3.min.js"></script>
+  <script src="../dist/GeoDash.min.js"></script>
+  <style>
+
+    .wrapper {
+      margin: 20px auto;
+      width: 700px;
+    }
+    .wrapper h1 {
+      margin: 0;
+      font-family: arial, sans-serif;
+    }
+    .charts {
+      width: auto;
+      margin: 20px auto;
+      text-align: center;
+      background: #dfdfdf;
+      overflow: auto;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      display: inline-block;
+    }
+    .barchartvertical {
+      width: 630px;
+      height: 315px;
+    }
+    .chart {
+      float: left;
+      background: #fff;
+      margin: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+    .row {
+      overflow: auto;
+    }
+  </style>
+</head>
+<body>
+<div class="wrapper">
+<h1>GeoDash</h1>
+  <div class="charts">
+    <div class="row">
+      <div class="barchartvertical chart"></div>
+    </div>
+    <div class="row">
+      <button id="randomize" onclick="randomize()">New Data</button>
+  </div>
+</div>
+  <script type="text/javascript">
+    var data = [
+      {
+        "id": "Talbot",
+        "value": "45.7"
+      },
+      {
+        "id": "Washington",
+        "value": "23.8"
+      },
+      {
+        "id": "Wicomico",
+        "geocode": "45",
+        "value": "67.3"
+      },
+      {
+        "id": "Worcester",
+        "value": "12.0"
+      },
+      {
+        "id": "Baltimore",
+        "value": "22.0"
+      },
+      {
+        "id": "Howard",
+        "value": "62.0"
+      }
+    ];
+
+  function makeid() {
+    var text = ""
+      , possible = "abcdefghijklmnopqrstuvwxyz";
+    for( var i=0; i < 5; i++ ) {
+      text += possible.charAt(Math.floor(Math.random() * possible.length))
+    }
+    return text
+  }
+
+  function randomize() {
+    var datalength = Math.floor((Math.random()*10)+1)
+    var newdata = []
+    for (var i = 0; i < datalength; i++) {
+      var obj = {}
+      obj.value = Math.floor((Math.random()*100)+1)
+      obj.id = makeid()
+      newdata.push(obj)
+    }
+    var addnegative = Math.floor((Math.random()*4)+1)
+    if(addnegative === 2) {
+      newdata[Math.floor((Math.random()*datalength)+1)].value *= -1
+    }
+    barchartvertical.update(newdata)
+  }
+
+
+    var barchartvertical = new GeoDash.BarChartVertical('.barchartvertical', {
+      x: 'id',
+      y: 'value',
+      barColors: ['#f00'],
+      title: 'Vertical Bar Chart',
+      drawX: true,
+      drawY: true
+    });
+
+
+    barchartvertical.update(data);
+  </script>
+</body>
+</html>

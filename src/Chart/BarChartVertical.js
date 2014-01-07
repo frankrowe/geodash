@@ -108,9 +108,6 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
     } else {
       this.y.domain([0, extent[1]])
     }
-    //this.y.domain([0, d3.max(data, function (d) { return d[y] })])
-
-    console.log(this.y.domain())
 
     var bars = this.container.select(".bars")
       .selectAll(".bar")
@@ -120,11 +117,56 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
       .attr("geodash-id", function (d) { return d[x] })
       .style("left", function (d) { return self.x(d[x]) + 'px' })
       .style("width", self.x.rangeBand() + 'px')
-      .style("bottom", function (d) { return 0 })
-      .style("height", function (d) { return self.height - self.y(d[y]) + 'px'})
+      .style("bottom", function (d) {
+        var bottom = 0
+        if(d[y] > 0){
+          bottom = self.height - self.margin.bottom - self.y(0)
+        } else {
+          bottom = self.height - self.margin.bottom - self.y(d[y])
+        }
+        return bottom + 'px'
+      })
+      .style("height", function (d) {
+        var height = 0
+        if(d[y] > 0) {
+          height = self.y(0) - self.y(d[y])
+        } else {
+          height = self.y(d[y]) - self.y(0)
+        }
+        return height + 'px'
+      })
       .style("opacity", function(d){
         if(d[x] == self.options.highlight) return 1
         else return self.options.opacity
+      })
+      .style("background-color", function(d) { return self.color(d[x]) })
+      .style("border-top-right-radius", function(d){
+        if(d[y] > 0) {
+          return self.options.roundRadius + 'px'
+        } else {
+          return 0
+        }
+      })
+      .style("border-top-left-radius", function(d){
+        if(d[y] > 0) {
+          return self.options.roundRadius + 'px'
+        } else {
+          return 0
+        }
+      })
+      .style("border-bottom-right-radius", function(d){
+        if(d[y] < 0) {
+          return self.options.roundRadius + 'px'
+        } else {
+          return 0
+        }
+      })
+      .style("border-bottom-left-radius", function(d){
+        if(d[y] < 0) {
+          return self.options.roundRadius + 'px'
+        } else {
+          return 0
+        }
       })
       .style("background-color", function(d) { return self.color(d[x]) })
 
@@ -185,41 +227,35 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
         }
       })
       .on('mouseover', function (d, i) {
-        d3.select(this).style('opacity', 1)
-        var text = d[x] + ': '
-        if(self.options.percent) {
-          text += self.formatPercent(d[y])
-        } else {
-          text += self.formatComma(d[y])
-        }
-        self.container.select('.hoverbox')
-          .html(text)
-
-        self.container.select('.hoverbox')
-          .transition()
-          .style('display', 'block')
+        self.barMouseOver(d, i, this)
       }).on('mouseout', function (d, i) {
-        var opacity = self.options.opacity
-        if(d[x] == self.options.highlight) {
-          opacity =  1
-        }
-        d3.select(this).style('opacity', opacity)
-        self.container.select('.hoverbox')
-          .transition()
-          .style('display', 'none')
+        self.barMouseOut(d, i, this)
       })
 
     bars.exit().remove()
 
     if (this.options.drawY) {
       var ticks = this.y.ticks()
+      console.log(ticks)
       var tickElements = this.yAxisElement
         .selectAll(".tick")
         .data(ticks)
 
-      tickElements.transition()
+      var ticks = tickElements.transition()
         .style("top", function(d) {
           return self.y(d)  + 'px'
+        })
+
+      ticks.select('.gd-label')
+        .text(function(d){
+          var label = self.formatLarge(d)
+          if (self.options.money) {
+            label = '$' + label
+          }
+          if (self.options.percent) {
+            label = label + '%'
+          }
+          return label
         })
 
       var newTicks = tickElements.enter().append('div')
@@ -250,21 +286,31 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
           return label
         })
         .style("margin-top", function(d){
-          //center labels using negative left margin
           var h = d3.select(this).style('height')
           var m = (parseInt(h)/2*-1)
           return m + 'px'
         })
     }
+
     if (this.options.drawX) {
       var labels = this.x.domain()
       var tickElements = this.xAxisElement
-        .selectAll(".gd-label")
+        .selectAll(".tick")
         .data(labels)
 
-      tickElements.transition()
+      var ticks = tickElements.transition()
         .style("left", function (d) { return self.x(d) + 'px' })
         .style("width", self.x.rangeBand() + 'px')
+
+      ticks.select('.line')
+        .style("margin-left", function(d, i){
+          var m = self.x.rangeBand() / 2
+          return m + 'px'
+        })
+      ticks.select('.gd-label')
+        .text(function(d){
+          return d
+        })
 
       var newTicks = tickElements.enter().append('div')
         .attr("class", "tick")
@@ -275,8 +321,7 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
 
       tickElements.exit().remove()
 
-      newTicks
-        .append('div')
+      newTicks.append('div')
         .attr("class", "line")
         .style("margin-left", function(d, i){
           var m = self.x.rangeBand() / 2
@@ -290,6 +335,34 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
         })
 
     }
+  }
+  ,barMouseOver: function(d, i, el) {
+    var self = this
+
+    d3.select(el).style('opacity', 1)
+    var text = d[self.options.x] + ': '
+    if(self.options.percent) {
+      text += self.formatPercent(d[self.options.y])
+    } else {
+      text += self.formatComma(d[self.options.y])
+    }
+    self.container.select('.hoverbox')
+      .html(text)
+
+    self.container.select('.hoverbox')
+      .transition()
+      .style('display', 'block')
+  }
+  ,barMouseOut: function(d, i, el) {
+    var self = this
+    var opacity = self.options.opacity
+    if(d[self.options.x] == self.options.highlight) {
+      opacity =  1
+    }
+    d3.select(el).style('opacity', opacity)
+    self.container.select('.hoverbox')
+      .transition()
+      .style('display', 'none')
   }
   , setColor: function(colors) {
     this.options.barColors = colors
