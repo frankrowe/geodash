@@ -56,6 +56,14 @@
     .row {
       overflow: auto;
     }
+    .barchart2 {
+      width: 630px;
+      height: 315px;
+    }
+    .barcharthorizontal2 {
+      width: 630px;
+      height: 315px;
+    }
   </style>
 </head>
 <body>
@@ -70,9 +78,56 @@
       <div class="piechart chart"></div>
       <div class="linechart chart"></div>
     </div>
+    <div class="row">
+      <div class="barchart2 chart"></div>
+      <button id="randomize">New Data</button>
+      <button id="sort">Sort</button>
+    </div>
+    <div class="row">
+      <div class="barcharthorizontal2 chart"></div>
+      <button id="randomize2">New Data</button>
+      <button id="sort2">Sort</button>
+    </div>
   </div>
 </div>
   <script type="text/javascript">
+
+    function makeid() {
+      var text = ""
+        , possible = "abcdefghijklmnopqrstuvwxyz";
+      for( var i=0; i < 5; i++ ) {
+        text += possible.charAt(Math.floor(Math.random() * possible.length))
+      }
+      return text
+    }
+
+    function randomize() {
+      var datalength = Math.floor((Math.random()*10)+1)
+      var newdata = []
+      for (var i = 0; i <= datalength; i++) {
+        var obj = {}
+        obj.value = Math.floor((Math.random()*100)+1)
+        obj.id = makeid()
+        newdata.push(obj)
+      }
+      var addnegative = Math.floor((Math.random()*4)+1)
+      if(addnegative === 2) {
+        newdata[Math.floor((Math.random()*datalength)+1)].value *= -1
+      }
+      return newdata
+    }
+
+    function sort(data){
+      data.sort(function(a, b) {
+        if (a.value > b.value)
+          return 1
+        if (a.value < b.value)
+          return -1
+        return 0
+      })
+      return data
+    }
+
 
     var piechart = new GeoDash.PieChart('.piechart', {
       label: 'source',
@@ -228,29 +283,35 @@
 
     var data = [
       {
-        "geo": "Talbot",
-        "geocode": "41",
-        "C002": "45.7"
+        "id": "Talbot",
+        "value": "45.7"
       },
       {
-        "geo": "Washington",
-        "geocode": "43",
-        "C002": "23.8"
+        "id": "Washington",
+        "value": "23.8"
       },
       {
-        "geo": "Wicomico",
+        "id": "Wicomico",
         "geocode": "45",
-        "C002": "67.3"
+        "value": "67.3"
       },
       {
-        "geo": "Worcester",
-        "C002": "12.0"
+        "id": "Worcester",
+        "value": "12.0"
+      },
+      {
+        "id": "Baltimore",
+        "value": "22.0"
+      },
+      {
+        "id": "Howard",
+        "value": "62.0"
       }
-    ];
+    ]
 
     var barchartvertical = new GeoDash.BarChartVertical('.barchartvertical', {
-      x: 'geo',
-      y: 'C002',
+      x: 'id',
+      y: 'value',
       barColors: ['#f00'],
       title: 'Vertical Bar Chart',
       drawX: true,
@@ -259,6 +320,43 @@
 
 
     barchartvertical.update(data);
+
+    var barchart2 = new GeoDash.BarChartVertical('.barchart2', {
+      x: 'id',
+      y: 'value',
+      barColors: ['#f00'],
+      title: 'Update Bar Chart',
+      drawX: true,
+      drawY: true
+    });
+    barchart2.update(data);
+    document.getElementById('randomize').onclick = function() {
+      barchart2.update(randomize())
+    }
+    document.getElementById('sort').onclick = function() {
+      var data = barchart2.getData()
+      barchart2.update(sort(data))
+    }
+
+    var barcharthorizontal2 = new GeoDash.BarChartHorizontal('.barcharthorizontal2', {
+      x: 'value',
+      y: 'id',
+      barColors: ['#f00'],
+      title: 'Horizontal Bar Chart',
+      drawX: true,
+      drawY: true,
+      verticalX: true,
+      numberTicks: 5,
+      yWidth: 60
+    });
+    barcharthorizontal2.update(randomize())
+    document.getElementById('randomize2').onclick = function() {
+      barcharthorizontal2.update(randomize())
+    }
+    document.getElementById('sort2').onclick = function() {
+      var data = barchart2.getData()
+      barcharthorizontal2.update(sort(data))
+    }
   </script>
 </body>
 </html>
