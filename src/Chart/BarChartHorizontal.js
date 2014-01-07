@@ -93,8 +93,8 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
 
     d3.select(self.el).append('div').attr('class', 'hoverbox')
 
-  },
-  update: function (data) {
+  }
+  , update: function (data) {
     var self = this
     this.data = data
 
