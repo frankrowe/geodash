@@ -88,7 +88,7 @@ var piechart = new GeoDash.PieChart('.piechart', {
   , opacity: 0.7
   , innerRadius: 10
   , title: 'Pie Chart'
-  , hover: tru
+  , hover: true
 })
 
 var data = [
