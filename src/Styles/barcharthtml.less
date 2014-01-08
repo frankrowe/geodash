@@ -22,14 +22,25 @@
     }
   }
   .axis {
-    overflow: hidden;
     width: 100%;
     height: 100%;
     &.x {
+      overflow: hidden;
       position: absolute;
       z-index: 0;
       .gd-label {
         line-height: 11px;
+      }
+      .xAxisLabel {
+        position:absolute;
+        text-align: center;
+        bottom: 0;
+        width:100%;
+        .gd-label {
+          padding: 0 !important;
+          height: 100%;
+          width: 100%;
+        }
       }
     }
     &.y {
@@ -37,6 +48,25 @@
       .gd-label {
         position: relative;
         overflow: hidden;
+      }
+      .yAxisLabel {
+        position:absolute;
+        text-align: center;
+        bottom: 50%;
+        /* Safari */
+        -webkit-transform: rotate(-90deg);
+        /* Firefox */
+        -moz-transform: rotate(-90deg);
+        /* IE */
+        -ms-transform: rotate(-90deg);
+        /* Opera */
+        -o-transform: rotate(-90deg);
+        /* Internet Explorer */
+        filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+        .gd-label {
+          height: 100%;
+          width: 100%;
+        }
       }
     }
     .tick {
@@ -49,7 +79,7 @@
         margin-top: 10px;
       }
     }
-    .gd-label, .label {
+    .gd-label {
       font-size: 10px;
       color: #b8b8b8;
       font-family: 'arial', sans-serif;
@@ -75,53 +105,26 @@
           background: #fff;
           padding-right: 3px;
         }
+        .tick {
+          text-align: right;
+        }
         .line {
           height: 1px;
-        }
-        .yAxisLabel {
-            position:absolute;
-            text-align: center;
-            bottom: 50%;
-            /* Safari */
-            -webkit-transform: rotate(-90deg);
-            /* Firefox */
-            -moz-transform: rotate(-90deg);
-            /* IE */
-            -ms-transform: rotate(-90deg);
-            /* Opera */
-            -o-transform: rotate(-90deg);
-            /* Internet Explorer */
-            filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
-            .gd-label {
-              height: 100%;
-              width: 100%;
-            }
         }
       }
       &.x {
         z-index: 1;
         .tick {
           text-align: center;
-        }
-        .gd-label {
-          overflow: hidden;
-          height: 12px;
-          padding-top: 5px;
+          .gd-label {
+            overflow: hidden;
+            height: 12px;
+            padding-top: 5px;
+          }
         }
         .line {
           height: 5px;
           width: 1px;
-        }
-        .xAxisLabel {
-            position:absolute;
-            text-align: center;
-            bottom: 0;
-            width:100%;
-            .gd-label {
-              padding: 0;
-              height: 100%;
-              width: 100%;
-            }
         }
       }
     }
@@ -134,11 +137,9 @@
     .axis {
       &.y {
         z-index: 2;
-        .gd-label {
-          text-align: right;
-          position: absolute;
-          span {
-            background: #fff;
+        .tick {
+          .gd-label {
+            text-align: right;
           }
         }
       }

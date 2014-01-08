@@ -37,4 +37,16 @@ GeoDash.Chart = ezoop.BaseClass({
   ,getData: function() {
     return this.data
   }
+  , setWidth: function () {
+    this.width = parseInt(d3.select(this.el).style('width'))
+    this.width = this.width - this.margin.left - this.margin.right
+  }
+  , setHeight: function() {
+    this.height = parseInt(d3.select(this.el).style('height'))
+    this.height = this.height - this.margin.top - this.margin.bottom
+    if (this.options.title) {
+      this.height = this.height - 30
+    }
+
+  }
 })

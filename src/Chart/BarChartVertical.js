@@ -18,20 +18,10 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
     , invert: false
     , roundRadius: 3
     , axisLabelPadding: 20
+    , yaxisLabelPadding: 25
   }
   , initialize: function (el, options) {
 
-  }
-  , setWidth: function () {
-    this.width = parseInt(d3.select(this.el).style('width'))
-    this.width = this.width - this.margin.left - this.margin.right
-  }
-  , setHeight: function() {
-    this.height = parseInt(d3.select(this.el).style('height'))
-    this.height = this.height - this.margin.top
-    if (this.options.title) {
-      this.height = this.height - 30
-    }
   }
   , drawChart: function () {
     var self = this
@@ -40,7 +30,7 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
     this.margin = { 
       top: 10
       , right: 10
-      , bottom: 20
+      , bottom: 10
       , left: 10
     }
 
@@ -55,13 +45,21 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
     if(this.options.yLabel) {
       xrange -= this.options.axisLabelPadding
     }
+    if(this.options.drawY) {
+      xrange -= this.options.yaxisLabelPadding
+    }
+    this.xrange = xrange
     this.x = d3.scale.ordinal()
       .rangeRoundBands([0, xrange], 0.05, 0.5)
 
-    var yrange = this.height - this.margin.bottom
+    var yrange = this.height
     if(this.options.xLabel) {
       yrange -= this.options.axisLabelPadding
     }
+    if(this.options.drawX){
+      yrange -= this.options.axisLabelPadding
+    }
+    this.yrange = yrange
     this.y = d3.scale.linear()
       .range([yrange, 0])
 
@@ -70,24 +68,17 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
       .style("width", this.width + "px")
       .style("height", this.height + "px")
       .style("margin-top", this.margin.top + "px")
-      .style("margin-left", function(){
-          return self.margin.left + "px"
-      })
+      .style("margin-bottom", this.margin.bottom + "px")
+      .style("margin-left", self.margin.left + "px")
       .style("margin-right", this.margin.right + "px")
 
     this.xAxisElement = this.container.append("div")
       .attr("class", "x axis")
       .style("margin-left", function(){
-        if(self.options.yLabel) {
-          return self.options.axisLabelPadding + "px"
-        }
+        return self.width - self.xrange + 'px'
       })
       .style("width", function(){
-        if(self.options.yLabel) {
-          return self.width - self.options.axisLabelPadding + "px"
-        } else {
-          return self.width + "px"
-        }
+        return xrange + 'px'
       })
 
     if(self.options.xLabel) {
@@ -117,18 +108,14 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
 
     this.container.append("div")
       .attr("class", "bars")
-      .style("height", this.height - this.margin.bottom + "px")
+      .style("height", function(){
+        return yrange + "px"
+      })
       .style("width", function(){
-        if(self.options.yLabel) {
-          return self.width - self.options.axisLabelPadding + "px"
-        } else {
-          return self.width + "px"
-        }
+        return xrange + 'px'
       })
       .style("margin-left", function(){
-        if(self.options.yLabel) {
-          return self.options.axisLabelPadding + "px"
-        }
+        return self.width - self.xrange + 'px'
       })
 
     this.container.append('div')
@@ -179,9 +166,9 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
       .style("bottom", function (d) {
         var bottom = 0
         if(d[y] > 0){
-          bottom = self.height - self.margin.bottom - self.y(0)
+          bottom = self.yrange - self.y(0)
         } else {
-          bottom = self.height - self.margin.bottom - self.y(d[y])
+          bottom = self.yrange - self.y(d[y])
         }
         return bottom + 'px'
       })
@@ -237,9 +224,9 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
       .style("bottom", function (d) {
         var bottom = 0
         if(d[y] > 0){
-          bottom = self.height - self.margin.bottom - self.y(0)
+          bottom = self.yrange - self.y(0)
         } else {
-          bottom = self.height - self.margin.bottom - self.y(d[y])
+          bottom = self.yrange - self.y(d[y])
         }
         return bottom + 'px'
       })
@@ -321,12 +308,18 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
         .style("top", function(d) {
           return self.y(d) + 'px'
         })
-        .style("margin-left", function(){
+        .style("left", function(){
           if(self.options.yLabel) {
             return self.options.axisLabelPadding + 'px'
           }
         })
-        .style("width", "100%")
+        .style("width", function(){
+          if(self.options.yLabel) {
+            return self.width - self.options.axisLabelPadding + "px"
+          } else {
+            return self.width + "px"
+          }
+        })
 
       tickElements.exit().remove()
 
@@ -334,6 +327,7 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
         .append('div')
         .attr("class", "line")
         .style("width", "100%")
+        //.style("margin-left", self.options.axisLabelPadding + 'px')
 
       newTicks
         .append('div')
@@ -353,6 +347,7 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
           var m = (parseInt(h)/2*-1)
           return m + 'px'
         })
+        .style("width", self.options.yaxisLabelPadding + 'px')
     }
 
     if (this.options.drawX) {
@@ -380,13 +375,10 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
         .style("left", function (d) { return self.x(d) + 'px' })
         .style("width", self.x.rangeBand() + 'px')
         .style("bottom", function (d) {
-          if(self.options.xLabel){
-            return self.options.axisLabelPadding + 'px'
-          } else {
-            return '0px'
-          }
+          var b = self.height - self.yrange - self.options.axisLabelPadding
+          return b + 'px'
         })
-        .style("height", self.margin.bottom + 'px')
+        .style("height", self.options.axisLabelPadding + 'px')
 
       tickElements.exit().remove()
 

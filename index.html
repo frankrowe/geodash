@@ -284,28 +284,28 @@
     var data = [
       {
         "id": "Talbot",
-        "value": "45.7"
+        "value": "42235.7"
       },
       {
         "id": "Washington",
-        "value": "23.8"
+        "value": "212113.8"
       },
       {
         "id": "Wicomico",
         "geocode": "45",
-        "value": "67.3"
+        "value": "64447.3"
       },
       {
         "id": "Worcester",
-        "value": "12.0"
+        "value": "12444.0"
       },
       {
         "id": "Baltimore",
-        "value": "22.0"
+        "value": "22444.0"
       },
       {
         "id": "Howard",
-        "value": "62.0"
+        "value": "62444.0"
       }
     ]
 
@@ -349,7 +349,9 @@
       drawY: true,
       verticalX: true,
       numberTicks: 5,
-      yWidth: 60
+      yLabel: 'Y Axis Label',
+      xLabel: 'X Axis Label',
+      yWidth: 40
     });
     barcharthorizontal2.update(randomize())
     document.getElementById('randomize2').onclick = function() {
