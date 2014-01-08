@@ -8,6 +8,8 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
     , opacity: 0.7
     , drawX: false
     , drawY: false
+    , drawXLabel: false
+    , yLabel: false
     , percent: false
     , title: false
     , roundRadius: 3
@@ -15,6 +17,7 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
     , verticalX: false
     , invert: false
     , roundRadius: 3
+    , axisLabelPadding: 20
   }
   , initialize: function (el, options) {
 
@@ -48,8 +51,12 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
     this.formatLarge = d3.format("s")
     this.formatComma = d3.format(",")
 
+    var range = this.width
+    if(this.options.yLabel) {
+      range -= this.options.axisLabelPadding
+    }
     this.x = d3.scale.ordinal()
-      .rangeRoundBands([0, this.width], 0.05, 0.5)
+      .rangeRoundBands([0, range], 0.05, 0.5)
 
     this.y = d3.scale.linear()
       .range([this.height - this.margin.bottom, 0])
@@ -59,18 +66,42 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
       .style("width", this.width + "px")
       .style("height", this.height + "px")
       .style("margin-top", this.margin.top + "px")
-      .style("margin-left", this.margin.left + "px")
+      .style("margin-left", function(){
+          return self.margin.left + "px"
+      })
       .style("margin-right", this.margin.right + "px")
 
     this.xAxisElement = this.container.append("div")
       .attr("class", "x axis")
+      .style("margin-left", function(){
+        if(self.options.yLabel) {
+          return self.options.axisLabelPadding + "px"
+        }
+      })
 
     this.yAxisElement = this.container.append("div")
       .attr("class", "y axis")
 
+    if(self.options.yLabel) {
+      this.yAxisElement.append("div")
+        .attr("class", "yAxisLabel gd-label")
+        .style("height", this.options.axisLabelPadding + 'px')
+        .style("width", this.height - this.margin.bottom + "px")
+        .style("left", (this.height - this.margin.bottom - this.margin.top)/2*-1 + "px")
+        .append("div")
+        .attr("class", "gd-label")
+        .style("line-height", this.options.axisLabelPadding + 'px')
+        .text(this.options.yLabel)
+    }
+
     this.container.append("div")
       .attr("class", "bars")
       .style("height", this.height - this.margin.bottom + "px")
+      .style("margin-left", function(){
+        if(self.options.yLabel) {
+          return self.options.axisLabelPadding + "px"
+        }
+      })
 
     this.container.append('div')
       .attr('class', 'hoverbox')
@@ -261,6 +292,11 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
         .attr("class", "tick")
         .style("top", function(d) {
           return self.y(d) + 'px'
+        })
+        .style("margin-left", function(){
+          if(self.options.yLabel) {
+            return self.options.axisLabelPadding + 'px'
+          }
         })
         .style("width", "100%")
 

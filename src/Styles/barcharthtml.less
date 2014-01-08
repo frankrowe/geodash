@@ -40,7 +40,7 @@
         margin-top: 10px;
       }
     }
-    .gd-label {
+    .gd-label, .label {
       font-size: 10px;
       color: #b8b8b8;
       font-family: 'arial', sans-serif;
@@ -68,6 +68,25 @@
         }
         .line {
           height: 1px;
+        }
+        .yAxisLabel {
+            position:absolute;
+            text-align: center;
+            bottom: 50%;
+            /* Safari */
+            -webkit-transform: rotate(-90deg);
+            /* Firefox */
+            -moz-transform: rotate(-90deg);
+            /* IE */
+            -ms-transform: rotate(-90deg);
+            /* Opera */
+            -o-transform: rotate(-90deg);
+            /* Internet Explorer */
+            filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+            .gd-label {
+              height: 100%;
+              width: 100%;
+            }
         }
       }
       &.x {

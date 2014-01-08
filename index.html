@@ -318,16 +318,17 @@
       drawY: true
     });
 
-
     barchartvertical.update(data);
 
     var barchart2 = new GeoDash.BarChartVertical('.barchart2', {
       x: 'id',
       y: 'value',
-      barColors: ['#f00'],
+      barColors: ['#ac0000'],
       title: 'Update Bar Chart',
       drawX: true,
-      drawY: true
+      drawY: true,
+      yLabel: 'y Axis Label',
+      opacity: .7
     });
     barchart2.update(data);
     document.getElementById('randomize').onclick = function() {
