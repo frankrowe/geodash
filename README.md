@@ -1,7 +1,7 @@
 GeoDash.js
 =======
 
-A modern charting and mapping library for the web. (A D3 wrapper for lazy charts.)
+A D3 wrapper for charts.
 
 http://apps.esrgc.org/dashboards/geodash/
 
