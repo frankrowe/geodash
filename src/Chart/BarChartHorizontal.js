@@ -338,6 +338,11 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
 
       newTicks
         .append('div')
+        .attr("class", "line")
+        .style("height", "100%")
+
+      newTicks
+        .append('div')
         .attr("class", "gd-label")
         .text(function(d){
           var label = self.formatLarge(d)
@@ -349,16 +354,17 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
           }
           return label
         })
+        .style("bottom", "0px")
+        .style("background", function(){
+          var c = d3.select(self.el).style("background-color")
+          console.log(c)
+          return c
+        })
         .style("margin-left", function(d){
           var width = d3.select(this).style('width')
           var m = (parseInt(width)/2*-1)
           return m + 'px'
         })
-
-      newTicks
-        .append('div')
-        .attr("class", "line")
-        .style("height", "100%")
     }
 
     if (this.options.drawY) {

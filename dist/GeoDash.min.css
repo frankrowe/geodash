@@ -15,7 +15,7 @@
 .barchart-html.vertical .axis.x .xAxisLabel{position:absolute;text-align:center;bottom:0;width:100%}.barchart-html.vertical .axis.x .xAxisLabel .gd-label{padding:0;height:100%;width:100%}
 .barchart-html.horizontal{height:100%}.barchart-html.horizontal .bars{z-index:1}
 .barchart-html.horizontal .axis.y{z-index:2}.barchart-html.horizontal .axis.y .gd-label{text-align:right;position:absolute}.barchart-html.horizontal .axis.y .gd-label span{background:#fff}
-.barchart-html.horizontal .axis.x{z-index:0}
+.barchart-html.horizontal .axis.x{overflow:visible;z-index:0}.barchart-html.horizontal .axis.x .gd-label{position:absolute}
 .barchart-html.horizontal .axis .line{width:1px}
 .axis path,.axis line{fill:none;opacity:0.6;stroke:#c5c5c5;shape-rendering:crispEdges}
 .axis text{font-size:10px;fill:#b8b8b8;font-family:'arial',sans-serif}.axis text.axis-label{fill:#a4a4a4}
