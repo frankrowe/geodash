@@ -24,6 +24,7 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
     , format: false
     , axisLabelPadding: 20
     , rightBarPadding: 10
+    , outerPadding: 0.5
   }
   , initialize: function (el, options) {
 
@@ -74,7 +75,7 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
       .rangeRoundBands([yrange, 0], 0.05, 0.3)
 
     this.container = d3.select(this.el).append("div")
-      .attr("class", "geodash barchart-html horizontal")
+      .attr("class", "geodash chart-html horizontal")
       .style("width", this.width + "px")
       .style("height", this.height + "px")
       .style("margin-top", this.margin.top + "px")

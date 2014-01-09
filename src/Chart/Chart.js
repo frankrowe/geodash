@@ -3,6 +3,9 @@ Chart base class
 */
 GeoDash.Chart = ezoop.BaseClass({
   className: 'Chart'
+  , defaults: {
+    
+  }
   , initialize: function (el, options) {
     this.el = el
     this.options = {}
@@ -24,7 +27,242 @@ GeoDash.Chart = ezoop.BaseClass({
   , setUpChart: function(){
     d3.select(this.el).style('position', 'relative')
   }
-  , drawChart: function () {}
+  , drawChart: function () {
+    var self = this
+      , padding = 10
+
+    this.margin = { 
+      top: 10
+      , right: 10
+      , bottom: 10
+      , left: 10
+    }
+
+    this.setWidth()
+    this.setHeight()
+
+    this.formatPercent = d3.format(".0%")
+    this.formatLarge = d3.format("s")
+    this.formatComma = d3.format(",")
+
+    var xrange = this.width
+    if(this.options.yLabel) {
+      xrange -= this.options.axisLabelPadding
+    }
+    if(this.options.drawY) {
+      xrange -= this.options.yaxisLabelPadding
+    }
+    this.xrange = xrange
+    this.x = d3.scale.ordinal()
+      .rangeRoundBands([0, xrange], 0.05, self.options.outerPadding)
+
+    var yrange = this.height
+    if(this.options.xLabel) {
+      yrange -= this.options.axisLabelPadding
+    }
+    if(this.options.drawX){
+      yrange -= this.options.axisLabelPadding
+    }
+    this.yrange = yrange
+    this.y = d3.scale.linear()
+      .range([yrange, 0])
+
+    this.container = d3.select(this.el).append("div")
+      .attr("class", function() {
+        return "geodash " + self.options.class
+      })
+      .style("width", this.width + "px")
+      .style("height", this.height + "px")
+      .style("margin-top", this.margin.top + "px")
+      .style("margin-bottom", this.margin.bottom + "px")
+      .style("margin-left", self.margin.left + "px")
+      .style("margin-right", this.margin.right + "px")
+
+    this.xAxisElement = this.container.append("div")
+      .attr("class", "x axis")
+      .style("margin-left", function(){
+        return self.width - self.xrange + 'px'
+      })
+      .style("width", function(){
+        return xrange + 'px'
+      })
+
+    if(self.options.xLabel) {
+      this.xAxisElement.append("div")
+        .attr("class", "xAxisLabel")
+        .style("height", this.options.axisLabelPadding + 'px')
+        .append("div")
+        .attr("class", "gd-label")
+        .style("line-height", this.options.axisLabelPadding + 'px')
+        .text(this.options.xLabel)
+    }
+
+    this.yAxisElement = this.container.append("div")
+      .attr("class", "y axis")
+
+    if(self.options.yLabel) {
+      this.yAxisElement.append("div")
+        .attr("class", "yAxisLabel")
+        .style("height", this.options.axisLabelPadding + 'px')
+        .style("width", this.height - this.margin.bottom + "px")
+        .style("left", (this.height - this.margin.bottom - this.margin.top)/2*-1 + "px")
+        .append("div")
+        .attr("class", "gd-label")
+        .style("line-height", this.options.axisLabelPadding + 'px')
+        .text(this.options.yLabel)
+    }
+
+    this.container.append("div")
+      .attr("class", "bars")
+      .style("height", function(){
+        return yrange + "px"
+      })
+      .style("width", function(){
+        return xrange + 'px'
+      })
+      .style("margin-left", function(){
+        return self.width - self.xrange + 'px'
+      })
+
+    if(self.className === 'LineChart') {
+      this.svg = this.container.select('.bars')
+        .append('svg')
+    }
+
+    this.container.append('div')
+      .attr('class', 'hoverbox')
+  }
+  , updateChart: function() {
+
+  }
+  , updateYAxis: function() {
+    var self = this
+    if (this.options.drawY) {
+      var ticks = this.y.ticks()
+      var tickElements = this.yAxisElement
+        .selectAll(".tick")
+        .data(ticks)
+
+      var ticks = tickElements.transition()
+        .style("top", function(d) {
+          return self.y(d)  + 'px'
+        })
+
+      ticks.select('.gd-label')
+        .text(function(d){
+          var label = self.formatLarge(d)
+          if (self.options.money) {
+            label = '$' + label
+          }
+          if (self.options.percent) {
+            label = label + '%'
+          }
+          return label
+        })
+
+      var newTicks = tickElements.enter().append('div')
+        .attr("class", "tick")
+        .style("top", function(d) {
+          return self.y(d) + 'px'
+        })
+        .style("left", function(){
+          if(self.options.yLabel) {
+            return self.options.axisLabelPadding + 'px'
+          }
+        })
+        .style("width", function(){
+          if(self.options.yLabel) {
+            return self.width - self.options.axisLabelPadding + "px"
+          } else {
+            return self.width + "px"
+          }
+        })
+
+      tickElements.exit().remove()
+
+      newTicks
+        .append('div')
+        .attr("class", "line")
+        .style("width", "100%")
+
+      newTicks
+        .append('div')
+        .attr("class", "gd-label")
+        .text(function(d){
+          var label = self.formatLarge(d)
+          if (self.options.money) {
+            label = '$' + label
+          }
+          if (self.options.percent) {
+            label = label + '%'
+          }
+          return label
+        })
+        .style("margin-top", function(d){
+          var h = d3.select(this).style('height')
+          var m = (parseInt(h)/2*-1)
+          return m + 'px'
+        })
+        .style("width", self.options.yaxisLabelPadding + 'px')
+    }
+  }
+  , updateXAxis: function() {
+    var self = this
+    if (this.options.drawX) {
+      var labels = this.x.domain()
+      var tickElements = this.xAxisElement
+        .selectAll(".tick")
+        .data(labels)
+
+      var ticks = tickElements.transition()
+        .style("left", function (d) { return self.x(d) + 'px' })
+        .style("width", self.x.rangeBand() + 'px')
+
+      ticks.select('.line')
+        .style("margin-left", function(d, i){
+          var m = self.x.rangeBand() / 2
+          return m + 'px'
+        })
+      ticks.select('.gd-label')
+        .text(function(d){
+          if(self.options.xFormat) {
+            return self.options.xFormat(d)
+          } else {
+            return d
+          }
+        })
+
+      var newTicks = tickElements.enter().append('div')
+        .attr("class", "tick")
+        .style("left", function (d) { return self.x(d) + 'px' })
+        .style("width", self.x.rangeBand() + 'px')
+        .style("bottom", function (d) {
+          var b = self.height - self.yrange - self.options.axisLabelPadding
+          return b + 'px'
+        })
+        .style("height", self.options.axisLabelPadding + 'px')
+
+      tickElements.exit().remove()
+
+      newTicks.append('div')
+        .attr("class", "line")
+        .style("margin-left", function(d, i){
+          var m = self.x.rangeBand() / 2
+          return m + 'px'
+        })
+
+      newTicks.append('div')
+        .attr("class", "gd-label")
+        .text(function(d){
+          if(self.options.xFormat) {
+            return self.options.xFormat(d)
+          } else {
+            return d
+          }
+        })
+
+    }
+  }
   , update: function () {}
   , makeTitle: function () {
     if (this.options.title) {
@@ -34,7 +272,7 @@ GeoDash.Chart = ezoop.BaseClass({
       d3.select(this.el).html(html)
     }
   }
-  ,getData: function() {
+  , getData: function() {
     return this.data
   }
   , setWidth: function () {
@@ -47,6 +285,11 @@ GeoDash.Chart = ezoop.BaseClass({
     if (this.options.title) {
       this.height = this.height - 30
     }
-
+  }
+  , setYAxisLabel: function(label) {
+    this.container.select(".y.axis .yAxisLabel .gd-label").text(label)
+  }
+  , setXAxisLabel: function(label) {
+    this.container.select(".y.axis .xAxisLabel .gd-label").text(label)
   }
 })

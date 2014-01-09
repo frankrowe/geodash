@@ -64,6 +64,10 @@
       width: 652px;
       height: 315px;
     }
+    .linechart2 {
+      width: 652px;
+      height: 315px;
+    }
   </style>
 </head>
 <body>
@@ -87,6 +91,11 @@
       <div class="barcharthorizontal2 chart"></div>
       <button id="randomize2">New Data</button>
       <button id="sort2">Sort</button>
+    </div>
+    <div class="row">
+      <div class="linechart2 chart"></div>
+      <button id="randomize3">New Data</button>
+      <button id="sort3">Sort</button>
     </div>
   </div>
 </div>
@@ -113,6 +122,14 @@
       var addnegative = Math.floor((Math.random()*4)+1)
       if(addnegative === 2) {
         newdata[Math.floor((Math.random()*datalength)+1)].value *= -1
+      }
+      return newdata
+    }
+
+    function randomizeLine() {
+      var newdata = linedata
+      for (var i = 0; i < newdata.length; i++) {
+        newdata[i].numCats = Math.floor((Math.random()*150000)+1)
       }
       return newdata
     }
@@ -163,6 +180,8 @@
       interpolate: 'monotone',
       dotRadius: 3,
       xInterval: 5,
+      yLabel: 'lol',
+      xFormat: d3.time.format("%Y"),
       dashed: [{
         line: 1,
         span: [{
@@ -172,7 +191,7 @@
       }]
     });
 
-    var data = [{
+    var linedata = [{
         "date":parseDate("2007"),
         "numCats":92817,
         "goalCats": 100000
@@ -202,7 +221,7 @@
         "goalCats": 100000
     }];
 
-    linechart.update(data);
+    linechart.update(linedata);
 
     var data = [
     {
@@ -360,6 +379,32 @@
     document.getElementById('sort2').onclick = function() {
       var data = barcharthorizontal2.getData()
       barcharthorizontal2.update(sort(data))
+    }
+
+    var linechart2 = new GeoDash.LineChart(".linechart2", {
+      x: 'date',
+      y: 'numCats',
+      width: 'auto',
+      height: 'auto',
+      colors: ["#ac0000", "#00f"],
+      title: 'Line Chart',
+      interpolate: 'monotone',
+      dotRadius: 3,
+      xInterval: 5,
+      yLabel: 'lol',
+      xFormat: d3.time.format("%Y"),
+      dashed: [{
+        line: 1,
+        span: [{
+          start: 0,
+          end: 2
+        }]
+      }]
+    })
+
+    linechart2.update(linedata)
+    document.getElementById('randomize3').onclick = function() {
+      linechart2.update(randomizeLine())
     }
   </script>
 </body>
