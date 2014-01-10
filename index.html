@@ -95,7 +95,6 @@
     <div class="row">
       <div class="linechart2 chart"></div>
       <button id="randomize3">New Data</button>
-      <button id="sort3">Sort</button>
     </div>
   </div>
 </div>
@@ -153,7 +152,8 @@
       opacity: 0.8,
       innerRadius: 10,
       title: 'Pie Chart',
-      hover: true
+      legend: false,
+      arclabels: true
     });
 
     var data = [{
@@ -292,7 +292,6 @@
       title: 'Horizontal Bar Chart',
       drawX: true,
       drawY: true,
-      verticalX: true,
       money: true,
       numberTicks: 5,
       yWidth: 60

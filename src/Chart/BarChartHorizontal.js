@@ -13,45 +13,23 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
     , title: false
     , roundRadius: 3
     , highlight: []
-    , verticalX: false
     , invert: false
     , barHeight: 0
     , padding: 2
-    , topPadding: 15
     , numberTicks: 10
     , yWidth: 0
     , round: true
     , format: false
+    , topPadding: 10
     , axisLabelPadding: 20
     , rightBarPadding: 10
     , outerPadding: 0.5
+    , class: 'chart-html horizontal'
   }
   , initialize: function (el, options) {
 
   }
-  , drawChart: function () {
-    var self = this
-
-    this.margin = {
-      top: 10
-      , right: 10
-      , bottom: 10
-      , left: 10
-    }
-
-    if(this.options.barHeight !== 0) {
-      d3.select(this.el).style('height', 'auto')
-    }
-
-    this.setWidth()
-    this.setHeight()
-
-    this.formatPercent = d3.format(".2%")
-    this.formatPercentAxisLabel = d3.format("p")
-    this.formatMoney = d3.format("$")
-    this.formatLarge = d3.format("s")
-    this.formatComma = d3.format(",")
-
+  , setXAxis: function() {
     var xrange = this.width
     if(this.options.drawY){
       xrange -= this.options.yWidth
@@ -61,8 +39,10 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
     }
     this.xrange = xrange
     this.x = d3.scale.linear()
-      .range([0, xrange- self.options.rightBarPadding]).nice()
+      .range([0, xrange- this.options.rightBarPadding]).nice()
 
+  }
+  ,setYAxis: function() {
     var yrange = this.height
     if(this.options.drawX) {
       yrange -= this.options.axisLabelPadding
@@ -72,76 +52,26 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
     }
     this.yrange = yrange
     this.y = d3.scale.ordinal()
-      .rangeRoundBands([yrange, 0], 0.05, 0.3)
-
-    this.container = d3.select(this.el).append("div")
-      .attr("class", "geodash chart-html horizontal")
-      .style("width", this.width + "px")
-      .style("height", this.height + "px")
-      .style("margin-top", this.margin.top + "px")
-      .style("margin-bottom", this.margin.bottom + "px")
-      .style("margin-right", this.margin.right + "px")
-      .style("margin-left", this.margin.left + "px")
-
-    if(this.options.drawX) {
-      this.xAxisElement = this.container.append("div")
-        .attr("class", "x axis")
-        .style("margin-left", function(){
-          return self.width - self.xrange + 'px'
-        })
-        .style("width", function(){
-          return xrange + 'px'
-        })
-
-      if(self.options.xLabel) {
-        this.xAxisElement.append("div")
-          .attr("class", "xAxisLabel")
-          .style("height", this.options.axisLabelPadding + 'px')
-          .append("div")
-          .attr("class", "gd-label")
-          .style("line-height", this.options.axisLabelPadding + 'px')
-          .text(this.options.xLabel)
-      }
-    }
-
-    if(this.options.drawY) {
-      this.yAxisElement = this.container.append("div")
-        .attr("class", "y axis")
-        .style("height", function(){
-          return yrange + 'px'
-        })
-      if(self.options.yLabel) {
-        this.yAxisElement.append("div")
-          .attr("class", "yAxisLabel")
-          .style("height", this.options.axisLabelPadding + 'px')
-          .style("width", this.height - this.margin.bottom + "px")
-          .style("left", (this.height - this.margin.bottom - this.margin.top)/2*-1 + "px")
-          .append("div")
-          .attr("class", "gd-label")
-          .style("line-height", this.options.axisLabelPadding + 'px')
-          .text(this.options.yLabel)
-      }
-    }
-
-    var bars = this.container.append("div")
-      .attr("class", "bars")
-      .style("height", function(){
-        return yrange + "px"
-      })
-      .style("width", function(){
-        return xrange + 'px'
-      })
-      .style("margin-left", function(){
-        return self.width - self.xrange + 'px'
-      })
-
-    this.container.append('div')
-      .attr('class', 'hoverbox')
-
+      .rangeRoundBands([yrange, 0], 0.05, this.options.outerPadding)
   }
   , update: function (data) {
     var self = this
-    this.data = data
+
+    if(this.options.barHeight !== 0) {
+      var height = this.options.barHeight * data.length
+        + this.options.padding * data.length
+        + this.options.topPadding * 2
+        if(this.options.drawX) {
+          height += this.options.axisLabelPadding
+        }
+        if(this.options.xLabel) {
+          height += this.options.axisLabelPadding
+        }
+      this.container.select('.bars')
+        .style('height', height + 'px')
+      this.setHeight()
+      this.setYAxis()
+    }
 
     var y = this.options.y
     var x = this.options.x
@@ -154,14 +84,7 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
         }
       }
     }
-
-    if(this.options.barHeight !== 0) {
-      var height = this.options.barHeight * data.length
-        + this.options.padding * data.length
-        + this.options.topPadding
-      d3.select(this.el).select('.bars')
-        .style('height', height + 'px')
-    }
+    this.data = data
 
     this.color = d3.scale.ordinal()
       .range(this.options.barColors)
@@ -175,9 +98,18 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
     
     this.y.domain(data.map(function(d) { return d[y] }))
 
+    this.updateChart()
+    this.updateXAxis()
+    this.updateYAxis()
+  }
+  , updateChart: function() {
+    var self = this
+      , y = this.options.y
+      , x = this.options.x
+    
     var bars = this.container.select(".bars")
-      .selectAll(".bar")
-      .data(data)
+        .selectAll(".bar")
+        .data(this.data)
 
     bars.transition()
       .attr("geodash-id", function (d) { return d[y] })
@@ -327,14 +259,19 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
 
     barsenter
       .on('mouseover', function (d, i) {
-        self.barmouseover(d, i)
+        self.mouseOver(d, i)
       })
       .on('mouseout', function (d, i) {
-        self.barmouseout(d, i)
+        self.mouseOut(d, i)
       })
-
+  }
+  , updateXAxis: function() {
+    var self = this
+      , y = this.options.y
+      , x = this.options.x
 
     if(this.options.drawX){
+      var chartHeight = this.container.select('.bars').style('height')
       var ticks = this.x.ticks(self.options.numberTicks)
       var tickElements = this.xAxisElement
         .selectAll(".tick")
@@ -344,6 +281,13 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
         .style("left", function(d) {
           var left = self.x(d)
           return left + 'px'
+        })
+        .style("height", function(){
+          if(self.options.xLabel) {
+            return self.height - self.options.axisLabelPadding + "px"
+          } else {
+            return self.height + "px"
+          }
         })
 
       ticks.select('.gd-label')
@@ -410,6 +354,11 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
         .style("height", self.options.axisLabelPadding + 'px')
         .style("line-height", self.options.axisLabelPadding + 'px')
     }
+  }
+  , updateYAxis: function() {
+    var self = this
+      , y = this.options.y
+      , x = this.options.x
 
     if (this.options.drawY) {
       var w = parseInt(d3.select(self.el).select('.bars').style("width"))
@@ -500,10 +449,10 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
           }
         })
         .on('mouseover', function (d, i) {
-          self.barmouseover(d, i)
+          self.mouseOver(d, i, this)
         })
         .on('mouseout', function (d, i) {
-          self.barmouseout(d, i)
+          self.mouseOut(d, i, this)
         })
         .append('div')
           .attr("class", "gd-label")
@@ -514,7 +463,7 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
       tickElements.exit().remove()
     }
   }
-  ,barmouseover: function(d, i) {
+  , mouseOver: function(d, i, el) {
     var self = this
       , label = ''
     if(typeof d === 'object') {
@@ -523,37 +472,42 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
       label = d
     }
     var value = self.data[i][self.options.x]
-    var bar = d3.select(self.el).selectAll('.bar')[0][i]
-    d3.select(bar).style('opacity', 0.9)
-    var format = ''
+    d3.select(el).style('opacity', 0.9)
+    var text = label + ': '
     if(value !== null) {
       if(self.options.format) {
         var formatter =  d3.format(",." + self.options.format.precision + "f")
-        format = formatter(value)
+        text += formatter(value)
       } else {
-        format = self.formatComma(value)
+        text += self.formatComma(value)
       }
       if (self.options.money) {
-        format = '$' + format
+        text = '$' + text
       }
       if (self.options.percent) {
-        format = format + '%'
+        text = text + '%'
       }
     } else {
-      format = 'NA'
+      text = 'NA'
     }
-    d3.select(self.el).select('.hoverbox').html(label + ': ' + format)
-    d3.select(self.el).select('.hoverbox').transition().style('display', 'block')
+    self.container.select('.hoverbox')
+      .html(text)
+
+    self.container.select('.hoverbox')
+      .transition()
+      .style('display', 'block')
   }
-  ,barmouseout: function(d, i) {
+  , mouseOut: function(d, i, el) {
     var self = this
     var opacity = self.options.opacity
     for(var j = 0; j < self.options.highlight.length; j++) {
       if(self.options.highlight[j] == d) opacity =  1
     }
-    var bar = d3.select(self.el).selectAll('.bar')[0][i]
-    d3.select(bar).style('opacity', opacity)
-    d3.select(self.el).select('.hoverbox').transition().style('display', 'none')
+  
+    d3.select(el).style('opacity', opacity)
+    self.container.select('.hoverbox')
+      .transition()
+      .style('display', 'none')
   }
   , setColor: function(colors) {
     this.options.barColors = colors

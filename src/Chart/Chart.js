@@ -40,32 +40,14 @@ GeoDash.Chart = ezoop.BaseClass({
 
     this.setWidth()
     this.setHeight()
+    this.setXAxis()
+    this.setYAxis()
 
     this.formatPercent = d3.format(".0%")
     this.formatLarge = d3.format("s")
     this.formatComma = d3.format(",")
-
-    var xrange = this.width
-    if(this.options.yLabel) {
-      xrange -= this.options.axisLabelPadding
-    }
-    if(this.options.drawY) {
-      xrange -= this.options.yaxisLabelPadding
-    }
-    this.xrange = xrange
-    this.x = d3.scale.ordinal()
-      .rangeRoundBands([0, xrange], 0.05, self.options.outerPadding)
-
-    var yrange = this.height
-    if(this.options.xLabel) {
-      yrange -= this.options.axisLabelPadding
-    }
-    if(this.options.drawX){
-      yrange -= this.options.axisLabelPadding
-    }
-    this.yrange = yrange
-    this.y = d3.scale.linear()
-      .range([yrange, 0])
+    this.formatPercentAxisLabel = d3.format("p")
+    this.formatMoney = d3.format("$")
 
     this.container = d3.select(this.el).append("div")
       .attr("class", function() {
@@ -84,7 +66,7 @@ GeoDash.Chart = ezoop.BaseClass({
         return self.width - self.xrange + 'px'
       })
       .style("width", function(){
-        return xrange + 'px'
+        return self.xrange + 'px'
       })
 
     if(self.options.xLabel) {
@@ -104,8 +86,7 @@ GeoDash.Chart = ezoop.BaseClass({
       this.yAxisElement.append("div")
         .attr("class", "yAxisLabel")
         .style("height", this.options.axisLabelPadding + 'px')
-        .style("width", this.height - this.margin.bottom + "px")
-        .style("left", (this.height - this.margin.bottom - this.margin.top)/2*-1 + "px")
+        .style("left", this.options.axisLabelPadding*-1 + "px")
         .append("div")
         .attr("class", "gd-label")
         .style("line-height", this.options.axisLabelPadding + 'px')
@@ -115,25 +96,54 @@ GeoDash.Chart = ezoop.BaseClass({
     this.container.append("div")
       .attr("class", "bars")
       .style("height", function(){
-        return yrange + "px"
+        return self.yrange + "px"
       })
       .style("width", function(){
-        return xrange + 'px'
+        return self.xrange + 'px'
       })
       .style("margin-left", function(){
         return self.width - self.xrange + 'px'
       })
 
-    if(self.className === 'LineChart') {
+    if(this.className === 'LineChart') {
       this.svg = this.container.select('.bars')
         .append('svg')
+    }
+    if(this.className === 'PieChart') {
+      this.svg = this.container.select('.bars')
+        .append('svg')
+        .append("g")
+         .attr("transform", "translate(" + this.width / 2 + "," + this.height / 2 + ")");
     }
 
     this.container.append('div')
       .attr('class', 'hoverbox')
   }
   , updateChart: function() {
-
+  }
+  , setXAxis: function() {
+    var xrange = this.width
+    if(this.options.yLabel) {
+      xrange -= this.options.axisLabelPadding
+    }
+    if(this.options.drawY) {
+      xrange -= this.options.yaxisLabelPadding
+    }
+    this.xrange = xrange
+    this.x = d3.scale.ordinal()
+      .rangeRoundBands([0, xrange], 0.05, this.options.outerPadding)
+  }
+  , setYAxis: function() {
+    var yrange = this.height
+    if(this.options.xLabel) {
+      yrange -= this.options.axisLabelPadding
+    }
+    if(this.options.drawX){
+      yrange -= this.options.axisLabelPadding
+    }
+    this.yrange = yrange
+    this.y = d3.scale.linear()
+      .range([yrange, 0])
   }
   , updateYAxis: function() {
     var self = this
@@ -263,7 +273,8 @@ GeoDash.Chart = ezoop.BaseClass({
 
     }
   }
-  , update: function () {}
+  , update: function () {
+  }
   , makeTitle: function () {
     if (this.options.title) {
       var html = '<div class="geodash-title">'
@@ -280,6 +291,10 @@ GeoDash.Chart = ezoop.BaseClass({
     this.width = this.width - this.margin.left - this.margin.right
   }
   , setHeight: function() {
+    if(this.options.barHeight !== 0 
+      && typeof this.options.barHeight != 'undefined') {
+      d3.select(this.el).style('height', 'auto')
+    }
     this.height = parseInt(d3.select(this.el).style('height'))
     this.height = this.height - this.margin.top - this.margin.bottom
     if (this.options.title) {
