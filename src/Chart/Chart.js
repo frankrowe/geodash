@@ -110,10 +110,19 @@ GeoDash.Chart = ezoop.BaseClass({
         .append('svg')
     }
     if(this.className === 'PieChart') {
+      var w = this.width
+      if(this.options.legend) {
+        w -= this.options.legendWidth
+        this.container.select('.bars')
+          .style('width', this.width - this.options.legendWidth + 'px')
+        this.container.append('div')
+          .attr('class', 'legend')
+          .style("width", this.options.legendWidth + 'px')
+      }
       this.svg = this.container.select('.bars')
         .append('svg')
         .append("g")
-         .attr("transform", "translate(" + this.width / 2 + "," + this.height / 2 + ")");
+         .attr("transform", "translate(" + w / 2 + "," + this.height / 2 + ")");
     }
 
     this.container.append('div')

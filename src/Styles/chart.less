@@ -1,7 +1,7 @@
 @import "barcharthtml.less";
 
 .geodash {
-  font: sans-serif;
+  font-family: sans-serif;
 }
 
 .axis path,
@@ -39,14 +39,23 @@ svg {
 .piechart-svg {
   .arc {
     stroke: #fff;
-    stroke-width: 3;
+  }
+  .legend {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    .legend-item {
+      text-align: left;
+      overflow: hidden;
+      .value {
+        float: left;
+        color: #444;
+        font-size: 11px;
+      }
+    }
   }
 }
 
-.legend-item {
-  font-size: 11px;
-  fill: #333;
-}
 
 .hoverbox {
   font-family: 'arial', sans-serif;

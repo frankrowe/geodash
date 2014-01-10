@@ -17,14 +17,14 @@
 .chart-html.horizontal .axis.y{z-index:2}.chart-html.horizontal .axis.y .tick .gd-label{text-align:right}
 .chart-html.horizontal .axis.x{overflow:visible;z-index:0}.chart-html.horizontal .axis.x .gd-label{position:absolute}
 .chart-html.horizontal .axis .line{width:1px}
-.geodash{font:sans-serif}
+.geodash{font-family:sans-serif}
 .axis path,.axis line{fill:none;opacity:0.6;stroke:#c5c5c5;shape-rendering:crispEdges}
 .axis text{font-size:10px;fill:#b8b8b8;font-family:'arial',sans-serif}.axis text.axis-label{fill:#a4a4a4}
 .line{fill:none;stroke:#c5c5c5}
 svg{fill:blue}
 .linechart-svg path.domain{display:none}
-.piechart-svg .arc{stroke:#fff;stroke-width:3}
-.legend-item{font-size:11px;fill:#333}
+.piechart-svg .arc{stroke:#fff}
+.piechart-svg .legend{position:absolute;top:0px;right:0px}.piechart-svg .legend .legend-item{text-align:left;overflow:hidden}.piechart-svg .legend .legend-item .value{float:left;color:#444;font-size:11px}
 .hoverbox{font-family:'arial',sans-serif;font-size:12px;position:absolute;right:5px;top:5px;display:none;opacity:0.8;background:black;color:white;padding:2px 5px 2px 5px;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px;z-index:4;pointer-events:none}
 .gd-table td{text-align:right}
 .gd-table tr.highlight{background:red}

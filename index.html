@@ -68,6 +68,10 @@
       width: 652px;
       height: 315px;
     }
+    #randomize4 {
+      float: left;
+      margin-left: 140px;
+    }
   </style>
 </head>
 <body>
@@ -81,6 +85,7 @@
     <div class="row">
       <div class="piechart chart"></div>
       <div class="linechart chart"></div>
+      <button id="randomize4">New Pie Data</button>
     </div>
     <div class="row">
       <div class="barchart2 chart"></div>
@@ -96,6 +101,7 @@
       <div class="linechart2 chart"></div>
       <button id="randomize3">New Data</button>
     </div>
+
   </div>
 </div>
   <script type="text/javascript">
@@ -146,28 +152,32 @@
 
 
     var piechart = new GeoDash.PieChart('.piechart', {
-      label: 'source',
-      value: 'percent',
+      label: 'id',
+      value: 'value',
       colors: ["#ac0000", "#e60000", "#ff4d4d"],
       opacity: 0.8,
       innerRadius: 10,
       title: 'Pie Chart',
-      legend: false,
-      arclabels: true
+      legend: true,
+      arclabels: false,
+      legendWidth: 60
     });
 
-    var data = [{
-        "source":"lol",
-        "percent":33
+    var piedata = [{
+        "id":"lol",
+        "value":33
       },{
-        "source":"cats",
-        "percent":11
+        "id":"cats",
+        "value":11
       },{
-        "source":"#woah",
-        "percent":2
+        "id":"cool",
+        "value":2
     }];
 
-    piechart.update(data);
+    piechart.update(piedata);
+    document.getElementById('randomize4').onclick = function() {
+      piechart.update(randomize())
+    }
 
     var parseDate = d3.time.format("%Y").parse;
     var linechart = new GeoDash.LineChart(".linechart", {
