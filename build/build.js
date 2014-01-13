@@ -3,8 +3,7 @@ var fs = require('fs')
   , lesscss = require('less')
 
 var result = UglifyJS.minify([
-    "../src/ezoop.js"
-    , "../src/mustache.js"
+    "../src/lib/ezoop.js"
     , "../src/GeoDash.js"
     , "../src/Chart/Chart.js"
     , "../src/Chart/TableChart.js"

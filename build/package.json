@@ -6,5 +6,13 @@
   "dependencies": {
     "uglify-js": "2.3.x",
     "less": "1.4.x"
+  },
+  "devDependencies": {
+    "gulp-util": "~2.2.9",
+    "gulp": "~3.3.1",
+    "gulp-uglify": "~0.1.0",
+    "gulp-less": "~1.1.10",
+    "gulp-concat": "~2.1.7",
+    "gulp-rename": "~0.2.1"
   }
 }

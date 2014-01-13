@@ -189,9 +189,15 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
         }
       })
       .on('mouseover', function (d, i) {
+        console.log('mouseover')
         self.mouseOver(d, i, this)
-      }).on('mouseout', function (d, i) {
+      })
+      .on('mouseout', function (d, i) {
         self.mouseOut(d, i, this)
+      })
+      .on('click', function (d, i) {
+        //self.mouseOut(d, i, this)
+        console.log('click')
       })
 
     bars.exit().remove()

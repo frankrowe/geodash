@@ -573,4 +573,1682 @@ var u,i=[],o=e(Math.abs(r)),a=-1;if(n*=o,t*=o,r*=o,0>r)for(;(u=n+r*++a)>t;)i.pus
   mustache.Writer = Writer;
 
 }));
-var _ezoop=window.ezoop,ezoop=function(){};ezoop.version="0.1",ezoop.noConflict=function(){return window.ezoop=_ezoop,this},window.ezoop=ezoop,ezoop.ExtendedClass=function(t,i){return ezoop.Class(t,i)},ezoop.BaseClass=function(t){return ezoop.Class(null,t)},ezoop.Class=function(t,i){var e=null,n=ezoop.Class;return null==t||"undefined"==typeof t?(e=function(){"undefined"!=typeof this.initialize&&this.initialize.apply(this,arguments)},e.prototype=i):(e=function(){if("undefined"!=typeof t.prototype){var i=t.prototype.initialize;"function"==typeof i&&i.apply(this,arguments)}var e="function"==typeof this.initialize?this.initialize:"undefined";"function"==typeof e&&e.apply(this,arguments)},n.inheritPrototype(e,t),n.augmentPrototype(e.prototype,i)),e},ezoop.Class.inheritPrototype=function(t,i){var e=function(){};e.prototype=i.prototype,t.prototype=new e,t.prototype.constructor=t,t.parent=i.prototype},ezoop.Class.augmentPrototype=function(t,i){if(t=t||{},i){for(var e in i){var n=i[e];void 0!==n&&(t[e]=n)}var o="function"==typeof window.Event&&i instanceof window.Event;!o&&i.hasOwnProperty&&i.hasOwnProperty("toString")&&(t.toString=i.toString)}};var oldGeoDash=window.GeoDash,GeoDash=function(){};GeoDash.version="0.2f-dev",GeoDash.noConflict=function(){return window.GeoDash=oldGeoDash,this},window.GeoDash=GeoDash,GeoDash.Chart=ezoop.BaseClass({className:"Chart",defaults:{},initialize:function(t,i){this.el=t,this.options={},this.setOptions(i),this.makeTitle(),this.setUpChart(),this.drawChart()},setOptions:function(t){for(var i in this.defaults)this.defaults.hasOwnProperty(i)&&void 0===t[i]&&(t[i]=this.defaults[i]);this.options=t},setUpChart:function(){d3.select(this.el).style("position","relative")},drawChart:function(){var t=this;if(this.margin={top:10,right:10,bottom:10,left:10},this.setWidth(),this.setHeight(),this.setXAxis(),this.setYAxis(),this.formatPercent=d3.format(".0%"),this.formatLarge=d3.format("s"),this.formatComma=d3.format(","),this.formatPercentAxisLabel=d3.format("p"),this.formatMoney=d3.format("$"),this.container=d3.select(this.el).append("div").attr("class",function(){return"geodash "+t.options.class}).style("width",this.width+"px").style("height",this.height+"px").style("margin-top",this.margin.top+"px").style("margin-bottom",this.margin.bottom+"px").style("margin-left",t.margin.left+"px").style("margin-right",this.margin.right+"px"),this.xAxisElement=this.container.append("div").attr("class","x axis").style("margin-left",function(){return t.width-t.xrange+"px"}).style("width",function(){return t.xrange+"px"}),t.options.xLabel&&this.xAxisElement.append("div").attr("class","xAxisLabel").style("height",this.options.axisLabelPadding+"px").append("div").attr("class","gd-label").style("line-height",this.options.axisLabelPadding+"px").text(this.options.xLabel),this.yAxisElement=this.container.append("div").attr("class","y axis"),t.options.yLabel&&this.yAxisElement.append("div").attr("class","yAxisLabel").style("height",this.options.axisLabelPadding+"px").style("left",-1*this.options.axisLabelPadding+"px").append("div").attr("class","gd-label").style("line-height",this.options.axisLabelPadding+"px").text(this.options.yLabel),this.container.append("div").attr("class","bars").style("height",function(){return t.yrange+"px"}).style("width",function(){return t.xrange+"px"}).style("margin-left",function(){return t.width-t.xrange+"px"}),"LineChart"===this.className&&(this.svg=this.container.select(".bars").append("svg")),"PieChart"===this.className){var i=this.width;this.options.legend&&(i-=this.options.legendWidth,this.container.select(".bars").style("width",this.width-this.options.legendWidth+"px"),this.container.append("div").attr("class","legend").style("width",this.options.legendWidth+"px")),this.svg=this.container.select(".bars").append("svg").append("g").attr("transform","translate("+i/2+","+this.height/2+")")}this.container.append("div").attr("class","hoverbox")},updateChart:function(){},setXAxis:function(){var t=this.width;this.options.yLabel&&(t-=this.options.axisLabelPadding),this.options.drawY&&(t-=this.options.yaxisLabelPadding),this.xrange=t,this.x=d3.scale.ordinal().rangeRoundBands([0,t],.05,this.options.outerPadding)},setYAxis:function(){var t=this.height;this.options.xLabel&&(t-=this.options.axisLabelPadding),this.options.drawX&&(t-=this.options.axisLabelPadding),this.yrange=t,this.y=d3.scale.linear().range([t,0])},updateYAxis:function(){var t=this;if(this.options.drawY){var i=this.y.ticks(),e=this.yAxisElement.selectAll(".tick").data(i),i=e.transition().style("top",function(i){return t.y(i)+"px"});i.select(".gd-label").text(function(i){var e=t.formatLarge(i);return t.options.money&&(e="$"+e),t.options.percent&&(e+="%"),e});var n=e.enter().append("div").attr("class","tick").style("top",function(i){return t.y(i)+"px"}).style("left",function(){return t.options.yLabel?t.options.axisLabelPadding+"px":void 0}).style("width",function(){return t.options.yLabel?t.width-t.options.axisLabelPadding+"px":t.width+"px"});e.exit().remove(),n.append("div").attr("class","line").style("width","100%"),n.append("div").attr("class","gd-label").text(function(i){var e=t.formatLarge(i);return t.options.money&&(e="$"+e),t.options.percent&&(e+="%"),e}).style("margin-top",function(){var t=d3.select(this).style("height"),i=parseInt(t)/2*-1;return i+"px"}).style("width",t.options.yaxisLabelPadding+"px")}},updateXAxis:function(){var t=this;if(this.options.drawX){var i=this.x.domain(),e=this.xAxisElement.selectAll(".tick").data(i),n=e.transition().style("left",function(i){return t.x(i)+"px"}).style("width",t.x.rangeBand()+"px");n.select(".line").style("margin-left",function(){var i=t.x.rangeBand()/2;return i+"px"}),n.select(".gd-label").text(function(i){return t.options.xFormat?t.options.xFormat(i):i});var o=e.enter().append("div").attr("class","tick").style("left",function(i){return t.x(i)+"px"}).style("width",t.x.rangeBand()+"px").style("bottom",function(){var i=t.height-t.yrange-t.options.axisLabelPadding;return i+"px"}).style("height",t.options.axisLabelPadding+"px");e.exit().remove(),o.append("div").attr("class","line").style("margin-left",function(){var i=t.x.rangeBand()/2;return i+"px"}),o.append("div").attr("class","gd-label").text(function(i){return t.options.xFormat?t.options.xFormat(i):i})}},update:function(){},makeTitle:function(){if(this.options.title){var t='<div class="geodash-title">'+this.options.title+"</div>";d3.select(this.el).html(t)}},getData:function(){return this.data},setWidth:function(){this.width=parseInt(d3.select(this.el).style("width")),this.width=this.width-this.margin.left-this.margin.right},setHeight:function(){0!==this.options.barHeight&&"undefined"!=typeof this.options.barHeight&&d3.select(this.el).style("height","auto"),this.height=parseInt(d3.select(this.el).style("height")),this.height=this.height-this.margin.top-this.margin.bottom,this.options.title&&(this.height=this.height-30)},setYAxisLabel:function(t){this.container.select(".y.axis .yAxisLabel .gd-label").text(t)},setXAxisLabel:function(t){this.container.select(".y.axis .xAxisLabel .gd-label").text(t)}}),GeoDash.BarChartHorizontal=ezoop.ExtendedClass(GeoDash.Chart,{className:"BarChartHorizontal",defaults:{x:"x",y:"y",barColors:["#f00"],opacity:.7,drawX:!1,drawY:!1,percent:!1,money:!1,title:!1,roundRadius:3,highlight:[],invert:!1,barHeight:0,padding:2,numberTicks:10,yWidth:0,round:!0,format:!1,topPadding:10,axisLabelPadding:20,rightBarPadding:10,outerPadding:.5,"class":"chart-html horizontal",hoverTemplate:"{{y}}: {{x}}",formatter:d3.format(",")},initialize:function(){},setXAxis:function(){var t=this.width;this.options.drawY&&(t-=this.options.yWidth),this.options.yLabel&&(t-=this.options.axisLabelPadding),this.xrange=t,this.x=d3.scale.linear().range([0,t-this.options.rightBarPadding]).nice()},setYAxis:function(){var t=this.height;this.options.drawX&&(t-=this.options.axisLabelPadding),this.options.xLabel&&(t-=this.options.axisLabelPadding),this.yrange=t,this.y=d3.scale.ordinal().rangeRoundBands([t,0],.05,this.options.outerPadding)},update:function(t){if(0!==this.options.barHeight){var i=this.options.barHeight*t.length+this.options.padding*t.length+2*this.options.topPadding;this.options.drawX&&(i+=this.options.axisLabelPadding),this.options.xLabel&&(i+=this.options.axisLabelPadding),this.container.select(".bars").style("height",i+"px"),this.setHeight(),this.setYAxis()}for(var e=this.options.y,n=this.options.x,o=0;o<t.length;o++){var a=t[o];null!=a[n]&&"string"==typeof a[n]&&(a[n]=+a[n].replace(",",""))}this.data=t,this.color=d3.scale.ordinal().range(this.options.barColors);var s=d3.extent(t,function(t){return t[n]});s[0]<0?this.x.domain(s):this.x.domain([0,s[1]]),this.y.domain(t.map(function(t){return t[e]})),this.updateChart(),this.updateXAxis(),this.updateYAxis()},updateChart:function(){var t=this,i=this.options.y,e=this.options.x,n=this.container.select(".bars").selectAll(".bar").data(this.data);n.transition().attr("geodash-id",function(t){return t[i]}).style("left",function(i){var n=t.x(Math.min(0,i[e]));return n===t.x(0)&&(n+=1),n+"px"}).style("top",function(e,n){var o=0;return o=0!==t.options.barHeight?t.options.barHeight*n+t.options.padding*n+t.options.topPadding:t.y(e[i]),o+"px"}).style("width",function(i){var n=Math.abs(t.x(i[e])-t.x(0));return n+"px"}).style("height",function(){return 0!==t.options.barHeight?t.options.barHeight+"px":t.y.rangeBand()+"px"}).style("opacity",function(e){for(var n=0;n<t.options.highlight.length;n++)if(t.options.highlight[n]==e[i])return 1;return t.options.opacity}).style("border-top-right-radius",function(i){var n=0,o=t.x(Math.min(0,i[e]));return o>=t.x(0)&&(n=t.options.roundRadius),n+"px"}).style("border-bottom-right-radius",function(i){var n=0,o=t.x(Math.min(0,i[e]));return o>=t.x(0)&&(n=t.options.roundRadius),n+"px"}).style("border-top-left-radius",function(i){var n=0,o=t.x(Math.min(0,i[e]));return o<t.x(0)&&(n=t.options.roundRadius),n+"px"}).style("border-bottom-left-radius",function(i){var n=0,o=t.x(Math.min(0,i[e]));return o<t.x(0)&&(n=t.options.roundRadius),n+"px"}).style("background-color",function(e){return t.color(e[i])},"important");var o=n.enter().append("div").attr("class","bar").attr("geodash-id",function(t){return t[i]}).style("left",function(i){var n=t.x(Math.min(0,i[e]));return n===t.x(0)&&(n+=1),n+"px"}).style("top",function(e,n){var o=0;return o=0!==t.options.barHeight?t.options.barHeight*n+t.options.padding*n+t.options.topPadding:t.y(e[i]),o+"px"}).style("width",function(i){var n=Math.abs(t.x(i[e])-t.x(0));return n+"px"}).style("height",function(){return 0!==t.options.barHeight?t.options.barHeight+"px":t.y.rangeBand()+"px"}).style("opacity",function(e){for(var n=0;n<t.options.highlight.length;n++)if(t.options.highlight[n]==e[i])return 1;return t.options.opacity}).style("border-top-right-radius",function(i){var n=0,o=t.x(Math.min(0,i[e]));return o>=t.x(0)&&(n=t.options.roundRadius),n+"px"}).style("border-bottom-right-radius",function(i){var n=0,o=t.x(Math.min(0,i[e]));return o>=t.x(0)&&(n=t.options.roundRadius),n+"px"}).style("border-top-left-radius",function(i){var n=0,o=t.x(Math.min(0,i[e]));return o<t.x(0)&&(n=t.options.roundRadius),n+"px"}).style("border-bottom-left-radius",function(i){var n=0,o=t.x(Math.min(0,i[e]));return o<t.x(0)&&(n=t.options.roundRadius),n+"px"}).style("-webkit-print-color-adjust","exact").style("background-color",function(e){return t.color(e[i])},"important");n.exit().remove(),o.on("mouseover",function(i,e){t.mouseOver(i,e)}).on("mouseout",function(i,e){t.mouseOut(i,e)})},updateXAxis:function(){{var t=this;this.options.y,this.options.x}if(this.options.drawX){var i=(this.container.select(".bars").style("height"),this.x.ticks(t.options.numberTicks)),e=this.xAxisElement.selectAll(".tick").data(i),i=e.transition().style("left",function(i){var e=t.x(i);return e+"px"}).style("height",function(){return t.options.xLabel?t.height-t.options.axisLabelPadding+"px":t.height+"px"});i.select(".gd-label").text(function(i){var e=t.formatLarge(i);return t.options.money&&(e="$"+e),t.options.percent&&(e+="%"),e});var n=e.enter().append("div").attr("class","tick").style("left",function(i){var e=t.x(i);return e+"px"}).style("bottom",function(){return t.options.yLabel?t.options.axisLabelPadding+"px":void 0}).style("height",function(){return t.options.xLabel?t.height-t.options.axisLabelPadding+"px":t.height+"px"});e.exit().remove(),n.append("div").attr("class","line").style("height","100%"),n.append("div").attr("class","gd-label").text(function(i){var e=t.formatLarge(i);return t.options.money&&(e="$"+e),t.options.percent&&(e+="%"),e}).style("bottom","0px").style("background",function(){var i=d3.select(t.el).style("background-color");return i}).style("margin-left",function(){var t=d3.select(this).style("width"),i=parseInt(t)/2*-1;return i+"px"}).style("height",t.options.axisLabelPadding+"px").style("line-height",t.options.axisLabelPadding+"px")}},updateYAxis:function(){var t=this,i=(this.options.y,this.options.x);if(this.options.drawY){var e=parseInt(d3.select(t.el).select(".bars").style("width"));isNaN(e)||(barWidth=e);{var n=this.y.domain(),o=this.yAxisElement.selectAll(".tick").data(n);o.transition().style("top",function(i,e){var n=0;return n=0!==t.options.barHeight?t.options.barHeight*e+t.options.padding*e+t.options.topPadding:t.y(i),n+"px"}).style("right",function(){return"0px"}).style("padding-right",function(e,n){var o=t.data[n][i],a=t.x(Math.min(0,o)),s=barWidth-a+2;return s+"px"}).style("height",function(){return 0!==t.options.barHeight?t.options.barHeight+"px":t.y.rangeBand()+"px"}).style("line-height",function(){return 0!==t.options.barHeight?t.options.barHeight+"px":t.y.rangeBand()+"px"}).select(".gd-label").text(function(t){return t}),o.enter().append("div").attr("class","tick").style("top",function(i,e){var n=0;return n=0!==t.options.barHeight?t.options.barHeight*e+t.options.padding*e+t.options.topPadding:t.y(i),n+"px"}).style("right",function(){return"0px"}).style("padding-right",function(e,n){var o=t.data[n][i],a=t.x(Math.min(0,o)),s=barWidth-a+2;return s+"px"}).style("height",function(){return 0!==t.options.barHeight?t.options.barHeight+"px":t.y.rangeBand()+"px"}).style("line-height",function(){return 0!==t.options.barHeight?t.options.barHeight+"px":t.y.rangeBand()+"px"}).on("mouseover",function(i,e){t.mouseOver(i,e,this)}).on("mouseout",function(i,e){t.mouseOut(i,e,this)}).append("div").attr("class","gd-label").text(function(t){return t})}o.exit().remove()}},mouseOver:function(t,i){var e,n,o=this,a="",n=o.data[i][o.options.x],e=o.data[i][o.options.y];if(null!==n){n=o.options.formatter(n);var s={y:e,x:n};a=Mustache.render(o.options.hoverTemplate,s)}else a="NA";var r=d3.select(o.container.selectAll(".bar")[0][i]);r.style("opacity",.9),o.container.select(".hoverbox").html(a),o.container.select(".hoverbox").transition().style("display","block")},mouseOut:function(t,i){for(var e=this,n=e.options.opacity,o=0;o<e.options.highlight.length;o++)e.options.highlight[o]==t&&(n=1);var a=d3.select(e.container.selectAll(".bar")[0][i]);a.style("opacity",n),e.container.select(".hoverbox").transition().style("display","none")},setColor:function(t){this.options.barColors=t}}),GeoDash.BarChartVertical=ezoop.ExtendedClass(GeoDash.Chart,{className:"BarChartVertical",defaults:{x:"x",y:"y",barColors:["#f00"],opacity:.7,drawX:!1,drawY:!1,xLabel:!1,yLabel:!1,percent:!1,title:!1,roundRadius:3,highlight:!1,verticalX:!1,invert:!1,roundRadius:3,axisLabelPadding:20,yaxisLabelPadding:25,"class":"chart-html vertical",outerPadding:.5,hoverTemplate:"{{x}}: {{y}}",formatter:d3.format(",")},initialize:function(){},cleanData:function(t){for(var i=this.options.y,e=(this.options.x,0);e<t.length;e++){var n=t[e];null!=n[i]&&"string"==typeof n[i]&&(n[i]=+n[i].replace(",",""))}return t},update:function(t){var i=this.options.y,e=this.options.x;this.data=t=this.cleanData(t),this.color=d3.scale.ordinal().range(this.options.barColors),this.x.domain(t.map(function(t){return t[e]}));var n=d3.extent(t,function(t){return t[i]});n[0]<0?this.y.domain(n):this.y.domain([0,n[1]]),this.updateChart(),this.updateXAxis(),this.updateYAxis()},updateChart:function(){var t=this,i=this.options.y,e=this.options.x,n=this.container.select(".bars").selectAll(".bar").data(this.data);n.transition().attr("geodash-id",function(t){return t[e]}).style("left",function(i){return t.x(i[e])+"px"}).style("width",t.x.rangeBand()+"px").style("bottom",function(e){var n=0;return n=e[i]>0?t.yrange-t.y(0):t.yrange-t.y(e[i]),n+"px"}).style("height",function(e){var n=0;return n=e[i]>0?t.y(0)-t.y(e[i]):t.y(e[i])-t.y(0),n+"px"}).style("opacity",function(i){return i[e]==t.options.highlight?1:t.options.opacity}).style("background-color",function(i){return t.color(i[e])}).style("border-top-right-radius",function(e){return e[i]>0?t.options.roundRadius+"px":0}).style("border-top-left-radius",function(e){return e[i]>0?t.options.roundRadius+"px":0}).style("border-bottom-right-radius",function(e){return e[i]<0?t.options.roundRadius+"px":0}).style("border-bottom-left-radius",function(e){return e[i]<0?t.options.roundRadius+"px":0}).style("background-color",function(i){return t.color(i[e])}),n.enter().append("div").attr("class","bar").attr("geodash-id",function(t){return t[e]}).style("left",function(i){return t.x(i[e])+"px"}).style("width",t.x.rangeBand()+"px").style("bottom",function(e){var n=0;return n=e[i]>0?t.yrange-t.y(0):t.yrange-t.y(e[i]),n+"px"}).style("height",function(e){var n=0;return n=e[i]>0?t.y(0)-t.y(e[i]):t.y(e[i])-t.y(0),n+"px"}).style("opacity",function(i){return i[e]==t.options.highlight?1:t.options.opacity}).style("background-color",function(i){return t.color(i[e])}).style("border-top-right-radius",function(e){return e[i]>0?t.options.roundRadius+"px":0}).style("border-top-left-radius",function(e){return e[i]>0?t.options.roundRadius+"px":0}).style("border-bottom-right-radius",function(e){return e[i]<0?t.options.roundRadius+"px":0}).style("border-bottom-left-radius",function(e){return e[i]<0?t.options.roundRadius+"px":0}).on("mouseover",function(i,e){console.log("mouseover"),t.mouseOver(i,e,this)}).on("mouseout",function(i,e){t.mouseOut(i,e,this)}).on("click",function(){console.log("click")}),n.exit().remove()},mouseOver:function(t,i,e){var n,o,a=this,s="",o=a.data[i][a.options.x],n=a.data[i][a.options.y];if(null!==n){n=a.options.formatter(n);var r={y:n,x:o};s=Mustache.render(a.options.hoverTemplate,r)}else s="NA";d3.select(e).style("opacity",.9),a.container.select(".hoverbox").html(s),a.container.select(".hoverbox").transition().style("display","block")},mouseOut:function(t,i,e){var n=this,o=n.options.opacity;t[n.options.x]==n.options.highlight&&(o=1),d3.select(e).style("opacity",o),n.container.select(".hoverbox").transition().style("display","none")},setColor:function(t){this.options.barColors=t}}),GeoDash.LineChart=ezoop.ExtendedClass(GeoDash.Chart,{className:"LineChart",defaults:{x:"x",y:"y",width:"auto",height:"auto",colors:["#d80000","#006200"],interpolate:"monotone",dotRadius:3,title:!1,opacity:.5,strokeWidth:2,drawX:!0,drawY:!0,xLabel:!1,yLabel:!1,xInterval:"auto",dashed:!1,time:!0,axisLabelPadding:20,yaxisLabelPadding:25,"class":"chart-html linechart vertical",xFormat:d3.time.format("%Y-%m-%d"),hoverTemplate:"{{x}}: {{y}}",formatter:d3.format(","),outerPadding:0},initialize:function(){},update:function(t){var i=this;if(this.data=t,this.color=d3.scale.ordinal().range(this.options.colors),this.color.domain(d3.keys(t[0]).filter(function(t){return t!==i.options.x})),this.linedata=this.color.domain().map(function(e){return{name:e,values:t.map(function(t){var n,o=t[i.options.x];return n=null===t[e]?null:+t[e],{date:o,value:n}})}}),this.options.dashed){var e=[];this.options.dashed.forEach(function(t){var n=i.linedata[t.line];if("undefined"!=typeof n){var o={};o.name=JSON.parse(JSON.stringify(n.name)),o.values=[],o.dashed=!0,t.span.forEach(function(t){for(var i=t.start;i<=t.end;i++)o.values.push({date:n.values[i].date,value:JSON.parse(JSON.stringify(n.values[i].value))}),i!==t.end&&(n.values[i].value=null)}),e.push(o)}}),e.forEach(function(t){i.linedata.push(t)})}for(var n=0;n<this.linedata.length;n++){for(var o=[],a=0;a<this.linedata[n].values.length;a++){var s=this.linedata[n].values[a].value;isNaN(s)||null===s||o.push(this.linedata[n].values[a])}this.linedata[n].values=o}this.xLine=this.options.time?d3.time.scale().range([0,this.xrange]):d3.scale.linear().range([0,this.xrange]),this.xLine.domain(d3.extent(this.data,function(t){return t[i.options.x]})),"auto"==i.options.xInterval?this.xLine.ticks(t.length):this.xLine.ticks(i.options.xInterval),this.x.domain(this.xLine.ticks()),this.y.domain([d3.min(this.linedata,function(t){return d3.min(t.values,function(t){return t.value})}),d3.max(this.linedata,function(t){return d3.max(t.values,function(t){return t.value})})]);var r=this.y.domain();this.y.domain([r[0]-.1*r[0],r[1]+.1*r[1]]),this.updateChart(),this.updateXAxis(),this.updateYAxis()},updateChart:function(){var t=this;this.line=d3.svg.line().interpolate(this.options.interpolate).x(function(i){return t.x(i.date)+t.x.rangeBand()/2}).y(function(i){return t.y(i.value)});var i=function(t,i){return 10*i},e=this.svg.selectAll(".line_group").data(this.linedata),n=this.svg.selectAll(".line").data(this.linedata);n.transition().style("stroke",function(i){return t.color(i.name)}).style("stroke-dasharray",function(t){return t.dashed?"5, 5":"none"}).attr("d",function(i){return t.line(i.values)}),n.enter().append("g").attr("class",function(t,i){return"line_group line_group"+i}).append("path").attr("class","line").attr("d",function(i){return t.line(i.values)}).style("stroke",function(i){return t.color(i.name)}).style("stroke-width",t.options.strokeWidth).style("stroke-dasharray",function(t){return t.dashed?"5, 5":"none"}).style("stroke-opacity",t.options.opacity);n.exit().selectAll(".dot");n.exit().remove(),e.exit().remove();for(var o=0;o<this.linedata.length;o++){var a=this.linedata[o].values,s=this.svg.select(".line_group"+o).selectAll(".dot").data(a);s.transition().duration(500).delay(i).attr("data",function(t){return t.value}).style("fill",function(){return t.color(t.linedata[o].name)}).attr("cx",function(i){return t.x(i.date)+t.x.rangeBand()/2}).attr("cy",function(i){return t.y(i.value)}),s.enter().append("circle").attr("class","dot").attr("r",this.options.dotRadius).style("fill",function(){return t.color(t.linedata[o].name)}).style("fill-opacity",t.options.opacity).attr("data",function(t){return t.value}).on("mouseover",function(i,e){t.mouseOver(i,e,this)}).on("mouseout",function(i,e){t.mouseOut(i,e,this)}).attr("cx",function(i){return t.x(i.date)+t.x.rangeBand()/2}).attr("cy",function(i){return t.y(i.value)}),s.exit().remove()}},mouseOver:function(t,i,e){var n=this,o=t.value,a=t.date,s="";if(n.options.xFormat&&(a=n.options.xFormat(a)),null!==o){o=n.options.formatter(o);var r={y:o,x:a};s=Mustache.render(n.options.hoverTemplate,r)}else s="NA";d3.select(e).transition().attr("r",this.options.dotRadius+3),d3.select(e).style("fill-opacity",.9),n.container.select(".hoverbox").html(s),n.container.select(".hoverbox").transition().style("display","block")},mouseOut:function(t,i,e){var n=this;d3.select(e).style("fill-opacity",n.options.opacity),d3.select(e).transition().attr("r",this.options.dotRadius),n.container.select(".hoverbox").transition().style("display","none")}}),GeoDash.PieChart=ezoop.ExtendedClass(GeoDash.Chart,{className:"PieChart",defaults:{label:"label",value:"value",colors:["#f00","#0f0","#00f"],innerRadius:10,opacity:1,drawX:!1,drawY:!1,title:!1,padding:10,legend:!1,hover:!0,arclabels:!1,"class":"chart-html piechart-svg",formatter:d3.format(",.0f"),formatPercent:d3.format(".2f"),hoverTemplate:"{{label}}: {{value}} ({{percent}}%)",labelColor:"#ccc",legendWidth:80,arcstroke:2},initialize:function(){},setColors:function(t){this.color=d3.scale.ordinal().range(t)},update:function(t){var i=this,e=Math.min(this.width,this.height);this.options.legend&&(e-=this.options.legendWidth);var n=e/2;this.arc=d3.svg.arc().outerRadius(n).innerRadius(this.options.innerRadius),this.pie=d3.layout.pie().sort(null).value(function(t){return t[i.options.value]}),this.color=d3.scale.ordinal().range(this.options.colors),this.total=0,t.forEach(function(e,n){e[i.options.value]=+e[i.options.value],+e[i.options.value]<0?t.splice(n,1):i.total+=+e[i.options.value]});var o=this.svg.selectAll("path").data(this.pie(t));if(o.style("fill",function(t){return i.color(t.data[i.options.label])}).attr("d",this.arc),o.enter().append("path").attr("class","arc").attr("d",this.arc).style("fill",function(t){return i.color(t.data[i.options.label])}).style("fill-opacity",this.options.opacity).style("stroke-width",this.options.arcstroke).on("mouseover",function(t){if(d3.select(this).style("fill-opacity",1),i.options.hover){var e=t.data[i.options.label],n=i.options.formatter(t.value),o=i.options.formatPercent(t.value/i.total*100),a={label:e,value:n,percent:o};output=Mustache.render(i.options.hoverTemplate,a),i.container.select(".hoverbox").html(output),i.container.select(".hoverbox").style("display","block")}}).on("mouseout",function(){i.container.select(".hoverbox").html(""),i.container.select(".hoverbox").style("display","none"),d3.select(this).style("fill-opacity",i.options.opacity)}),o.exit().remove(),this.options.arclabels){var a=i.svg.selectAll(".arc-text").data(this.pie(t));a.select("text").attr("transform",function(t){return"translate("+i.arc.centroid(t)+")"}).text(function(t){return t.data[i.options.label]+" ("+t.value+")"}),a.enter().append("g").attr("class","arc-text").append("text").attr("transform",function(t){return"translate("+i.arc.centroid(t)+")"}).attr("dy",".35em").style("text-anchor","middle").style("fill",i.options.labelColor).text(function(t){return t.data[i.options.label]+" ("+t.value+")"}),a.exit().remove()}if(this.options.legend){var s={width:10,height:10,padding:5},r=3,l=this.container.select(".legend"),h=l.selectAll(".legend-item").data(this.color.domain().slice()),a=h.select(".value").text(function(t){return t}),d=h.enter().append("div").attr("class","legend-item");d.append("div").attr("class","swatch").style("float","left").style("width",s.width+"px").style("height",s.height+"px").style("background",this.color),d.append("div").attr("class","value").style("width",this.options.legendWidth-s.width-r+"px").style("padding-left",r+"px").text(function(t){return t}),h.exit().remove();var p=parseInt(l.style("height")),u=this.height/2-p/2;l.style("top",u+"px")}}}),GeoDash.TableChart=ezoop.ExtendedClass(GeoDash.Chart,{className:"TableChart",defaults:{highlight:[],format:!1},initialize:function(){},drawChart:function(){this.margin={top:20,right:10,bottom:20,left:40},this.width=("auto"===this.options.width||void 0===this.options.width?parseInt(d3.select(this.el).style("width")):this.options.width)-this.margin.left-this.margin.right,this.height=("auto"===this.options.height||void 0===this.options.height?parseInt(d3.select(this.el).style("height")):this.options.height)-this.margin.top-this.margin.bottom,this.options.title&&(this.height=this.height-30),this.formatPercent=d3.format(".2%"),this.formatPercentAxisLabel=d3.format(".0%"),this.formatLarge=d3.format("s"),this.formatComma=d3.format(",.2f"),this.table=d3.select(this.el).append("table").attr("width",this.width+this.margin.left+this.margin.right).attr("class","table table-condensed table-bordered gd-table"),this.tbody=this.table.append("tbody")},update:function(t){var i=this,e=this.tbody.selectAll("tr").data(t).attr("style",function(t){for(var e=t[i.options.columns[0]],n=0;n<i.options.highlight.length;n++)if(i.options.highlight[n]==e)return"background:"+i.options.color;return""});e.enter().append("tr").attr("style",function(t){for(var e=t[i.options.columns[0]],n=0;n<i.options.highlight.length;n++)if(i.options.highlight[n]==e)return"background:"+i.options.color;return""}),e.exit().remove();var n=e.selectAll("td").data(function(t){return i.options.columns.map(function(i){return{column:i,value:t[i]}})});return n.transition().text(function(t){return i.format(t)}),n.enter().append("td").text(function(t){return i.format(t)}),n.exit().remove(),this},format:function(t){var i="",e=this;if(null===t.value)return i="NA";if(isNaN(parseFloat(t.value)))i=t.value;else{if(e.options.format){var n=d3.format(",."+e.options.format.precision+"f");i=n(t.value)}else i=e.formatComma(t.value);e.options.money&&(i="$"+i),e.options.percent&&(i+="%")}return i}});
+var _ezoop = window.ezoop,
+    ezoop = function () {};
+
+ezoop.version = '0.1'
+
+ezoop.noConflict = function () {
+  window.ezoop = _ezoop;
+  return this;
+};
+
+window.ezoop = ezoop;
+
+ezoop.ExtendedClass = function(parentClass, properties) {
+  return ezoop.Class(parentClass, properties);
+}
+
+ezoop.BaseClass = function(properties) {
+  return ezoop.Class(null, properties);
+}
+
+ezoop.Class = function (parentClass, childClass) {
+  var _class_ = null;
+  var self = ezoop.Class;
+  if (parentClass == null || typeof parentClass == 'undefined') {
+    _class_ = function () {
+      if (typeof this.initialize != 'undefined') {
+        this.initialize.apply(this, arguments);
+      }
+    }
+    _class_.prototype = childClass;
+  }
+  else {
+    _class_ = function () {
+      if (typeof parentClass.prototype != 'undefined') {
+        var parentInit = parentClass.prototype.initialize;
+        if (typeof parentInit == 'function') {
+          parentInit.apply(this, arguments);
+        }
+      }
+      var init = typeof this.initialize == "function" ? this.initialize : 'undefined';
+        if (typeof init == 'function') {
+          init.apply(this, arguments);
+        }
+    }
+    self.inheritPrototype(_class_, parentClass); //inherit prototype
+    self.augmentPrototype(_class_.prototype, childClass); //augment prototype
+  }
+  return _class_;
+}
+
+ezoop.Class.inheritPrototype = function (child, parent) {
+  var f = function () { };
+  f.prototype = parent.prototype;
+  child.prototype = new f();
+  child.prototype.constructor = child;
+  child.parent = parent.prototype;
+}
+
+ezoop.Class.augmentPrototype = function (child, parent) {
+  child = child || {};
+  if (parent) {
+    for (var property in parent) {
+      var value = parent[property];
+      if (value !== undefined) {
+        child[property] = value;
+      }
+    }
+    var sourceIsEvt = typeof window.Event == "function" && parent instanceof window.Event;
+    if (!sourceIsEvt && parent.hasOwnProperty && parent.hasOwnProperty("toString")) {
+      child.toString = parent.toString;
+    }
+  }
+}
+var oldGeoDash = window.GeoDash
+  , GeoDash = function () {}
+
+GeoDash.version = '0.2f-dev'
+
+GeoDash.noConflict = function () {
+  window.GeoDash = oldGeoDash
+  return this
+}
+
+window.GeoDash = GeoDash
+/*
+Chart base class
+*/
+GeoDash.Chart = ezoop.BaseClass({
+  className: 'Chart'
+  , defaults: {
+    
+  }
+  , initialize: function (el, options) {
+    this.el = el
+    this.options = {}
+    this.setOptions(options)
+    this.makeTitle()
+    this.setUpChart()
+    this.drawChart()
+  }
+  , setOptions: function (options) {
+    for (var key in this.defaults) {
+      if (this.defaults.hasOwnProperty(key)) {
+        if (options[key] === undefined) {
+          options[key] = this.defaults[key]
+        }
+      }
+    }
+    this.options = options
+  }
+  , setUpChart: function(){
+    d3.select(this.el).style('position', 'relative')
+  }
+  , drawChart: function () {
+    var self = this
+      , padding = 10
+
+    this.margin = { 
+      top: 10
+      , right: 10
+      , bottom: 10
+      , left: 10
+    }
+
+    this.setWidth()
+    this.setHeight()
+    this.setXAxis()
+    this.setYAxis()
+
+    this.formatPercent = d3.format(".0%")
+    this.formatLarge = d3.format("s")
+    this.formatComma = d3.format(",")
+    this.formatPercentAxisLabel = d3.format("p")
+    this.formatMoney = d3.format("$")
+
+    this.container = d3.select(this.el).append("div")
+      .attr("class", function() {
+        return "geodash " + self.options.class
+      })
+      .style("width", this.width + "px")
+      .style("height", this.height + "px")
+      .style("margin-top", this.margin.top + "px")
+      .style("margin-bottom", this.margin.bottom + "px")
+      .style("margin-left", self.margin.left + "px")
+      .style("margin-right", this.margin.right + "px")
+
+    this.xAxisElement = this.container.append("div")
+      .attr("class", "x axis")
+      .style("margin-left", function(){
+        return self.width - self.xrange + 'px'
+      })
+      .style("width", function(){
+        return self.xrange + 'px'
+      })
+
+    if(self.options.xLabel) {
+      this.xAxisElement.append("div")
+        .attr("class", "xAxisLabel")
+        .style("height", this.options.axisLabelPadding + 'px')
+        .append("div")
+        .attr("class", "gd-label")
+        .style("line-height", this.options.axisLabelPadding + 'px')
+        .text(this.options.xLabel)
+    }
+
+    this.yAxisElement = this.container.append("div")
+      .attr("class", "y axis")
+
+    if(self.options.yLabel) {
+      this.yAxisElement.append("div")
+        .attr("class", "yAxisLabel")
+        .style("height", this.options.axisLabelPadding + 'px')
+        .style("left", this.options.axisLabelPadding*-1 + "px")
+        .append("div")
+        .attr("class", "gd-label")
+        .style("line-height", this.options.axisLabelPadding + 'px')
+        .text(this.options.yLabel)
+    }
+
+    this.container.append("div")
+      .attr("class", "bars")
+      .style("height", function(){
+        return self.yrange + "px"
+      })
+      .style("width", function(){
+        return self.xrange + 'px'
+      })
+      .style("margin-left", function(){
+        return self.width - self.xrange + 'px'
+      })
+
+    if(this.className === 'LineChart') {
+      this.svg = this.container.select('.bars')
+        .append('svg')
+    }
+    if(this.className === 'PieChart') {
+      var w = this.width
+      if(this.options.legend) {
+        w -= this.options.legendWidth
+        this.container.select('.bars')
+          .style('width', this.width - this.options.legendWidth + 'px')
+        this.container.append('div')
+          .attr('class', 'legend')
+          .style("width", this.options.legendWidth + 'px')
+      }
+      this.svg = this.container.select('.bars')
+        .append('svg')
+        .append("g")
+         .attr("transform", "translate(" + w / 2 + "," + this.height / 2 + ")");
+    }
+
+    this.container.append('div')
+      .attr('class', 'hoverbox')
+  }
+  , updateChart: function() {
+  }
+  , setXAxis: function() {
+    var xrange = this.width
+    if(this.options.yLabel) {
+      xrange -= this.options.axisLabelPadding
+    }
+    if(this.options.drawY) {
+      xrange -= this.options.yaxisLabelPadding
+    }
+    this.xrange = xrange
+    this.x = d3.scale.ordinal()
+      .rangeRoundBands([0, xrange], 0.05, this.options.outerPadding)
+  }
+  , setYAxis: function() {
+    var yrange = this.height
+    if(this.options.xLabel) {
+      yrange -= this.options.axisLabelPadding
+    }
+    if(this.options.drawX){
+      yrange -= this.options.axisLabelPadding
+    }
+    this.yrange = yrange
+    this.y = d3.scale.linear()
+      .range([yrange, 0])
+  }
+  , updateYAxis: function() {
+    var self = this
+    if (this.options.drawY) {
+      var ticks = this.y.ticks()
+      var tickElements = this.yAxisElement
+        .selectAll(".tick")
+        .data(ticks)
+
+      var ticks = tickElements.transition()
+        .style("top", function(d) {
+          return self.y(d)  + 'px'
+        })
+
+      ticks.select('.gd-label')
+        .text(function(d){
+          var label = self.formatLarge(d)
+          if (self.options.money) {
+            label = '$' + label
+          }
+          if (self.options.percent) {
+            label = label + '%'
+          }
+          return label
+        })
+
+      var newTicks = tickElements.enter().append('div')
+        .attr("class", "tick")
+        .style("top", function(d) {
+          return self.y(d) + 'px'
+        })
+        .style("left", function(){
+          if(self.options.yLabel) {
+            return self.options.axisLabelPadding + 'px'
+          }
+        })
+        .style("width", function(){
+          if(self.options.yLabel) {
+            return self.width - self.options.axisLabelPadding + "px"
+          } else {
+            return self.width + "px"
+          }
+        })
+
+      tickElements.exit().remove()
+
+      newTicks
+        .append('div')
+        .attr("class", "line")
+        .style("width", "100%")
+
+      newTicks
+        .append('div')
+        .attr("class", "gd-label")
+        .text(function(d){
+          var label = self.formatLarge(d)
+          if (self.options.money) {
+            label = '$' + label
+          }
+          if (self.options.percent) {
+            label = label + '%'
+          }
+          return label
+        })
+        .style("margin-top", function(d){
+          var h = d3.select(this).style('height')
+          var m = (parseInt(h)/2*-1)
+          return m + 'px'
+        })
+        .style("width", self.options.yaxisLabelPadding + 'px')
+    }
+  }
+  , updateXAxis: function() {
+    var self = this
+    if (this.options.drawX) {
+      var labels = this.x.domain()
+      var tickElements = this.xAxisElement
+        .selectAll(".tick")
+        .data(labels)
+
+      var ticks = tickElements.transition()
+        .style("left", function (d) { return self.x(d) + 'px' })
+        .style("width", self.x.rangeBand() + 'px')
+
+      ticks.select('.line')
+        .style("margin-left", function(d, i){
+          var m = self.x.rangeBand() / 2
+          return m + 'px'
+        })
+      ticks.select('.gd-label')
+        .text(function(d){
+          if(self.options.xFormat) {
+            return self.options.xFormat(d)
+          } else {
+            return d
+          }
+        })
+
+      var newTicks = tickElements.enter().append('div')
+        .attr("class", "tick")
+        .style("left", function (d) { return self.x(d) + 'px' })
+        .style("width", self.x.rangeBand() + 'px')
+        .style("bottom", function (d) {
+          var b = self.height - self.yrange - self.options.axisLabelPadding
+          return b + 'px'
+        })
+        .style("height", self.options.axisLabelPadding + 'px')
+
+      tickElements.exit().remove()
+
+      newTicks.append('div')
+        .attr("class", "line")
+        .style("margin-left", function(d, i){
+          var m = self.x.rangeBand() / 2
+          return m + 'px'
+        })
+
+      newTicks.append('div')
+        .attr("class", "gd-label")
+        .text(function(d){
+          if(self.options.xFormat) {
+            return self.options.xFormat(d)
+          } else {
+            return d
+          }
+        })
+
+    }
+  }
+  , update: function () {
+  }
+  , makeTitle: function () {
+    if (this.options.title) {
+      var html = '<div class="geodash-title">'
+        + this.options.title
+        + '</div>'
+      d3.select(this.el).html(html)
+    }
+  }
+  , getData: function() {
+    return this.data
+  }
+  , setWidth: function () {
+    this.width = parseInt(d3.select(this.el).style('width'))
+    this.width = this.width - this.margin.left - this.margin.right
+  }
+  , setHeight: function() {
+    if(this.options.barHeight !== 0 
+      && typeof this.options.barHeight != 'undefined') {
+      d3.select(this.el).style('height', 'auto')
+    }
+    this.height = parseInt(d3.select(this.el).style('height'))
+    this.height = this.height - this.margin.top - this.margin.bottom
+    if (this.options.title) {
+      this.height = this.height - 30
+    }
+  }
+  , setYAxisLabel: function(label) {
+    this.container.select(".y.axis .yAxisLabel .gd-label").text(label)
+  }
+  , setXAxisLabel: function(label) {
+    this.container.select(".y.axis .xAxisLabel .gd-label").text(label)
+  }
+})
+//BarChart extends Chart
+GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
+  className: 'BarChartHorizontal',
+  defaults: {
+    x: 'x'
+    , y: 'y'
+    , barColors: ['#f00']
+    , opacity: 0.7
+    , drawX: false
+    , drawY: false
+    , percent: false
+    , money: false
+    , title: false
+    , roundRadius: 3
+    , highlight: []
+    , invert: false
+    , barHeight: 0
+    , padding: 2
+    , numberTicks: 10
+    , yWidth: 0
+    , round: true
+    , format: false
+    , topPadding: 10
+    , axisLabelPadding: 20
+    , rightBarPadding: 10
+    , outerPadding: 0.5
+    , class: 'chart-html horizontal'
+    , hoverTemplate: "{{y}}: {{x}}"
+    , formatter: d3.format(",")
+  }
+  , initialize: function (el, options) {
+
+  }
+  , setXAxis: function() {
+    var xrange = this.width
+    if(this.options.drawY){
+      xrange -= this.options.yWidth
+    }
+    if(this.options.yLabel) {
+      xrange -= this.options.axisLabelPadding
+    }
+    this.xrange = xrange
+    this.x = d3.scale.linear()
+      .range([0, xrange- this.options.rightBarPadding]).nice()
+
+  }
+  ,setYAxis: function() {
+    var yrange = this.height
+    if(this.options.drawX) {
+      yrange -= this.options.axisLabelPadding
+    }
+    if(this.options.xLabel){
+      yrange -= this.options.axisLabelPadding
+    }
+    this.yrange = yrange
+    this.y = d3.scale.ordinal()
+      .rangeRoundBands([yrange, 0], 0.05, this.options.outerPadding)
+  }
+  , update: function (data) {
+    var self = this
+
+    if(this.options.barHeight !== 0) {
+      var height = this.options.barHeight * data.length
+        + this.options.padding * data.length
+        + this.options.topPadding * 2
+        if(this.options.drawX) {
+          height += this.options.axisLabelPadding
+        }
+        if(this.options.xLabel) {
+          height += this.options.axisLabelPadding
+        }
+      this.container.select('.bars')
+        .style('height', height + 'px')
+      this.setHeight()
+      this.setYAxis()
+    }
+
+    var y = this.options.y
+    var x = this.options.x
+
+    for(var i = 0; i < data.length; i++){
+      var d = data[i]
+      if(d[x] != null){
+        if(typeof d[x] === 'string') {
+          d[x] = +d[x].replace(",", "")
+        }
+      }
+    }
+    this.data = data
+
+    this.color = d3.scale.ordinal()
+      .range(this.options.barColors)
+
+    var extent = d3.extent(data, function(d) { return d[x] })
+    if(extent[0] < 0){
+      this.x.domain(extent)
+    } else {
+      this.x.domain([0, extent[1]])
+    }
+    
+    this.y.domain(data.map(function(d) { return d[y] }))
+
+    this.updateChart()
+    this.updateXAxis()
+    this.updateYAxis()
+  }
+  , updateChart: function() {
+    var self = this
+      , y = this.options.y
+      , x = this.options.x
+    
+    var bars = this.container.select(".bars")
+        .selectAll(".bar")
+        .data(this.data)
+
+    bars.transition()
+      .attr("geodash-id", function (d) { return d[y] })
+      .style("left", function(d) {
+        var xposition = self.x(Math.min(0, d[x]))
+        if(xposition === self.x(0)) {
+          xposition += 1
+        }
+        return xposition + 'px'
+      })
+      .style("top", function(d, i) {
+        var top = 0
+        if(self.options.barHeight !== 0){
+          top = self.options.barHeight * i
+            + self.options.padding * i
+            + self.options.topPadding
+        } else {
+          top = self.y(d[y])
+        }
+        return top + 'px'
+      })
+      .style("width", function(d) {
+        var w = Math.abs(self.x(d[x]) - self.x(0))
+        return w + 'px'
+      })
+      .style("height", function(d){
+        if(self.options.barHeight !== 0){
+          return self.options.barHeight + "px"
+        } else {
+          return self.y.rangeBand() + "px"
+        }
+      })
+      .style("opacity", function(d){
+        for(var i = 0; i < self.options.highlight.length; i++){
+          if(self.options.highlight[i] == d[y]) return 1
+        }
+        return self.options.opacity
+      })
+      .style("border-top-right-radius", function(d){
+        var r = 0
+        var xposition = self.x(Math.min(0, d[x]))
+        if(xposition >= self.x(0)) {
+          r = self.options.roundRadius
+        }
+        return r + 'px'
+      })
+      .style("border-bottom-right-radius", function(d){
+        var r = 0
+          , xposition = self.x(Math.min(0, d[x]))
+        if(xposition >= self.x(0)) {
+          r = self.options.roundRadius
+        }
+        return r + 'px'
+      })
+      .style("border-top-left-radius", function(d){
+        var r = 0
+          , xposition = self.x(Math.min(0, d[x]))
+        if(xposition < self.x(0)) {
+          r = self.options.roundRadius
+        }
+        return r + 'px'
+      })
+      .style("border-bottom-left-radius", function(d){
+        var r = 0
+          , xposition = self.x(Math.min(0, d[x]))
+        if(xposition < self.x(0)) {
+          r = self.options.roundRadius
+        }
+        return r + 'px'
+      })
+      .style("background-color", function(d) { return self.color(d[y]) }, 'important')
+
+    var barsenter = bars.enter().append("div")
+      .attr("class", "bar")
+      .attr("geodash-id", function (d) { return d[y] })
+      .style("left", function(d) {
+        var xposition = self.x(Math.min(0, d[x]))
+        if(xposition === self.x(0)) {
+          xposition += 1
+        }
+        return xposition + 'px'
+      })
+      .style("top", function(d, i) {
+        var top = 0
+        if(self.options.barHeight !== 0){
+          top = self.options.barHeight * i
+            + self.options.padding * i
+            + self.options.topPadding
+        } else {
+          top = self.y(d[y])
+        }
+        return top + 'px'
+      })
+      .style("width", function(d) {
+        var w = Math.abs(self.x(d[x]) - self.x(0))
+        return w + 'px'
+      })
+      .style("height", function(d){
+        if(self.options.barHeight !== 0){
+          return self.options.barHeight + "px"
+        } else {
+          return self.y.rangeBand() + "px"
+        }
+      })
+      .style("opacity", function(d){
+        for(var i = 0; i < self.options.highlight.length; i++){
+          if(self.options.highlight[i] == d[y]) return 1
+        }
+        return self.options.opacity
+      })
+      .style("border-top-right-radius", function(d){
+        var r = 0
+          , xposition = self.x(Math.min(0, d[x]))
+        if(xposition >= self.x(0)) {
+          r = self.options.roundRadius
+        }
+        return r + 'px'
+      })
+      .style("border-bottom-right-radius", function(d){
+        var r = 0
+          , xposition = self.x(Math.min(0, d[x]))
+        if(xposition >= self.x(0)) {
+          r = self.options.roundRadius
+        }
+        return r + 'px'
+      })
+      .style("border-top-left-radius", function(d){
+        var r = 0
+          , xposition = self.x(Math.min(0, d[x]))
+        if(xposition < self.x(0)) {
+          r = self.options.roundRadius
+        }
+        return r + 'px'
+      })
+      .style("border-bottom-left-radius", function(d){
+        var r = 0
+          , xposition = self.x(Math.min(0, d[x]))
+        if(xposition < self.x(0)) {
+          r = self.options.roundRadius
+        }
+        return r + 'px'
+      })
+      .style("-webkit-print-color-adjust", "exact")
+      .style("background-color", function(d) { return self.color(d[y]) }, 'important')
+
+    bars.exit().remove()
+
+    barsenter
+      .on('mouseover', function (d, i) {
+        self.mouseOver(d, i)
+      })
+      .on('mouseout', function (d, i) {
+        self.mouseOut(d, i)
+      })
+  }
+  , updateXAxis: function() {
+    var self = this
+      , y = this.options.y
+      , x = this.options.x
+
+    if(this.options.drawX){
+      var chartHeight = this.container.select('.bars').style('height')
+      var ticks = this.x.ticks(self.options.numberTicks)
+      var tickElements = this.xAxisElement
+        .selectAll(".tick")
+        .data(ticks)
+
+      var ticks = tickElements.transition()
+        .style("left", function(d) {
+          var left = self.x(d)
+          return left + 'px'
+        })
+        .style("height", function(){
+          if(self.options.xLabel) {
+            return self.height - self.options.axisLabelPadding + "px"
+          } else {
+            return self.height + "px"
+          }
+        })
+
+      ticks.select('.gd-label')
+        .text(function(d){
+          var label = self.formatLarge(d)
+          if (self.options.money) {
+            label = '$' + label
+          }
+          if (self.options.percent) {
+            label = label + '%'
+          }
+          return label
+        })
+
+      var newTicks = tickElements.enter().append('div')
+        .attr("class", "tick")
+        .style("left", function(d) {
+          var left = self.x(d)
+          return left + 'px'
+        })
+        .style("bottom", function(){
+          if(self.options.yLabel) {
+            return self.options.axisLabelPadding + 'px'
+          }
+        })
+        .style("height", function(){
+          if(self.options.xLabel) {
+            return self.height - self.options.axisLabelPadding + "px"
+          } else {
+            return self.height + "px"
+          }
+        })
+
+      tickElements.exit().remove()
+
+      newTicks
+        .append('div')
+        .attr("class", "line")
+        .style("height", "100%")
+
+      newTicks
+        .append('div')
+        .attr("class", "gd-label")
+        .text(function(d){
+          var label = self.formatLarge(d)
+          if (self.options.money) {
+            label = '$' + label
+          }
+          if (self.options.percent) {
+            label = label + '%'
+          }
+          return label
+        })
+        .style("bottom", "0px")
+        .style("background", function(){
+          var c = d3.select(self.el).style("background-color")
+          return c
+        })
+        .style("margin-left", function(d){
+          var width = d3.select(this).style('width')
+          var m = (parseInt(width)/2*-1)
+          return m + 'px'
+        })
+        .style("height", self.options.axisLabelPadding + 'px')
+        .style("line-height", self.options.axisLabelPadding + 'px')
+    }
+  }
+  , updateYAxis: function() {
+    var self = this
+      , y = this.options.y
+      , x = this.options.x
+
+    if (this.options.drawY) {
+      var w = parseInt(d3.select(self.el).select('.bars').style("width"))
+      if(!isNaN(w)) {
+        barWidth = w
+      }
+      var labels = this.y.domain()
+
+      var tickElements = this.yAxisElement
+        .selectAll(".tick")
+        .data(labels)
+
+      var ticks = tickElements.transition()
+        .style("top", function(d, i) {
+          var top = 0
+          if(self.options.barHeight !== 0){
+            top = self.options.barHeight * i
+              + self.options.padding * i
+              + self.options.topPadding
+          } else {
+            top = self.y(d)
+          }
+          return top + 'px'
+        })
+        .style("right", function(d){
+          return '0px'
+        })
+        .style("padding-right", function(d, i){
+          var value = self.data[i][x]
+            , left = self.x(Math.min(0, value))
+            , p = (barWidth - left) + 2
+          return p + "px"
+        })
+        .style("height", function(d){
+          if(self.options.barHeight !== 0) {
+            return self.options.barHeight + "px"
+          } else {
+            return self.y.rangeBand() + "px"
+          }
+        })
+        .style("line-height", function(d){
+          if(self.options.barHeight !== 0) {
+            return self.options.barHeight + "px"
+          } else {
+            return self.y.rangeBand() + "px"
+          }
+        })
+        .select('.gd-label')
+          .text(function(d){
+            return d
+          })
+
+
+      var newTicks = tickElements.enter().append('div')
+        .attr("class", "tick")
+        .style("top", function(d, i) {
+          var top = 0
+          if(self.options.barHeight !== 0){
+            top = self.options.barHeight * i
+              + self.options.padding * i
+              + self.options.topPadding
+          } else {
+            top = self.y(d)
+          }
+          return top + 'px'
+        })
+        .style("right", function(d){
+          return '0px'
+        })
+        .style("padding-right", function(d, i){
+          var value = self.data[i][x]
+            , left = self.x(Math.min(0, value))
+            , p = (barWidth - left) + 2
+          return p + "px"
+        })
+        .style("height", function(d){
+          if(self.options.barHeight !== 0) {
+            return self.options.barHeight + "px"
+          } else {
+            return self.y.rangeBand() + "px"
+          }
+        })
+        .style("line-height", function(d){
+          if(self.options.barHeight !== 0) {
+            return self.options.barHeight + "px"
+          } else {
+            return self.y.rangeBand() + "px"
+          }
+        })
+        .on('mouseover', function (d, i) {
+          self.mouseOver(d, i, this)
+        })
+        .on('mouseout', function (d, i) {
+          self.mouseOut(d, i, this)
+        })
+        .append('div')
+          .attr("class", "gd-label")
+          .text(function(d){
+            return d
+          })
+
+      tickElements.exit().remove()
+    }
+  }
+  , mouseOver: function(d, i, el) {
+    var self = this
+      , y
+      , x
+      , output = ''
+
+    var x = self.data[i][self.options.x]
+    var y = self.data[i][self.options.y]
+    if(x !== null) {
+      x = self.options.formatter(x)
+      var view = {
+        y: y
+        , x: x
+      }
+      output = Mustache.render(self.options.hoverTemplate, view)
+    } else {
+      output = 'NA'
+    }
+
+    var bar = d3.select(self.container.selectAll('.bar')[0][i])
+    bar.style('opacity', 0.9)
+
+    self.container.select('.hoverbox')
+      .html(output)
+
+    self.container.select('.hoverbox')
+      .transition()
+      .style('display', 'block')
+  }
+  , mouseOut: function(d, i, el) {
+    var self = this
+    var opacity = self.options.opacity
+    for(var j = 0; j < self.options.highlight.length; j++) {
+      if(self.options.highlight[j] == d) opacity =  1
+    }
+  
+    var bar = d3.select(self.container.selectAll('.bar')[0][i])
+    bar.style('opacity', opacity)
+    self.container.select('.hoverbox')
+      .transition()
+      .style('display', 'none')
+  }
+  , setColor: function(colors) {
+    this.options.barColors = colors
+  }
+})
+
+//BarChart extends Chart
+GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
+  className: 'BarChartVertical'
+  , defaults: {
+    x: 'x'
+    , y: 'y'
+    , barColors: ['#f00']
+    , opacity: 0.7
+    , drawX: false
+    , drawY: false
+    , xLabel: false
+    , yLabel: false
+    , percent: false
+    , title: false
+    , roundRadius: 3
+    , highlight: false
+    , verticalX: false
+    , invert: false
+    , roundRadius: 3
+    , axisLabelPadding: 20
+    , yaxisLabelPadding: 25
+    , class: 'chart-html vertical'
+    , outerPadding: 0.5
+    , hoverTemplate: "{{x}}: {{y}}"
+    , formatter: d3.format(",")
+  }
+  , initialize: function (el, options) {
+
+  }
+  , cleanData: function (data) {
+    var y = this.options.y
+      , x = this.options.x
+
+    for(var i = 0; i < data.length; i++){
+      var d = data[i]
+      if(d[y] != null){
+        if(typeof d[y] === 'string') {
+          d[y] = +d[y].replace(",", "")
+        }
+      }
+    }
+    return data
+  }
+  , update: function (data) {
+    var self = this
+      , y = this.options.y
+      , x = this.options.x
+
+    this.data = data = this.cleanData(data)
+
+    this.color = d3.scale.ordinal()
+      .range(this.options.barColors)
+
+    this.x.domain(data.map(function (d) { return d[x] }))
+
+    var extent = d3.extent(data, function(d) { return d[y] })
+    if(extent[0] < 0){
+      this.y.domain(extent)
+    } else {
+      this.y.domain([0, extent[1]])
+    }
+
+
+    this.updateChart()
+    this.updateXAxis()
+    this.updateYAxis()
+
+  }
+  , updateChart: function() {
+    var self = this
+      , y = this.options.y
+      , x = this.options.x
+
+    var bars = this.container.select(".bars")
+      .selectAll(".bar")
+      .data(this.data)
+
+    bars.transition()
+      .attr("geodash-id", function (d) { return d[x] })
+      .style("left", function (d) { return self.x(d[x]) + 'px' })
+      .style("width", self.x.rangeBand() + 'px')
+      .style("bottom", function (d) {
+        var bottom = 0
+        if(d[y] > 0){
+          bottom = self.yrange - self.y(0)
+        } else {
+          bottom = self.yrange - self.y(d[y])
+        }
+        return bottom + 'px'
+      })
+      .style("height", function (d) {
+        var height = 0
+        if(d[y] > 0) {
+          height = self.y(0) - self.y(d[y])
+        } else {
+          height = self.y(d[y]) - self.y(0)
+        }
+        return height + 'px'
+      })
+      .style("opacity", function(d){
+        if(d[x] == self.options.highlight) return 1
+        else return self.options.opacity
+      })
+      .style("background-color", function(d) { return self.color(d[x]) })
+      .style("border-top-right-radius", function(d){
+        if(d[y] > 0) {
+          return self.options.roundRadius + 'px'
+        } else {
+          return 0
+        }
+      })
+      .style("border-top-left-radius", function(d){
+        if(d[y] > 0) {
+          return self.options.roundRadius + 'px'
+        } else {
+          return 0
+        }
+      })
+      .style("border-bottom-right-radius", function(d){
+        if(d[y] < 0) {
+          return self.options.roundRadius + 'px'
+        } else {
+          return 0
+        }
+      })
+      .style("border-bottom-left-radius", function(d){
+        if(d[y] < 0) {
+          return self.options.roundRadius + 'px'
+        } else {
+          return 0
+        }
+      })
+      .style("background-color", function(d) { return self.color(d[x]) })
+
+    bars.enter().append("div")
+      .attr("class", "bar")
+      .attr("geodash-id", function (d) { return d[x] })
+      .style("left", function (d) { return self.x(d[x]) + 'px' })
+      .style("width", self.x.rangeBand() + 'px')
+      .style("bottom", function (d) {
+        var bottom = 0
+        if(d[y] > 0){
+          bottom = self.yrange - self.y(0)
+        } else {
+          bottom = self.yrange - self.y(d[y])
+        }
+        return bottom + 'px'
+      })
+      .style("height", function (d) {
+        var height = 0
+        if(d[y] > 0) {
+          height = self.y(0) - self.y(d[y])
+        } else {
+          height = self.y(d[y]) - self.y(0)
+        }
+        return height + 'px'
+      })
+      .style("opacity", function(d){
+        if(d[x] == self.options.highlight) return 1
+        else return self.options.opacity
+      })
+      .style("background-color", function(d) { return self.color(d[x]) })
+      .style("border-top-right-radius", function(d){
+        if(d[y] > 0) {
+          return self.options.roundRadius + 'px'
+        } else {
+          return 0
+        }
+      })
+      .style("border-top-left-radius", function(d){
+        if(d[y] > 0) {
+          return self.options.roundRadius + 'px'
+        } else {
+          return 0
+        }
+      })
+      .style("border-bottom-right-radius", function(d){
+        if(d[y] < 0) {
+          return self.options.roundRadius + 'px'
+        } else {
+          return 0
+        }
+      })
+      .style("border-bottom-left-radius", function(d){
+        if(d[y] < 0) {
+          return self.options.roundRadius + 'px'
+        } else {
+          return 0
+        }
+      })
+      .on('mouseover', function (d, i) {
+        console.log('mouseover')
+        self.mouseOver(d, i, this)
+      })
+      .on('mouseout', function (d, i) {
+        self.mouseOut(d, i, this)
+      })
+      .on('click', function (d, i) {
+        //self.mouseOut(d, i, this)
+        console.log('click')
+      })
+
+    bars.exit().remove()
+  }
+  , mouseOver: function(d, i, el) {
+    var self = this
+      , y
+      , x
+      , output = ''
+
+    var x = self.data[i][self.options.x]
+    var y = self.data[i][self.options.y]
+    if(y !== null) {
+      y = self.options.formatter(y)
+      var view = {
+        y: y
+        , x: x
+      }
+      output = Mustache.render(self.options.hoverTemplate, view)
+    } else {
+      output = 'NA'
+    }
+
+    d3.select(el).style('opacity', 0.9)
+
+    self.container.select('.hoverbox')
+      .html(output)
+
+    self.container.select('.hoverbox')
+      .transition()
+      .style('display', 'block')
+  }
+  , mouseOut: function(d, i, el) {
+    var self = this
+    var opacity = self.options.opacity
+    if(d[self.options.x] == self.options.highlight) {
+      opacity =  1
+    }
+    d3.select(el).style('opacity', opacity)
+    self.container.select('.hoverbox')
+      .transition()
+      .style('display', 'none')
+  }
+  , setColor: function(colors) {
+    this.options.barColors = colors
+  }
+})
+
+
+//LineChart extends Chart
+
+GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
+  className: 'LineChart',
+  defaults: {
+    x: 'x'
+    , y: 'y'
+    , width: 'auto'
+    , height: 'auto'
+    , colors: ['#d80000', '#006200']
+    , interpolate: 'monotone'
+    , dotRadius: 3
+    , title: false
+    , opacity: 0.5
+    , strokeWidth: 2
+    , drawX: true
+    , drawY: true
+    , xLabel: false
+    , yLabel: false
+    , xInterval: 'auto'
+    , dashed: false
+    , time: true
+    , axisLabelPadding: 20
+    , yaxisLabelPadding: 25
+    , class: 'chart-html linechart vertical'
+    , xFormat: d3.time.format("%Y-%m-%d")
+    , hoverTemplate: "{{x}}: {{y}}"
+    , formatter: d3.format(",")
+    , outerPadding: 0
+  }
+  , initialize: function (el, options) {
+  }
+  , update: function(data) {
+    var self = this
+    this.data = data
+    this.color = d3.scale.ordinal()
+      .range(this.options.colors)
+    
+    this.color.domain(d3.keys(data[0]).filter(function(key) { return key !== self.options.x }))
+
+    this.linedata = this.color.domain().map(function(name) {
+      return {
+        name: name,
+        values: data.map(function(d) {
+          var date = d[self.options.x]
+          var value
+          if(d[name] === null) {
+            value = null
+          } else {
+            value = +d[name]
+          }
+          return {date: date, value: value}
+        })
+      }
+    })
+    
+    /*
+      dashed: [{
+        line: 0,
+        span: [{
+          start: 0,
+          end: 1
+        }]
+      },{
+        line: 1,
+        span: [{
+          start: 0,
+          end: 2
+        }]
+      }]
+    */
+    if(this.options.dashed){
+      var dashedlines = [];
+      this.options.dashed.forEach(function(dash_options, idx){
+        var line = self.linedata[dash_options.line];
+        if(typeof line !== 'undefined'){
+          var dashedline = {};
+          dashedline.name = JSON.parse(JSON.stringify(line.name));
+          dashedline.values = [];
+          dashedline.dashed = true;
+          dash_options.span.forEach(function(span, idx){
+            for(var i = span.start; i <= span.end; i++){
+              dashedline.values.push({
+                date: line.values[i].date,
+                value: JSON.parse(JSON.stringify(line.values[i].value))
+              });
+              if(i !== span.end) line.values[i].value = null;
+            }
+          });
+          dashedlines.push(dashedline);
+        }
+      });
+      dashedlines.forEach(function(dashedline){
+        self.linedata.push(dashedline);
+      });
+    }
+    
+    //remove NaNs
+    for(var i = 0; i < this.linedata.length; i++) {
+      var one_line = []
+      for(var j = 0; j < this.linedata[i].values.length; j++){
+        var value = this.linedata[i].values[j].value
+        if(!isNaN(value) && value !== null) one_line.push(this.linedata[i].values[j])
+      }
+      this.linedata[i].values = one_line
+    }
+
+    if(this.options.time){
+      this.xLine = d3.time.scale()
+        .range([0, this.xrange]);
+    } else {
+      this.xLine = d3.scale.linear()
+        .range([0, this.xrange]);
+    }
+    this.xLine.domain(d3.extent(this.data, function(d) { return d[self.options.x] }))
+    if(self.options.xInterval == 'auto') {
+      this.xLine.ticks(data.length);
+    } else {
+      this.xLine.ticks(self.options.xInterval);
+    }
+
+    this.x.domain(this.xLine.ticks())
+
+    this.y.domain([
+      d3.min(this.linedata, function(c) { return d3.min(c.values, function(v) { return v.value; }) }),
+      d3.max(this.linedata, function(c) { return d3.max(c.values, function(v) { return v.value; }) })
+    ])
+
+    var ydomain = this.y.domain()
+    this.y.domain([
+      ydomain[0] - ydomain[0]*.10,
+      ydomain[1] + ydomain[1]*.10
+    ])
+
+    this.updateChart()
+    this.updateXAxis()
+    this.updateYAxis()
+
+  }
+  , updateChart: function() {
+    var self = this
+
+    this.line = d3.svg.line()
+      .interpolate(this.options.interpolate)
+      .x(function(d) { return self.x(d.date) + self.x.rangeBand()/2 })
+      .y(function(d) { return self.y(d.value) })
+
+    var delay = function(d, i) { return i * 10 }
+
+    var line_groups = this.svg.selectAll(".line_group")
+      .data(this.linedata)
+
+    var lines = this.svg.selectAll(".line")
+      .data(this.linedata)
+
+    lines.transition()
+      //.duration(500).delay(delay)
+      .style("stroke", function(d) { return self.color(d.name) })
+      .style("stroke-dasharray", function(d){
+        if(d.dashed) return "5, 5"
+        else return "none"
+      })
+      .attr("d", function(d) { return self.line(d.values); })
+
+    lines.enter()
+      .append("g")
+      .attr('class', function(d, i){
+        return 'line_group line_group' + i;
+      })
+      .append('path')
+      .attr("class", "line")
+      .attr("d", function(d) { return self.line(d.values); })
+      .style("stroke", function(d) { return self.color(d.name); })
+      .style("stroke-width", self.options.strokeWidth)
+      .style("stroke-dasharray", function(d){
+        if(d.dashed) return "5, 5";
+        else return "none";
+      })
+      .style("stroke-opacity", self.options.opacity);
+
+    var exitdots = lines.exit().selectAll('.dot');
+    lines.exit().remove();
+    line_groups.exit().remove();
+
+    //dots
+    for(var i = 0; i < this.linedata.length; i++) {
+      var one_line = this.linedata[i].values;
+      var dots = this.svg.select(".line_group" + i).selectAll('.dot')
+          .data(one_line);
+
+      dots.transition().duration(500).delay(delay)
+        .attr("data", function(d){ return d.value; })
+        .style("fill", function(d) { return self.color(self.linedata[i].name); })
+        .attr("cx", function(d) { return self.x(d.date) + self.x.rangeBand()/2 })
+        .attr("cy", function(d) { return self.y(d.value); });
+
+      dots.enter().append("circle")
+        .attr("class", "dot")
+        .attr("r", this.options.dotRadius)
+        .style("fill", function(d) { return self.color(self.linedata[i].name); })
+        .style("fill-opacity", self.options.opacity)
+        .attr("data", function(d){ return d.value; })
+        .on('mouseover', function(d, i) {self.mouseOver(d, i, this); })
+        .on('mouseout', function(d, i) {self.mouseOut(d, i, this); })
+        .attr("cx", function(d) { return self.x(d.date) + self.x.rangeBand()/2 })
+        .attr("cy", function(d) { return self.y(d.value); });
+
+      dots.exit().remove();
+    }
+  }
+  , mouseOver: function(d, i, el){
+    var self = this
+      , y = d.value
+      , x = d.date
+      , output = ''
+
+    if(self.options.xFormat) {
+      x = self.options.xFormat(x)
+    }
+
+    if(y !== null) {
+      y = self.options.formatter(y)
+      var view = {
+        y: y
+        , x: x
+      }
+      output = Mustache.render(self.options.hoverTemplate, view)
+    } else {
+      output = 'NA'
+    }
+
+    d3.select(el).transition().attr('r', this.options.dotRadius + 3)
+    d3.select(el).style("fill-opacity", 0.9)
+
+    self.container.select('.hoverbox')
+      .html(output)
+
+    self.container.select('.hoverbox')
+      .transition()
+      .style('display', 'block')
+  }
+  , mouseOut: function(d, i, el){
+    var self = this;
+    // d3.select(self.el).select('.hoverbox').transition().style('display', 'none');
+    d3.select(el).style("fill-opacity", self.options.opacity)
+    d3.select(el).transition().attr('r', this.options.dotRadius);
+    self.container.select('.hoverbox')
+      .transition()
+      .style('display', 'none')
+  }
+});
+
+//PieChart extends Chart
+
+GeoDash.PieChart = ezoop.ExtendedClass(GeoDash.Chart, {
+  className: 'PieChart'
+  , defaults: {
+    label: 'label'
+    , value: 'value'
+    , colors: ["#f00", "#0f0", "#00f"]
+    , innerRadius: 10
+    , opacity: 1
+    , drawX: false
+    , drawY: false
+    , title: false
+    , padding: 10
+    , legend: false
+    , hover: true
+    , arclabels: false
+    , class: 'chart-html piechart-svg'
+    , formatter: d3.format(',.0f')
+    , formatPercent: d3.format('.2f')
+    , hoverTemplate: "{{label}}: {{value}} ({{percent}}%)"
+    , labelColor: "#ccc"
+    , legendWidth: 80
+    , arcstroke: 2
+  }
+  , initialize: function (el, options) {
+  }
+  , setColors: function(colors){
+    this.color = d3.scale.ordinal()
+      .range(colors);
+  }
+  , update: function(data){
+    var self = this
+
+    var diameter = Math.min(this.width, this.height)
+    if(this.options.legend) {
+      diameter -= this.options.legendWidth
+    }
+    var radius = diameter / 2
+
+    this.arc = d3.svg.arc()
+      .outerRadius(radius)
+      .innerRadius(this.options.innerRadius)
+
+    this.pie = d3.layout.pie()
+      .sort(null)
+      .value(function(d) { return d[self.options.value] })
+
+    this.color = d3.scale.ordinal()
+       .range(this.options.colors)
+
+    this.total = 0
+    data.forEach(function(d, i) {
+      d[self.options.value] = +d[self.options.value]
+      if(+d[self.options.value] < 0) {
+        data.splice(i, 1)
+      } else {
+        self.total += +d[self.options.value]
+      }
+    })
+
+    var g = this.svg.selectAll("path")
+      .data(this.pie(data))
+
+    g.style("fill", function(d) { return self.color(d.data[self.options.label]) })
+      .attr("d", this.arc)
+
+    g.enter()
+      .append("path")
+      .attr("class", "arc")
+      .attr("d", this.arc)
+      .style("fill", function(d) { return self.color(d.data[self.options.label]) })
+      .style("fill-opacity", this.options.opacity)
+      .style("stroke-width", this.options.arcstroke)
+      .on('mouseover', function(d,i){
+        d3.select(this).style('fill-opacity', 1)
+        if(self.options.hover) {
+          var label = d.data[self.options.label]
+          var value = self.options.formatter(d.value)
+          var percent = self.options.formatPercent((d.value/self.total)*100)
+          var view = {
+            label: label
+            , value: value
+            , percent: percent
+          }
+          output = Mustache.render(self.options.hoverTemplate, view)
+          self.container.select('.hoverbox').html(output)
+          self.container.select('.hoverbox').style('display', 'block')
+        }
+      })
+      .on('mouseout', function(d,i){
+        self.container.select('.hoverbox').html('')
+        self.container.select('.hoverbox').style('display', 'none')
+        d3.select(this).style('fill-opacity', self.options.opacity  )
+      })
+
+    g.exit().remove()
+
+    if(this.options.arclabels) {
+      var t = self.svg.selectAll(".arc-text")
+            .data(this.pie(data))
+
+      t.select("text")
+        .attr("transform", function(d) { return "translate(" + self.arc.centroid(d) + ")"; })
+        .text(function(d) { return d.data[self.options.label] + ' (' + d.value + ')' })
+
+      t.enter().append("g")
+        .attr("class", "arc-text")
+        .append("text")
+        .attr("transform", function(d) { return "translate(" + self.arc.centroid(d) + ")" })
+        .attr("dy", ".35em")
+        .style("text-anchor", "middle")
+        .style("fill", self.options.labelColor)
+        .text(function(d) { return d.data[self.options.label] + ' (' + d.value + ')' })
+
+      t.exit().remove()
+    }
+
+    if(this.options.legend) {
+
+      var block = {width: 10, height: 10, padding: 5}
+      var padding = 3
+      var legend = this.container.select('.legend')
+
+      var legenditems = legend.selectAll(".legend-item")
+          .data(this.color.domain().slice())
+
+      var t = legenditems.select('.value')
+        .text(function(d) { return d })
+
+      var legenditem = legenditems.enter()
+          .append('div')
+          .attr('class', 'legend-item')
+
+      legenditem.append("div")
+        .attr("class", "swatch")
+        .style('float', 'left')
+        .style("width", block.width + 'px')
+        .style("height", block.height + 'px')
+        .style("background", this.color)
+
+      legenditem.append("div")
+          .attr("class", "value")
+          .style("width", this.options.legendWidth - block.width - padding + 'px')
+          .style("padding-left", padding + 'px')
+          .text(function(d) { return d })
+
+      legenditems.exit().remove()
+
+      var lHeight = parseInt(legend.style('height'))
+      var middle = (this.height / 2) - (lHeight / 2)
+      legend.style('top', middle + 'px')
+    }
+  }
+});
+//BarChart extends Chart
+GeoDash.TableChart = ezoop.ExtendedClass(GeoDash.Chart, {
+  className: 'TableChart',
+  defaults: {
+    highlight: [],
+    format: false
+  },
+  initialize: function (el, options) {
+
+  },
+  drawChart: function () {
+    var self = this;
+    var padding = 10;
+    this.margin = { top: 20, right: 10, bottom: 20, left: 40 };
+    this.width = (this.options.width === 'auto' || this.options.width === undefined ? parseInt(d3.select(this.el).style('width')) : this.options.width) - this.margin.left - this.margin.right,
+    this.height = (this.options.height === 'auto' || this.options.height === undefined ? parseInt(d3.select(this.el).style('height')) : this.options.height) - this.margin.top - this.margin.bottom;
+    if (this.options.title) {
+      this.height = this.height - 30;
+    }
+    this.formatPercent = d3.format(".2%");
+    this.formatPercentAxisLabel = d3.format(".0%");
+    this.formatLarge = d3.format("s");
+    this.formatComma = d3.format(",.2f");
+    this.table = d3.select(this.el).append("table")
+      .attr("width", this.width + this.margin.left + this.margin.right)
+      //.attr("height", this.height + this.margin.top + this.margin.bottom)
+      .attr("class", "table table-condensed table-bordered gd-table");
+
+    this.tbody = this.table.append("tbody");
+  },
+  update: function (data) {
+    var self = this;
+    var rows = this.tbody.selectAll("tr")
+      .data(data)
+      .attr("style", function(d){
+        var name = d[self.options.columns[0]];
+        for(var i = 0; i < self.options.highlight.length; i++){
+          if(self.options.highlight[i] == name) {
+            return 'background:' + self.options.color;
+          }
+        }
+        return '';
+      });
+
+    rows.enter()
+      .append("tr")
+      .attr("style", function(d){
+        var name = d[self.options.columns[0]];
+        for(var i = 0; i < self.options.highlight.length; i++){
+          if(self.options.highlight[i] == name) {
+            return 'background:' + self.options.color;
+          }
+        }
+        return '';
+      });
+
+    rows.exit().remove();
+
+    var cells = rows.selectAll("td")
+      .data(function(row) {
+        return self.options.columns.map(function(column) {
+          return {column: column, value: row[column]};
+        });
+      });
+
+    cells.transition()
+      .text(function(d) { 
+        return self.format(d);
+      });
+
+    cells.enter()
+      .append("td")
+      .text(function(d) { 
+        return self.format(d);
+      });
+
+    cells.exit().remove();
+    
+    return this;
+  },
+  format: function(d){
+    var display = '';
+    var self = this;
+    if(d.value === null) {
+      display = 'NA';
+      return display;
+    }
+    if(isNaN(parseFloat(d.value))){
+      display = d.value; //value is string
+    } else {
+      if(self.options.format){
+        var formatter =  d3.format(",." + self.options.format.precision + "f");
+        display = formatter(d.value);
+      } else {
+        display = self.formatComma(d.value);
+      }
+      if (self.options.money) {
+        display = '$' + display;
+      }
+      if (self.options.percent) {
+        display = display + '%';
+      }
+    }
+    return display;
+  }
+});

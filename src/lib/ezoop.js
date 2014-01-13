@@ -1,6 +1,8 @@
 var _ezoop = window.ezoop,
     ezoop = function () {};
 
+ezoop.version = '0.1'
+
 ezoop.noConflict = function () {
   window.ezoop = _ezoop;
   return this;
