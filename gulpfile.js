@@ -6,15 +6,14 @@ var gulp = require('gulp')
   , uglify = require('gulp-uglify')
   , less = require('gulp-less')
 
-var gulpconcat = function(){
-  gulp.src(['src/lib/*.js', '!src/lib/ezoop.js', 'dist/geodash.min.js'])
-    .pipe(concat('geodash.min.js'))
+gulp.task('less', function () {
+  gulp.src('src/styles/chart.less')
+    .pipe(less({
+      paths: ['../src/Styles']
+    }))
+    .pipe(rename('geodash.min.css'))
     .pipe(gulp.dest('../dist'))
-
-  gulp.src(['src/lib/*.js', '!src/lib/ezoop.js', 'dist/geodash.js'])
-    .pipe(concat('geodash.js'))
-    .pipe(gulp.dest('dist'))
-}
+})
 
 gulp.task('minify', function(next){
   gulp.src(['src/lib/ezoop.js', 'src/GeoDash.js', 'src/Chart.js', 'src/charts/*.js'])
@@ -26,14 +25,15 @@ gulp.task('minify', function(next){
     .on('end', next)
 })
 
-gulp.task('less', function () {
-  gulp.src('src/styles/chart.less')
-    .pipe(less({
-      paths: ['../src/Styles']
-    }))
-    .pipe(rename('geodash.min.css'))
+var gulpconcat = function(){
+  gulp.src(['src/lib/*.js', '!src/lib/ezoop.js', 'dist/geodash.min.js'])
+    .pipe(concat('geodash.min.js'))
     .pipe(gulp.dest('../dist'))
-})
+
+  gulp.src(['src/lib/*.js', '!src/lib/ezoop.js', 'dist/geodash.js'])
+    .pipe(concat('geodash.js'))
+    .pipe(gulp.dest('dist'))
+}
 
 gulp.task('default', function() {
   gulp.run('minify', function() { gulpconcat() })
@@ -46,5 +46,4 @@ gulp.task('default', function() {
   gulp.watch(['src/styles/*.less'], function(event) {
     gulp.run('less', function() { gulpconcat() })
   })
-
 })
