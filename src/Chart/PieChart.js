@@ -16,8 +16,9 @@ GeoDash.PieChart = ezoop.ExtendedClass(GeoDash.Chart, {
     , hover: true
     , arclabels: false
     , class: 'chart-html piechart-svg'
-    , formatHover: d3.format(',.0f')
+    , formatter: d3.format(',.0f')
     , formatPercent: d3.format('.2f')
+    , hoverTemplate: "{{label}}: {{value}} ({{percent}}%)"
     , labelColor: "#ccc"
     , legendWidth: 80
     , arcstroke: 2
@@ -75,9 +76,15 @@ GeoDash.PieChart = ezoop.ExtendedClass(GeoDash.Chart, {
         d3.select(this).style('fill-opacity', 1)
         if(self.options.hover) {
           var label = d.data[self.options.label]
-          var total = self.options.formatHover(d.value)
+          var value = self.options.formatter(d.value)
           var percent = self.options.formatPercent((d.value/self.total)*100)
-          self.container.select('.hoverbox').html(label + ": " + total + ' (' + percent + '%)')
+          var view = {
+            label: label
+            , value: value
+            , percent: percent
+          }
+          output = Mustache.render(self.options.hoverTemplate, view)
+          self.container.select('.hoverbox').html(output)
           self.container.select('.hoverbox').style('display', 'block')
         }
       })

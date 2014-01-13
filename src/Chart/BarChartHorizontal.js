@@ -25,6 +25,8 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
     , rightBarPadding: 10
     , outerPadding: 0.5
     , class: 'chart-html horizontal'
+    , hoverTemplate: "{{y}}: {{x}}"
+    , formatter: d3.format(",")
   }
   , initialize: function (el, options) {
 
@@ -465,33 +467,28 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
   }
   , mouseOver: function(d, i, el) {
     var self = this
-      , label = ''
-    if(typeof d === 'object') {
-      label = d[self.options.y]
+      , y
+      , x
+      , output = ''
+
+    var x = self.data[i][self.options.x]
+    var y = self.data[i][self.options.y]
+    if(x !== null) {
+      x = self.options.formatter(x)
+      var view = {
+        y: y
+        , x: x
+      }
+      output = Mustache.render(self.options.hoverTemplate, view)
     } else {
-      label = d
+      output = 'NA'
     }
-    var value = self.data[i][self.options.x]
-    d3.select(el).style('opacity', 0.9)
-    var text = label + ': '
-    if(value !== null) {
-      if(self.options.format) {
-        var formatter =  d3.format(",." + self.options.format.precision + "f")
-        text += formatter(value)
-      } else {
-        text += self.formatComma(value)
-      }
-      if (self.options.money) {
-        text = '$' + text
-      }
-      if (self.options.percent) {
-        text = text + '%'
-      }
-    } else {
-      text = 'NA'
-    }
+
+    var bar = d3.select(self.container.selectAll('.bar')[0][i])
+    bar.style('opacity', 0.9)
+
     self.container.select('.hoverbox')
-      .html(text)
+      .html(output)
 
     self.container.select('.hoverbox')
       .transition()
@@ -504,7 +501,8 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
       if(self.options.highlight[j] == d) opacity =  1
     }
   
-    d3.select(el).style('opacity', opacity)
+    var bar = d3.select(self.container.selectAll('.bar')[0][i])
+    bar.style('opacity', opacity)
     self.container.select('.hoverbox')
       .transition()
       .style('display', 'none')

@@ -21,6 +21,8 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
     , yaxisLabelPadding: 25
     , class: 'chart-html vertical'
     , outerPadding: 0.5
+    , hoverTemplate: "{{x}}: {{y}}"
+    , formatter: d3.format(",")
   }
   , initialize: function (el, options) {
 
@@ -196,22 +198,27 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
   }
   , mouseOver: function(d, i, el) {
     var self = this
+      , y
+      , x
+      , output = ''
 
-    d3.select(el).style('opacity', 1)
-    var text = ''
-    if(self.options.xFormat) {
-      text = self.options.xFormat(d[self.options.x])
+    var x = self.data[i][self.options.x]
+    var y = self.data[i][self.options.y]
+    if(y !== null) {
+      y = self.options.formatter(y)
+      var view = {
+        y: y
+        , x: x
+      }
+      output = Mustache.render(self.options.hoverTemplate, view)
     } else {
-      text = d[self.options.x]
+      output = 'NA'
     }
-    text += ': '
-    if(self.options.percent) {
-      text += self.formatPercent(d[self.options.y])
-    } else {
-      text += self.formatComma(d[self.options.y])
-    }
+
+    d3.select(el).style('opacity', 0.9)
+
     self.container.select('.hoverbox')
-      .html(text)
+      .html(output)
 
     self.container.select('.hoverbox')
       .transition()

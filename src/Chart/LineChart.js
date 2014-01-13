@@ -25,6 +25,8 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
     , yaxisLabelPadding: 25
     , class: 'chart-html linechart vertical'
     , xFormat: d3.time.format("%Y-%m-%d")
+    , hoverTemplate: "{{x}}: {{y}}"
+    , formatter: d3.format(",")
     , outerPadding: 0
   }
   , initialize: function (el, options) {
@@ -208,25 +210,31 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
     }
   }
   , mouseOver: function(d, i, el){
-    var self = this;
+    var self = this
+      , y = d.value
+      , x = d.date
+      , output = ''
 
-    d3.select(el).transition().attr('r', this.options.dotRadius + 3);
-
-    var text = ''
     if(self.options.xFormat) {
-      text = self.options.xFormat(d.date)
-    } else {
-      text = d.date
+      x = self.options.xFormat(x)
     }
-    text += ': '
 
-    if(self.options.percent) {
-      text += self.formatPercent(d.value)
+    if(y !== null) {
+      y = self.options.formatter(y)
+      var view = {
+        y: y
+        , x: x
+      }
+      output = Mustache.render(self.options.hoverTemplate, view)
     } else {
-      text += self.formatComma(d.value)
+      output = 'NA'
     }
+
+    d3.select(el).transition().attr('r', this.options.dotRadius + 3)
+    d3.select(el).style("fill-opacity", 0.9)
+
     self.container.select('.hoverbox')
-      .html(text)
+      .html(output)
 
     self.container.select('.hoverbox')
       .transition()
@@ -235,6 +243,7 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
   , mouseOut: function(d, i, el){
     var self = this;
     // d3.select(self.el).select('.hoverbox').transition().style('display', 'none');
+    d3.select(el).style("fill-opacity", self.options.opacity)
     d3.select(el).transition().attr('r', this.options.dotRadius);
     self.container.select('.hoverbox')
       .transition()
