@@ -4,8 +4,7 @@
   "version": "0.0.1",
   "private": true,
   "dependencies": {
-    "uglify-js": "2.3.x",
-    "less": "1.4.x"
+
   },
   "devDependencies": {
     "gulp-util": "~2.2.9",
