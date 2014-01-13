@@ -1,0 +1,214 @@
+.geodash-title {
+  height: 30px;
+  line-height: 30px;
+  background: none;
+  color: #b1b1b1;
+  font-size: 12px;
+  font-family: 'arial', sans-serif;
+}
+.chart-html {
+  position: relative;
+}
+.chart-html .bars {
+  position: relative;
+  left: 0;
+  top: 0;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+}
+.chart-html .bars .bar {
+  position: absolute;
+}
+.chart-html .axis {
+  width: 100%;
+  height: 100%;
+}
+.chart-html .axis.x {
+  overflow: hidden;
+  position: absolute;
+  z-index: 0;
+}
+.chart-html .axis.x .gd-label {
+  line-height: 11px;
+}
+.chart-html .axis.x .xAxisLabel {
+  position: absolute;
+  text-align: center;
+  bottom: 0;
+  width: 100%;
+}
+.chart-html .axis.x .xAxisLabel .gd-label {
+  padding: 0 !important;
+  height: 100%;
+  width: 100%;
+}
+.chart-html .axis.y {
+  position: absolute;
+}
+.chart-html .axis.y .gd-label {
+  position: relative;
+  overflow: hidden;
+}
+.chart-html .axis.y .yAxisLabel {
+  position: absolute;
+  text-align: center;
+  bottom: 50%;
+  /* Safari */
+  -webkit-transform: rotate(-90deg);
+  /* Firefox */
+  -moz-transform: rotate(-90deg);
+  /* IE */
+  -ms-transform: rotate(-90deg);
+  /* Opera */
+  -o-transform: rotate(-90deg);
+  /* Internet Explorer */
+  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+}
+.chart-html .axis.y .yAxisLabel .gd-label {
+  height: 100%;
+  width: 100%;
+}
+.chart-html .axis .tick {
+  position: absolute;
+}
+.chart-html .axis .line {
+  background: #ccc;
+  position: absolute;
+}
+.chart-html .axis .line.zero {
+  margin-top: 10px;
+}
+.chart-html .axis .gd-label {
+  font-size: 10px;
+  color: #b8b8b8;
+  font-family: 'arial', sans-serif;
+}
+/*
+* horiz/vert difference
+*/
+.chart-html.vertical .bars {
+  z-index: 2;
+}
+.chart-html.vertical .axis.y {
+  z-index: 0;
+}
+.chart-html.vertical .axis.y .gd-label {
+  float: left;
+  background: #fff;
+  padding-right: 3px;
+}
+.chart-html.vertical .axis.y .tick {
+  text-align: right;
+}
+.chart-html.vertical .axis.y .line {
+  height: 1px;
+}
+.chart-html.vertical .axis.x {
+  z-index: 1;
+}
+.chart-html.vertical .axis.x .tick {
+  text-align: center;
+}
+.chart-html.vertical .axis.x .tick .gd-label {
+  overflow: hidden;
+  height: 12px;
+  padding-top: 5px;
+}
+.chart-html.vertical .axis.x .line {
+  height: 5px;
+  width: 1px;
+}
+.chart-html.horizontal {
+  height: 100%;
+}
+.chart-html.horizontal .bars {
+  z-index: 1;
+}
+.chart-html.horizontal .axis.y {
+  z-index: 2;
+}
+.chart-html.horizontal .axis.y .tick .gd-label {
+  text-align: right;
+}
+.chart-html.horizontal .axis.x {
+  overflow: visible;
+  z-index: 0;
+}
+.chart-html.horizontal .axis.x .gd-label {
+  position: absolute;
+}
+.chart-html.horizontal .axis .line {
+  width: 1px;
+}
+.geodash {
+  font-family: sans-serif;
+}
+.axis path,
+.axis line {
+  fill: none;
+  opacity: 0.6;
+  stroke: #c5c5c5;
+  shape-rendering: crispEdges;
+}
+.axis text {
+  font-size: 10px;
+  fill: #b8b8b8;
+  font-family: 'arial', sans-serif;
+}
+.axis text.axis-label {
+  fill: #a4a4a4;
+}
+.line {
+  fill: none;
+  stroke: #c5c5c5;
+}
+svg {
+  fill: blue;
+}
+.linechart-svg path.domain {
+  display: none;
+}
+.piechart-svg .arc {
+  stroke: #fff;
+}
+.piechart-svg .legend {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+}
+.piechart-svg .legend .legend-item {
+  text-align: left;
+  overflow: hidden;
+}
+.piechart-svg .legend .legend-item .value {
+  float: left;
+  color: #444;
+  font-size: 11px;
+}
+.hoverbox {
+  font-family: 'arial', sans-serif;
+  font-size: 12px;
+  position: absolute;
+  right: 5px;
+  top: 5px;
+  display: none;
+  opacity: 0.8;
+  background: black;
+  color: white;
+  padding: 2px 5px 2px 5px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  z-index: 4;
+  pointer-events: none;
+}
+.gd-table td {
+  text-align: right;
+}
+.gd-table tr.highlight {
+  background: red;
+}
+.arc-text text {
+  font: 12px sans-serif;
+}
