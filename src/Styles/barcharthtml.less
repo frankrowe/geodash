@@ -52,7 +52,7 @@
       .yAxisLabel {
         position:absolute;
         text-align: center;
-        bottom: 50%;
+        bottom: 0%;
         /* Safari */
         -webkit-transform: rotate(-90deg);
         /* Firefox */
@@ -63,6 +63,8 @@
         -o-transform: rotate(-90deg);
         /* Internet Explorer */
         filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+        transform-origin: top left;
+        -webkit-transform-origin: top left;
         .gd-label {
           height: 100%;
           width: 100%;
@@ -102,7 +104,6 @@
         z-index: 0;
         .gd-label {
           float:left;
-          background: #fff;
           padding-right: 3px;
         }
         .tick {

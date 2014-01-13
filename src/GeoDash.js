@@ -1,7 +1,7 @@
 var oldGeoDash = window.GeoDash
   , GeoDash = function () {}
 
-GeoDash.version = '0.2f-dev'
+GeoDash.version = '0.2-dev'
 
 GeoDash.noConflict = function () {
   window.GeoDash = oldGeoDash

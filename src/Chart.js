@@ -86,7 +86,7 @@ GeoDash.Chart = ezoop.BaseClass({
       this.yAxisElement.append("div")
         .attr("class", "yAxisLabel")
         .style("height", this.options.axisLabelPadding + 'px')
-        .style("left", this.options.axisLabelPadding*-1 + "px")
+        .style("width", this.height + 'px')
         .append("div")
         .attr("class", "gd-label")
         .style("line-height", this.options.axisLabelPadding + 'px')
@@ -223,6 +223,10 @@ GeoDash.Chart = ezoop.BaseClass({
           return m + 'px'
         })
         .style("width", self.options.yaxisLabelPadding + 'px')
+        .style("background", function(){
+          var c = d3.select(self.el).style("background-color")
+          return c
+        })
     }
   }
   , updateXAxis: function() {

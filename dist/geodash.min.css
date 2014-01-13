@@ -53,7 +53,7 @@
 .chart-html .axis.y .yAxisLabel {
   position: absolute;
   text-align: center;
-  bottom: 50%;
+  bottom: 0%;
   /* Safari */
   -webkit-transform: rotate(-90deg);
   /* Firefox */
@@ -64,6 +64,8 @@
   -o-transform: rotate(-90deg);
   /* Internet Explorer */
   filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+  transform-origin: top left;
+  -webkit-transform-origin: top left;
 }
 .chart-html .axis.y .yAxisLabel .gd-label {
   height: 100%;
@@ -95,7 +97,6 @@
 }
 .chart-html.vertical .axis.y .gd-label {
   float: left;
-  background: #fff;
   padding-right: 3px;
 }
 .chart-html.vertical .axis.y .tick {
@@ -163,9 +164,6 @@
   fill: none;
   stroke: #c5c5c5;
 }
-svg {
-  fill: blue;
-}
 .linechart-svg path.domain {
   display: none;
 }
@@ -210,5 +208,5 @@ svg {
   background: red;
 }
 .arc-text text {
-  font: 12px sans-serif;
+  font: 11px sans-serif;
 }
