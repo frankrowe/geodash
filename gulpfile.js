@@ -7,9 +7,9 @@ var gulp = require('gulp')
   , less = require('gulp-less')
 
 gulp.task('less', function () {
-  gulp.src('src/styles/chart.less')
+  gulp.src('src/style/chart.less')
     .pipe(less({
-      paths: ['src/styles']
+      paths: ['src/style']
     }))
     .pipe(rename('geodash.min.css'))
     .pipe(gulp.dest('dist/'))
@@ -43,7 +43,7 @@ gulp.task('default', function() {
     gulp.run('minify')
   })
 
-  gulp.watch(['src/styles/*.less'], function(event) {
+  gulp.watch(['src/style/*.less'], function(event) {
     gulp.run('less')
   })
 })

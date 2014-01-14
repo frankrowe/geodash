@@ -1425,7 +1425,7 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
           var m = (parseInt(width)/2*-1)
           return m + 'px'
         })
-        .style("lolheight", self.options.axisLabelPadding + 'px')
+        .style("height", self.options.axisLabelPadding + 'px')
         .style("line-height", self.options.axisLabelPadding + 'px')
     }
   }
