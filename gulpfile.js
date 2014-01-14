@@ -15,14 +15,14 @@ gulp.task('less', function () {
     .pipe(gulp.dest('dist/'))
 })
 
-gulp.task('minify', function(next){
+gulp.task('minify', function(){
   gulp.src(['src/lib/ezoop.js', 'src/GeoDash.js', 'src/Chart.js', 'src/charts/*.js'])
     .pipe(concat('geodash.js'))
     .pipe(gulp.dest('dist/'))
     .pipe(rename('geodash.min.js'))
     .pipe(uglify())
     .pipe(gulp.dest('dist/'))
-    .on('end', next)
+    .on('end', gulpconcat)
 })
 
 var gulpconcat = function(){
@@ -36,14 +36,14 @@ var gulpconcat = function(){
 }
 
 gulp.task('default', function() {
-  // gulp.run('minify', function() { gulpconcat() })
-  // gulp.run('less')
+  gulp.run('minify')
+  gulp.run('less')
 
   gulp.watch(['src/GeoDash.js', 'src/Chart.js', 'src/charts/*.js'], function(event) {
-    gulp.run('minify', function() { gulpconcat() })
+    gulp.run('minify')
   })
 
   gulp.watch(['src/styles/*.less'], function(event) {
-    gulp.run('less', function() { gulpconcat() })
+    gulp.run('less')
   })
 })
