@@ -1009,6 +1009,7 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
     , class: 'chart-html horizontal'
     , hoverTemplate: "{{y}}: {{x}}"
     , formatter: d3.format(",")
+    , xFormat: false
   }
   , initialize: function (el, options) {
 
@@ -1057,30 +1058,57 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
       this.setYAxis()
     }
 
-    var y = this.options.y
-    var x = this.options.x
 
-    for(var i = 0; i < data.length; i++){
-      var d = data[i]
+
+    function makeValue(d, x, y) {
       if(d[x] != null){
         if(typeof d[x] === 'string') {
           d[x] = +d[x].replace(",", "")
         }
       }
+      var obj = {
+        x: d[x],
+        y: d[y]
+      }
+      return obj
     }
-    this.data = data
+
+    var tmpdata = []
+      , y = this.options.y
+      , x = this.options.x
+
+    for(var i = 0; i < data.length; i++){
+      var d = data[i]
+        , total = 0
+      if(typeof x == 'object') {
+        this.stackNumber = x.length
+        x.forEach(function(_x){
+          var obj = makeValue(d, _x, y)
+          tmpdata.push(obj)
+          total += obj.x
+        })
+      } else {
+        this.stackNumber = 1
+        var obj = makeValue(d, x, y)
+        tmpdata.push(obj)
+        total += obj.x
+      }
+      data[i].total = total
+    }
+    this.data = tmpdata
 
     this.color = d3.scale.ordinal()
       .range(this.options.barColors)
+      .domain(x)
 
-    var extent = d3.extent(data, function(d) { return d[x] })
+    var extent = d3.extent(data, function(d) { return d.total })
     if(extent[0] < 0){
       this.x.domain(extent)
     } else {
       this.x.domain([0, extent[1]])
     }
-    
-    this.y.domain(data.map(function(d) { return d[y] }))
+
+    this.y.domain(this.data.map(function(d) { return d.y }))
 
     this.updateChart()
     this.updateXAxis()
@@ -1096,13 +1124,17 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
         .data(this.data)
 
     bars.transition()
-      .attr("geodash-id", function (d) { return d[y] })
-      .style("left", function(d) {
-        var xposition = self.x(Math.min(0, d[x]))
-        if(xposition === self.x(0)) {
-          xposition += 1
+      .attr("geodash-id", function (d) { return d.y })
+      .style("left", function(d, i) {
+        var left = self.x(Math.min(0, d.x))
+        var stackPosition = i % self.stackNumber
+        while(stackPosition > 0){
+          var x = self.data[i - stackPosition].x
+          left +=self.x(x)
+          stackPosition--
         }
-        return xposition + 'px'
+        left += 1
+        return left + 'px'
       })
       .style("top", function(d, i) {
         var top = 0
@@ -1111,12 +1143,12 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
             + self.options.padding * i
             + self.options.topPadding
         } else {
-          top = self.y(d[y])
+          top = self.y(d.y)
         }
         return top + 'px'
       })
       .style("width", function(d) {
-        var w = Math.abs(self.x(d[x]) - self.x(0))
+        var w = Math.abs(self.x(d.x) - self.x(0))
         return w + 'px'
       })
       .style("height", function(d){
@@ -1128,53 +1160,79 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
       })
       .style("opacity", function(d){
         for(var i = 0; i < self.options.highlight.length; i++){
-          if(self.options.highlight[i] == d[y]) return 1
+          if(self.options.highlight[i] == d.y) return 1
         }
         return self.options.opacity
       })
-      .style("border-top-right-radius", function(d){
-        var r = 0
-        var xposition = self.x(Math.min(0, d[x]))
-        if(xposition >= self.x(0)) {
-          r = self.options.roundRadius
+      .style("border-top-right-radius", function(d, i){
+        var notend = (i+1) % self.stackNumber
+        if(notend) {
+          return 0
+        } else {
+          var r = 0
+            , xposition = self.x(Math.min(0, d.x))
+          if(xposition >= self.x(0)) {
+            r = self.options.roundRadius
+          }
+          return r + 'px'
         }
-        return r + 'px'
       })
-      .style("border-bottom-right-radius", function(d){
-        var r = 0
-          , xposition = self.x(Math.min(0, d[x]))
-        if(xposition >= self.x(0)) {
-          r = self.options.roundRadius
+      .style("border-bottom-right-radius", function(d, i){
+        var notend = (i+1) % self.stackNumber
+        if(notend) {
+          return 0
+        } else {
+          var r = 0
+            , xposition = self.x(Math.min(0, d.x))
+          if(xposition >= self.x(0)) {
+            r = self.options.roundRadius
+          }
+          return r + 'px'
         }
-        return r + 'px'
       })
-      .style("border-top-left-radius", function(d){
-        var r = 0
-          , xposition = self.x(Math.min(0, d[x]))
-        if(xposition < self.x(0)) {
-          r = self.options.roundRadius
+      .style("border-top-left-radius", function(d, i){
+        var notend = (i+1) % self.stackNumber
+        if(notend) {
+          return 0
+        } else {
+          var r = 0
+            , xposition = self.x(Math.min(0, d.x))
+          if(xposition < self.x(0)) {
+            r = self.options.roundRadius
+          }
+          return r + 'px'
         }
-        return r + 'px'
       })
-      .style("border-bottom-left-radius", function(d){
-        var r = 0
-          , xposition = self.x(Math.min(0, d[x]))
-        if(xposition < self.x(0)) {
-          r = self.options.roundRadius
+      .style("border-bottom-left-radius", function(d, i){
+        var notend = (i+1) % self.stackNumber
+        if(notend) {
+          return 0
+        } else {
+          var r = 0
+            , xposition = self.x(Math.min(0, d.x))
+          if(xposition < self.x(0)) {
+            r = self.options.roundRadius
+          }
+          return r + 'px'
         }
-        return r + 'px'
       })
-      .style("background-color", function(d) { return self.color(d[y]) }, 'important')
+      .style("background-color", function(d, i) {
+        return self.options.barColors[i%self.stackNumber]
+      }, 'important')
 
     var barsenter = bars.enter().append("div")
       .attr("class", "bar")
-      .attr("geodash-id", function (d) { return d[y] })
-      .style("left", function(d) {
-        var xposition = self.x(Math.min(0, d[x]))
-        if(xposition === self.x(0)) {
-          xposition += 1
+      .attr("geodash-id", function (d) { return d.y })
+      .style("left", function(d, i) {
+        var left = self.x(Math.min(0, d.x))
+        var stackPosition = i % self.stackNumber
+        while(stackPosition > 0){
+          var x = self.data[i - stackPosition].x
+          left +=self.x(x)
+          stackPosition--
         }
-        return xposition + 'px'
+        left += 1
+        return left + 'px'
       })
       .style("top", function(d, i) {
         var top = 0
@@ -1183,12 +1241,12 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
             + self.options.padding * i
             + self.options.topPadding
         } else {
-          top = self.y(d[y])
+          top = self.y(d.y)
         }
         return top + 'px'
       })
       .style("width", function(d) {
-        var w = Math.abs(self.x(d[x]) - self.x(0))
+        var w = Math.abs(self.x(d.x) - self.x(0))
         return w + 'px'
       })
       .style("height", function(d){
@@ -1200,44 +1258,66 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
       })
       .style("opacity", function(d){
         for(var i = 0; i < self.options.highlight.length; i++){
-          if(self.options.highlight[i] == d[y]) return 1
+          if(self.options.highlight[i] == d.y) return 1
         }
         return self.options.opacity
       })
-      .style("border-top-right-radius", function(d){
-        var r = 0
-          , xposition = self.x(Math.min(0, d[x]))
-        if(xposition >= self.x(0)) {
-          r = self.options.roundRadius
+      .style("border-top-right-radius", function(d, i){
+        var notend = (i+1) % self.stackNumber
+        if(notend) {
+          return 0
+        } else {
+          var r = 0
+            , xposition = self.x(Math.min(0, d.x))
+          if(xposition >= self.x(0)) {
+            r = self.options.roundRadius
+          }
+          return r + 'px'
         }
-        return r + 'px'
       })
-      .style("border-bottom-right-radius", function(d){
-        var r = 0
-          , xposition = self.x(Math.min(0, d[x]))
-        if(xposition >= self.x(0)) {
-          r = self.options.roundRadius
+      .style("border-bottom-right-radius", function(d, i){
+        var notend = (i+1) % self.stackNumber
+        if(notend) {
+          return 0
+        } else {
+          var r = 0
+            , xposition = self.x(Math.min(0, d.x))
+          if(xposition >= self.x(0)) {
+            r = self.options.roundRadius
+          }
+          return r + 'px'
         }
-        return r + 'px'
       })
-      .style("border-top-left-radius", function(d){
-        var r = 0
-          , xposition = self.x(Math.min(0, d[x]))
-        if(xposition < self.x(0)) {
-          r = self.options.roundRadius
+      .style("border-top-left-radius", function(d, i){
+        var notend = (i+1) % self.stackNumber
+        if(notend) {
+          return 0
+        } else {
+          var r = 0
+            , xposition = self.x(Math.min(0, d.x))
+          if(xposition < self.x(0)) {
+            r = self.options.roundRadius
+          }
+          return r + 'px'
         }
-        return r + 'px'
       })
-      .style("border-bottom-left-radius", function(d){
-        var r = 0
-          , xposition = self.x(Math.min(0, d[x]))
-        if(xposition < self.x(0)) {
-          r = self.options.roundRadius
+      .style("border-bottom-left-radius", function(d, i){
+        var notend = (i+1) % self.stackNumber
+        if(notend) {
+          return 0
+        } else {
+          var r = 0
+            , xposition = self.x(Math.min(0, d.x))
+          if(xposition < self.x(0)) {
+            r = self.options.roundRadius
+          }
+          return r + 'px'
         }
-        return r + 'px'
       })
       .style("-webkit-print-color-adjust", "exact")
-      .style("background-color", function(d) { return self.color(d[y]) }, 'important')
+      .style("background-color", function(d, i) {
+        return self.options.barColors[i%self.stackNumber]
+      }, 'important')
 
     bars.exit().remove()
 
@@ -1251,8 +1331,10 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
   }
   , updateXAxis: function() {
     var self = this
-      , y = this.options.y
-      , x = this.options.x
+      // , y = this.options.y
+      // , x = this.options.x
+      , y = 'y'
+      , x = 'x'
 
     if(this.options.drawX){
       var chartHeight = this.container.select('.bars').style('height')
@@ -1276,14 +1358,18 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
 
       ticks.select('.gd-label')
         .text(function(d){
-          var label = self.formatLarge(d)
-          if (self.options.money) {
-            label = '$' + label
+          if(self.options.xFormat) {
+            return self.options.xFormat(d)
+          } else {
+            var label = self.formatLarge(d)
+            if (self.options.money) {
+              label = '$' + label
+            }
+            if (self.options.percent) {
+              label = label + '%'
+            }
+            return label
           }
-          if (self.options.percent) {
-            label = label + '%'
-          }
-          return label
         })
 
       var newTicks = tickElements.enter().append('div')
@@ -1316,14 +1402,18 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
         .append('div')
         .attr("class", "gd-label")
         .text(function(d){
-          var label = self.formatLarge(d)
-          if (self.options.money) {
-            label = '$' + label
+          if(self.options.xFormat) {
+            return self.options.xFormat(d)
+          } else {
+            var label = self.formatLarge(d)
+            if (self.options.money) {
+              label = '$' + label
+            }
+            if (self.options.percent) {
+              label = label + '%'
+            }
+            return label
           }
-          if (self.options.percent) {
-            label = label + '%'
-          }
-          return label
         })
         .style("bottom", "0px")
         .style("background", function(){
@@ -1341,8 +1431,8 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
   }
   , updateYAxis: function() {
     var self = this
-      , y = this.options.y
-      , x = this.options.x
+      , y = 'y'
+      , x = 'x'
 
     if (this.options.drawY) {
       var w = parseInt(d3.select(self.el).select('.bars').style("width"))
@@ -1391,6 +1481,13 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
           }
         })
         .select('.gd-label')
+          .style("height", function(d){
+            if(self.options.barHeight !== 0) {
+              return self.options.barHeight + "px"
+            } else {
+              return self.y.rangeBand() + "px"
+            }
+          })
           .text(function(d){
             return d
           })
@@ -1432,14 +1529,15 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
             return self.y.rangeBand() + "px"
           }
         })
-        .on('mouseover', function (d, i) {
-          self.mouseOver(d, i, this)
-        })
-        .on('mouseout', function (d, i) {
-          self.mouseOut(d, i, this)
-        })
         .append('div')
           .attr("class", "gd-label")
+          .style("height", function(d){
+            if(self.options.barHeight !== 0) {
+              return self.options.barHeight + "px"
+            } else {
+              return self.y.rangeBand() + "px"
+            }
+          })
           .text(function(d){
             return d
           })
@@ -1453,8 +1551,11 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
       , x
       , output = ''
 
-    var x = self.data[i][self.options.x]
-    var y = self.data[i][self.options.y]
+    var x = self.data[i].x
+    var y = self.data[i].y
+    if(typeof self.options.x == 'object') {
+      y += ' ' + self.options.x[i % self.stackNumber]
+    }
     if(x !== null) {
       x = self.options.formatter(x)
       var view = {

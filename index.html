@@ -235,69 +235,51 @@
     {
       "geo": "Allegany",
       "geocode": "1",
-      "C002": "74,692"
+      "2011": "74,692",
+      "2012": "73,692",
+      "2013": "444403"
     },
     {
       "geo": "Anne Arundel",
       "geocode": "3",
-      "C002": "544403"
+      "2011": "544403",
+      "2012": "444403",
+      "2013": "444403"
     },
     {
       "geo": "Baltimore City",
       "geocode": "510",
-      "C002": "619493"
+      "2011": "619493",
+      "2012": "519493",
+      "2013": "444403"
     },
     {
       "geo": "Baltimore",
       "geocode": "5",
-      "C002": "809941"
+      "2011": "809941",
+      "2012": "709941",
+      "2013": "444403"
     },
     {
       "geo": "Calvert",
       "geocode": "9",
-      "C002": "89256"
+      "2011": "89256",
+      "2012": "79256",
+      "2013": "444403"
     },
     {
       "geo": "Caroline",
       "geocode": "11",
-      "C002": "-32985"
-    },
-    {
-      "geo": "Carroll",
-      "geocode": "13",
-      "C002": "167288"
-    },
-    {
-      "geo": "Cecil",
-      "geocode": "15",
-      "C002": "101694"
-    },
-    {
-      "geo": "Charles",
-      "geocode": "17",
-      "C002": "149130"
-    },
-    {
-      "geo": "Dorchester",
-      "geocode": "19",
-      "C002": "-32640"
-    },
-    {
-      "geo": "Frederick",
-      "geocode": "21",
-      "C002": "236745"
-    },
-    {
-      "geo": "Garrett",
-      "geocode": "23",
-      "C002": "30051"
+      "2011": "32985",
+      "2012": "22985",
+      "2013": "444403"
     }
   ];
 
     var barcharthtml = new GeoDash.BarChartHorizontal('.barcharthorizontal', {
-      x: 'C002',
+      x: ['2011', '2012', '2013'],
       y: 'geo',
-      barColors: ['#ac0000'],
+      barColors: ["#ac0000", "#e60000", "#ff4d4d"],
       title: 'Horizontal Bar Chart',
       drawX: true,
       drawY: true,

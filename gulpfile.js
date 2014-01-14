@@ -36,8 +36,8 @@ var gulpconcat = function(){
 }
 
 gulp.task('default', function() {
-  gulp.run('minify', function() { gulpconcat() })
-  gulp.run('less')
+  // gulp.run('minify', function() { gulpconcat() })
+  // gulp.run('less')
 
   gulp.watch(['src/GeoDash.js', 'src/Chart.js', 'src/charts/*.js'], function(event) {
     gulp.run('minify', function() { gulpconcat() })
