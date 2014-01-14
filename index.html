@@ -8,18 +8,38 @@
   <link rel="stylesheet" href="./dist/geodash.min.css" />
   <script src="./dist/geodash.min.js"></script>
   <style>
-
+    body {
+      font-family: arial, sans-serif;
+    }
+    a {
+      color: #b1b1b1;
+    }
     .wrapper {
       margin: 20px auto;
       width: 700px;
     }
-    .wrapper h1 {
+    .title h1 {
+      float: left;
+      font-size: 32px;
       margin: 0;
-      font-family: arial, sans-serif;
+    }
+    .title a {
+      font-size: 14px;
+      margin-top: 14px;
+      float: right;
+    }
+    .description {
+      color: #b1b1b1;
+      font-size: 14px;
+      margin: 20px 0 20px 0;
+    }
+    .description p {
+      padding: 0 0 5px 0;
+      margin: 0;
     }
     .charts {
       width: auto;
-      margin: 20px auto;
+      margin: 0px auto;
       text-align: center;
       background: #dfdfdf;
       overflow: auto;
@@ -75,7 +95,14 @@
 </head>
 <body>
 <div class="wrapper">
-<h1>GeoDash</h1>
+  <div class="row title">
+    <h1>GeoDash</h1>
+  </div>
+  <div class="row description">
+    <p>A charting library.</p>
+    <p>Documentation on <a href="https://github.com/esrgc/geodash">Github</a>.</p>
+    <p>By <a href="https://twitter.com/fsrowe">@fsrowe</a>.</p>
+  </div>
   <div class="charts">
     <div class="row">
       <div class="barchartvertical chart"></div>
@@ -184,7 +211,7 @@
       y: 'numCats',
       width: 'auto',
       height: 'auto',
-      colors: ["#ac0000", "#00f"],
+      colors: ["#930000", "#ff4d4d"],
       title: 'Line Chart',
       interpolate: 'monotone',
       dotRadius: 3,
@@ -292,29 +319,33 @@
 
     var data = [
       {
-        "id": "Talbot",
+        "id": "Mon",
         "value": "42235.7"
       },
       {
-        "id": "Washington",
-        "value": "212113.8"
+        "id": "Tue",
+        "value": "165113.8"
       },
       {
-        "id": "Wicomico",
+        "id": "Wed",
         "geocode": "45",
         "value": "64447.3"
       },
       {
-        "id": "Worcester",
+        "id": "Thu",
         "value": "12444.0"
       },
       {
-        "id": "Baltimore",
+        "id": "Fri",
         "value": "22444.0"
       },
       {
-        "id": "Howard",
+        "id": "Sat",
         "value": "62444.0"
+      },
+      {
+        "id": "Sun",
+        "value": "92444.0"
       }
     ]
 
