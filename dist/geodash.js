@@ -690,13 +690,6 @@ GeoDash.Chart = ezoop.BaseClass({
     var self = this
       , padding = 10
 
-    this.margin = { 
-      top: 10
-      , right: 10
-      , bottom: 10
-      , left: 10
-    }
-
     this.setWidth()
     this.setHeight()
     this.setXAxis()
@@ -714,10 +707,10 @@ GeoDash.Chart = ezoop.BaseClass({
       })
       .style("width", this.width + "px")
       .style("height", this.height + "px")
-      .style("margin-top", this.margin.top + "px")
-      .style("margin-bottom", this.margin.bottom + "px")
-      .style("margin-left", self.margin.left + "px")
-      .style("margin-right", this.margin.right + "px")
+      .style("margin-top", this.options.margin.top + "px")
+      .style("margin-bottom", this.options.margin.bottom + "px")
+      .style("margin-left", this.options.margin.left + "px")
+      .style("margin-right", this.options.margin.right + "px")
 
     this.xAxisElement = this.container.append("div")
       .attr("class", "x axis")
@@ -960,7 +953,7 @@ GeoDash.Chart = ezoop.BaseClass({
   }
   , setWidth: function () {
     this.width = parseInt(d3.select(this.el).style('width'))
-    this.width = this.width - this.margin.left - this.margin.right
+    this.width = this.width - this.options.margin.left - this.options.margin.right
   }
   , setHeight: function() {
     if(this.options.barHeight !== 0 
@@ -968,7 +961,7 @@ GeoDash.Chart = ezoop.BaseClass({
       d3.select(this.el).style('height', 'auto')
     }
     this.height = parseInt(d3.select(this.el).style('height'))
-    this.height = this.height - this.margin.top - this.margin.bottom
+    this.height = this.height - this.options.margin.top - this.options.margin.bottom
     if (this.options.title) {
       this.height = this.height - 30
     }
@@ -1010,6 +1003,12 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
     , hoverTemplate: "{{y}}: {{x}}"
     , formatter: d3.format(",")
     , xFormat: false
+    , margin: {
+      top: 10
+      , right: 10
+      , bottom: 10
+      , left: 10
+    }
   }
   , initialize: function (el, options) {
 
@@ -1620,6 +1619,12 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
     , outerPadding: 0.5
     , hoverTemplate: "{{x}}: {{y}}"
     , formatter: d3.format(",")
+    , margin: {
+      top: 10
+      , right: 10
+      , bottom: 10
+      , left: 10
+    }
   }
   , initialize: function (el, options) {
 
@@ -1786,7 +1791,6 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
         }
       })
       .on('mouseover', function (d, i) {
-        console.log('mouseover')
         self.mouseOver(d, i, this)
       })
       .on('mouseout', function (d, i) {
@@ -1873,6 +1877,12 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
     , hoverTemplate: "{{x}}: {{y}}"
     , formatter: d3.format(",")
     , outerPadding: 0
+    , margin: {
+      top: 10
+      , right: 10
+      , bottom: 10
+      , left: 10
+    }
   }
   , initialize: function (el, options) {
   }
@@ -2120,6 +2130,12 @@ GeoDash.PieChart = ezoop.ExtendedClass(GeoDash.Chart, {
     , labelColor: "#ccc"
     , legendWidth: 80
     , arcstroke: 2
+    , margin: {
+      top: 10
+      , right: 10
+      , bottom: 10
+      , left: 10
+    }
   }
   , initialize: function (el, options) {
   }

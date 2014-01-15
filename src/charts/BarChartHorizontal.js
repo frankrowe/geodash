@@ -28,6 +28,12 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
     , hoverTemplate: "{{y}}: {{x}}"
     , formatter: d3.format(",")
     , xFormat: false
+    , margin: {
+      top: 10
+      , right: 10
+      , bottom: 10
+      , left: 10
+    }
   }
   , initialize: function (el, options) {
 

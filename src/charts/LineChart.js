@@ -28,6 +28,12 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
     , hoverTemplate: "{{x}}: {{y}}"
     , formatter: d3.format(",")
     , outerPadding: 0
+    , margin: {
+      top: 10
+      , right: 10
+      , bottom: 10
+      , left: 10
+    }
   }
   , initialize: function (el, options) {
   }

@@ -22,6 +22,12 @@ GeoDash.PieChart = ezoop.ExtendedClass(GeoDash.Chart, {
     , labelColor: "#ccc"
     , legendWidth: 80
     , arcstroke: 2
+    , margin: {
+      top: 10
+      , right: 10
+      , bottom: 10
+      , left: 10
+    }
   }
   , initialize: function (el, options) {
   }

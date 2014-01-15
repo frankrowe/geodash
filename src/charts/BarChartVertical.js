@@ -23,6 +23,12 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
     , outerPadding: 0.5
     , hoverTemplate: "{{x}}: {{y}}"
     , formatter: d3.format(",")
+    , margin: {
+      top: 10
+      , right: 10
+      , bottom: 10
+      , left: 10
+    }
   }
   , initialize: function (el, options) {
 
@@ -189,7 +195,6 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
         }
       })
       .on('mouseover', function (d, i) {
-        console.log('mouseover')
         self.mouseOver(d, i, this)
       })
       .on('mouseout', function (d, i) {
