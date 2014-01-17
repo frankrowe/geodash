@@ -110,6 +110,7 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
       , x = this.options.x
       , colordomain = []
 
+    data.reverse()
     for(var i = 0; i < data.length; i++){
       var d = data[i]
         , total = 0
