@@ -117,7 +117,7 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
         tmpdata.push(obj)
         total += obj.x
       }
-      data[i].total = total
+      tmpdata[i].total = total
     }
     this.data = tmpdata
 
@@ -125,7 +125,7 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
       .range(this.options.barColors)
       .domain(x)
 
-    var extent = d3.extent(data, function(d) { return d.total })
+    var extent = d3.extent(this.data, function(d) { return d.total })
     if(extent[0] < 0){
       this.x.domain(extent)
     } else {

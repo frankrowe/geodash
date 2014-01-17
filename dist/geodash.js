@@ -1161,7 +1161,7 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
         tmpdata.push(obj)
         total += obj.x
       }
-      data[i].total = total
+      tmpdata[i].total = total
     }
     this.data = tmpdata
 
@@ -1169,7 +1169,7 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
       .range(this.options.barColors)
       .domain(x)
 
-    var extent = d3.extent(data, function(d) { return d.total })
+    var extent = d3.extent(this.data, function(d) { return d.total })
     if(extent[0] < 0){
       this.x.domain(extent)
     } else {
@@ -1716,7 +1716,6 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
     }
   }
   , initialize: function (el, options) {
-
   }
   , cleanData: function (data) {
     var y = this.options.y
@@ -1737,30 +1736,65 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
       , y = this.options.y
       , x = this.options.x
 
-    this.data = data = this.cleanData(data)
+    //this.data = data = this.cleanData(data)
+    function makeValue(d, x, y) {
+      if(d[y] != null){
+        if(typeof d[y] === 'string') {
+          d[y] = +d[y].replace(",", "")
+        }
+      }
+      var obj = {
+        x: d[x],
+        y: d[y]
+      }
+      return obj
+    }
+
+    var tmpdata = []
+      , y = this.options.y
+      , x = this.options.x
+
+    for(var i = 0; i < data.length; i++){
+      var d = data[i]
+        , total = 0
+      if(typeof y == 'object') {
+        this.stackNumber = y.length
+        y.forEach(function(_y){
+          var obj = makeValue(d, x, _y)
+          tmpdata.push(obj)
+          total += obj.y
+        })
+      } else {
+        this.stackNumber = 1
+        var obj = makeValue(d, x, y)
+        tmpdata.push(obj)
+        total += obj.y
+      }
+      tmpdata[i].total = total
+    }
+    this.data = tmpdata
 
     this.color = d3.scale.ordinal()
       .range(this.options.barColors)
+      .domain(y)
 
-    this.x.domain(data.map(function (d) { return d[x] }))
+    this.x.domain(this.data.map(function (d) { return d.x }))
 
-    var extent = d3.extent(data, function(d) { return d[y] })
+    var extent = d3.extent(this.data, function(d) { return d.total })
     if(extent[0] < 0){
       this.y.domain(extent)
     } else {
       this.y.domain([0, extent[1]])
     }
 
-
     this.updateChart()
     this.updateXAxis()
     this.updateYAxis()
-
   }
   , updateChart: function() {
     var self = this
-      , y = this.options.y
-      , x = this.options.x
+      , y = 'y'
+      , x = 'x'
 
     var bars = this.container.select(".bars")
       .selectAll(".bar")
@@ -1770,14 +1804,22 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
       .attr("geodash-id", function (d) { return d[x] })
       .style("left", function (d) { return self.x(d[x]) + 'px' })
       .style("width", self.x.rangeBand() + 'px')
-      .style("bottom", function (d) {
+      .style("bottom", function (d, i) {
         var bottom = 0
-        if(d[y] > 0){
+        if(d.y > 0){
           bottom = self.yrange - self.y(0)
         } else {
-          bottom = self.yrange - self.y(d[y])
+          bottom = self.yrange - self.y(d.y)
         }
+        var stackPosition = i % self.stackNumber
+        while(stackPosition > 0){
+          var y = self.data[i - stackPosition].y
+          bottom += parseInt(self.yrange - self.y(y))
+          stackPosition--
+        }
+        bottom = parseInt(bottom)
         return bottom + 'px'
+
       })
       .style("height", function (d) {
         var height = 0
@@ -1793,49 +1835,79 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
         else return self.options.opacity
       })
       .style("background-color", function(d) { return self.color(d[x]) })
-      .style("border-top-right-radius", function(d){
-        if(d[y] > 0) {
-          return self.options.roundRadius + 'px'
-        } else {
+      .style("border-top-right-radius", function(d, i){
+        var notend = (i + 1) % self.stackNumber
+        if(notend) {
           return 0
+        } else {
+          if(d[y] > 0) {
+            return self.options.roundRadius + 'px'
+          } else {
+            return 0
+          }
         }
       })
-      .style("border-top-left-radius", function(d){
-        if(d[y] > 0) {
-          return self.options.roundRadius + 'px'
-        } else {
+      .style("border-top-left-radius", function(d, i){
+        var notend = (i + 1) % self.stackNumber
+        if(notend) {
           return 0
+        } else {
+          if(d[y] > 0) {
+            return self.options.roundRadius + 'px'
+          } else {
+            return 0
+          }
         }
       })
-      .style("border-bottom-right-radius", function(d){
-        if(d[y] < 0) {
-          return self.options.roundRadius + 'px'
-        } else {
+      .style("border-bottom-right-radius", function(d, i){
+        var notend = (i + 1) % self.stackNumber
+        if(notend) {
           return 0
+        } else {
+          if(d[y] < 0) {
+            return self.options.roundRadius + 'px'
+          } else {
+            return 0
+          }
         }
       })
-      .style("border-bottom-left-radius", function(d){
-        if(d[y] < 0) {
-          return self.options.roundRadius + 'px'
-        } else {
+      .style("border-bottom-left-radius", function(d, i){
+        var notend = (i + 1) % self.stackNumber
+        if(notend) {
           return 0
+        } else {
+          if(d[y] < 0) {
+            return self.options.roundRadius + 'px'
+          } else {
+            return 0
+          }
         }
       })
-      .style("background-color", function(d) { return self.color(d[x]) })
+      .style("background-color", function(d, i) {
+        return self.options.barColors[i%self.stackNumber]
+      }, 'important')
 
     bars.enter().append("div")
       .attr("class", "bar")
       .attr("geodash-id", function (d) { return d[x] })
       .style("left", function (d) { return self.x(d[x]) + 'px' })
       .style("width", self.x.rangeBand() + 'px')
-      .style("bottom", function (d) {
+      .style("bottom", function (d, i) {
         var bottom = 0
-        if(d[y] > 0){
+        if(d.y > 0){
           bottom = self.yrange - self.y(0)
         } else {
-          bottom = self.yrange - self.y(d[y])
+          bottom = self.yrange - self.y(d.y)
         }
+        var stackPosition = i % self.stackNumber
+        while(stackPosition > 0){
+          var y = self.data[i - stackPosition].y
+          bottom += parseInt(self.yrange - self.y(y))
+          stackPosition--
+        }
+        bottom = parseInt(bottom)
         return bottom + 'px'
+
       })
       .style("height", function (d) {
         var height = 0
@@ -1850,33 +1922,55 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
         if(d[x] == self.options.highlight) return 1
         else return self.options.opacity
       })
-      .style("background-color", function(d) { return self.color(d[x]) })
-      .style("border-top-right-radius", function(d){
-        if(d[y] > 0) {
-          return self.options.roundRadius + 'px'
-        } else {
+      .style("background-color", function(d, i) {
+        return self.options.barColors[i%self.stackNumber]
+      }, 'important')
+      .style("border-top-right-radius", function(d, i){
+        var notend = (i + 1) % self.stackNumber
+        if(notend) {
           return 0
+        } else {
+          if(d[y] > 0) {
+            return self.options.roundRadius + 'px'
+          } else {
+            return 0
+          }
         }
       })
-      .style("border-top-left-radius", function(d){
-        if(d[y] > 0) {
-          return self.options.roundRadius + 'px'
-        } else {
+      .style("border-top-left-radius", function(d, i){
+        var notend = (i + 1) % self.stackNumber
+        if(notend) {
           return 0
+        } else {
+          if(d[y] > 0) {
+            return self.options.roundRadius + 'px'
+          } else {
+            return 0
+          }
         }
       })
-      .style("border-bottom-right-radius", function(d){
-        if(d[y] < 0) {
-          return self.options.roundRadius + 'px'
-        } else {
+      .style("border-bottom-right-radius", function(d, i){
+        var notend = (i + 1) % self.stackNumber
+        if(notend) {
           return 0
+        } else {
+          if(d[y] < 0) {
+            return self.options.roundRadius + 'px'
+          } else {
+            return 0
+          }
         }
       })
-      .style("border-bottom-left-radius", function(d){
-        if(d[y] < 0) {
-          return self.options.roundRadius + 'px'
-        } else {
+      .style("border-bottom-left-radius", function(d, i){
+        var notend = (i + 1) % self.stackNumber
+        if(notend) {
           return 0
+        } else {
+          if(d[y] < 0) {
+            return self.options.roundRadius + 'px'
+          } else {
+            return 0
+          }
         }
       })
       .on('mouseover', function (d, i) {
@@ -1907,8 +2001,11 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
       , x
       , output = ''
 
-    var x = self.data[i][self.options.x]
-    var y = self.data[i][self.options.y]
+    var x = self.data[i].x
+    var y = self.data[i].y
+    if(typeof self.options.y == 'object') {
+      x += ' ' + self.options.y[i % self.stackNumber]
+    }
     if(y !== null) {
       y = self.options.formatter(y)
       var view = {
@@ -1949,7 +2046,6 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
       var activeEl = self.container.selectAll('.bar')[0][self.activeBar]
       self.mouseOver(d, self.activeBar, activeEl)
     }
-
   }
   , setColor: function(colors) {
     this.options.barColors = colors

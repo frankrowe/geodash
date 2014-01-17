@@ -320,39 +320,53 @@
     var data = [
       {
         "id": "Mon",
-        "value": "42235.7"
+        "2011": "42235.7",
+        "2012": "42235.7",
+        "2013": "42235.7"
       },
       {
         "id": "Tue",
-        "value": "165113.8"
+        "2011": "165113.8",
+        "2012": "42235.7",
+        "2013": "42235.7"
       },
       {
         "id": "Wed",
         "geocode": "45",
-        "value": "64447.3"
+        "2011": "64447.3",
+        "2012": "42235.7",
+        "2013": "42235.7"
       },
       {
         "id": "Thu",
-        "value": "12444.0"
+        "2011": "12444.0",
+        "2012": "42235.7",
+        "2013": "42235.7"
       },
       {
         "id": "Fri",
-        "value": "22444.0"
+        "2011": "22444.0",
+        "2012": "42235.7",
+        "2013": "42235.7"
       },
       {
         "id": "Sat",
-        "value": "62444.0"
+        "2011": "62444.0",
+        "2012": "42235.7",
+        "2013": "42235.7"
       },
       {
         "id": "Sun",
-        "value": "92444.0"
+        "2011": "92444.0",
+        "2012": "42235.7",
+        "2013": "42235.7"
       }
     ]
 
     var barchartvertical = new GeoDash.BarChartVertical('.barchartvertical', {
       x: 'id',
-      y: 'value',
-      barColors: ['#ac0000'],
+      y: ['2011', '2012', '2013'],
+      barColors: ["#ac0000", "#e60000", "#ff4d4d"],
       title: 'Vertical Bar Chart',
       drawX: true,
       drawY: true
@@ -371,7 +385,7 @@
       xLabel: 'X Axis Label',
       opacity: .7
     });
-    barchart2.update(data);
+    barchart2.update(randomize());
     document.getElementById('randomize').onclick = function() {
       barchart2.update(randomize())
     }
