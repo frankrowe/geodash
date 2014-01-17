@@ -646,20 +646,88 @@ ezoop.Class.augmentPrototype = function (child, parent) {
     }
   }
 }
-var oldGeoDash = window.GeoDash
-  , GeoDash = function () {}
 
-GeoDash.version = '0.2-dev'
-
-GeoDash.noConflict = function () {
-  window.GeoDash = oldGeoDash
-  return this
+var GeoDash = {
+  version: '0.2-dev'
 }
 
-window.GeoDash = GeoDash
+function expose() {
+  var oldGeoDash = window.GeoDash
+
+  GeoDash.noConflict = function () {
+    window.GeoDash = oldGeoDash
+    return this
+  }
+
+  window.GeoDash = GeoDash
+}
+
+expose()
+
+
+;(function () {
+  var ua = navigator.userAgent.toLowerCase(),
+      doc = document.documentElement,
+
+      ie = 'ActiveXObject' in window,
+
+      webkit    = ua.indexOf('webkit') !== -1,
+      phantomjs = ua.indexOf('phantom') !== -1,
+      android23 = ua.search('android [23]') !== -1,
+
+      mobile = typeof orientation !== 'undefined',
+      msPointer = navigator.msPointerEnabled && navigator.msMaxTouchPoints && !window.PointerEvent,
+      pointer = (window.PointerEvent && navigator.pointerEnabled && navigator.maxTouchPoints) || msPointer,
+
+      ie3d = ie && ('transition' in doc.style),
+      webkit3d = ('WebKitCSSMatrix' in window) && ('m11' in new window.WebKitCSSMatrix()) && !android23,
+      gecko3d = 'MozPerspective' in doc.style,
+      opera3d = 'OTransition' in doc.style;
+
+
+  var retina = 'devicePixelRatio' in window && window.devicePixelRatio > 1;
+
+  if (!retina && 'matchMedia' in window) {
+    var matches = window.matchMedia('(min-resolution:144dpi)');
+    retina = matches && matches.matches;
+  }
+
+  var touch = !window.L_NO_TOUCH && !phantomjs && (pointer || 'ontouchstart' in window ||
+      (window.DocumentTouch && document instanceof window.DocumentTouch));
+
+  GeoDash.Browser = {
+    ie: ie,
+    ielt9: ie && !document.addEventListener,
+    webkit: webkit,
+    gecko: (ua.indexOf('gecko') !== -1) && !webkit && !window.opera && !ie,
+    android: ua.indexOf('android') !== -1,
+    android23: android23,
+    chrome: ua.indexOf('chrome') !== -1,
+
+    ie3d: ie3d,
+    webkit3d: webkit3d,
+    gecko3d: gecko3d,
+    opera3d: opera3d,
+    any3d: !window.L_DISABLE_3D && (ie3d || webkit3d || gecko3d || opera3d) && !phantomjs,
+
+    mobile: mobile,
+    mobileWebkit: mobile && webkit,
+    mobileWebkit3d: mobile && webkit3d,
+    mobileOpera: mobile && window.opera,
+
+    touch: !!touch,
+    msPointer: !!msPointer,
+    pointer: !!pointer,
+
+    retina: !!retina
+  };
+
+}());
+
 /*
 Chart base class
 */
+
 GeoDash.Chart = ezoop.BaseClass({
   className: 'Chart'
   , defaults: {
@@ -668,6 +736,7 @@ GeoDash.Chart = ezoop.BaseClass({
   , initialize: function (el, options) {
     this.el = el
     this.options = {}
+    this.activeBar = -1
     this.setOptions(options)
     this.makeTitle()
     this.setUpChart()
@@ -1227,10 +1296,11 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
         var stackPosition = i % self.stackNumber
         while(stackPosition > 0){
           var x = self.data[i - stackPosition].x
-          left +=self.x(x)
+          left += parseInt(self.x(x))
           stackPosition--
         }
         left += 1
+        left = parseInt(left)
         return left + 'px'
       })
       .style("top", function(d, i) {
@@ -1246,6 +1316,7 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
       })
       .style("width", function(d) {
         var w = Math.abs(self.x(d.x) - self.x(0))
+        w = parseInt(w)
         return w + 'px'
       })
       .style("height", function(d){
@@ -1322,10 +1393,23 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
 
     barsenter
       .on('mouseover', function (d, i) {
-        self.mouseOver(d, i)
+        if(!GeoDash.Browser.touch) {
+          self.mouseOver(d, i, this)
+        }
       })
       .on('mouseout', function (d, i) {
-        self.mouseOut(d, i)
+        if(!GeoDash.Browser.touch) {
+          self.mouseOut(d, i, this)
+        }
+      })
+      .on('click', function (d, i) {
+        if(self.activeBar === i) {
+          self.activeBar = -1
+          self.mouseOut(d, i, this)
+        } else {
+          self.activeBar = i
+          self.mouseOver(d, i, this)
+        }
       })
   }
   , updateXAxis: function() {
@@ -1565,9 +1649,12 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
     } else {
       output = 'NA'
     }
-
-    var bar = d3.select(self.container.selectAll('.bar')[0][i])
-    bar.style('opacity', 0.9)
+    self.container.selectAll('.bar')
+      .style('opacity', function(d, i) {
+        if(i !== self.activeBar) return self.options.opacity
+        else return 1
+      })
+    d3.select(el).style('opacity', 1)
 
     self.container.select('.hoverbox')
       .html(output)
@@ -1582,12 +1669,14 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
     for(var j = 0; j < self.options.highlight.length; j++) {
       if(self.options.highlight[j] == d) opacity =  1
     }
-  
-    var bar = d3.select(self.container.selectAll('.bar')[0][i])
-    bar.style('opacity', opacity)
+    d3.select(el).style('opacity', opacity)
     self.container.select('.hoverbox')
-      .transition()
-      .style('display', 'none')
+    .transition()
+    .style('display', 'none')
+    if(self.activeBar >= 0){
+      var activeEl = self.container.selectAll('.bar')[0][self.activeBar]
+      self.mouseOver(d, self.activeBar, activeEl)
+    }
   }
   , setColor: function(colors) {
     this.options.barColors = colors
@@ -1791,14 +1880,23 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
         }
       })
       .on('mouseover', function (d, i) {
-        self.mouseOver(d, i, this)
+        if(!GeoDash.Browser.touch) {
+          self.mouseOver(d, i, this)
+        }
       })
       .on('mouseout', function (d, i) {
-        self.mouseOut(d, i, this)
+        if(!GeoDash.Browser.touch) {
+          self.mouseOut(d, i, this)
+        }
       })
       .on('click', function (d, i) {
-        //self.mouseOut(d, i, this)
-        console.log('click')
+        if(self.activeBar === i) {
+          self.activeBar = -1
+          self.mouseOut(d, i, this)
+        } else {
+          self.activeBar = i
+          self.mouseOver(d, i, this)
+        }
       })
 
     bars.exit().remove()
@@ -1822,7 +1920,13 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
       output = 'NA'
     }
 
-    d3.select(el).style('opacity', 0.9)
+    self.container.selectAll('.bar')
+      .style('opacity', function(d, i) {
+        if(i !== self.activeBar) return self.options.opacity
+        else return 1
+      })
+    
+    d3.select(el).style('opacity', 1)
 
     self.container.select('.hoverbox')
       .html(output)
@@ -1839,8 +1943,13 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
     }
     d3.select(el).style('opacity', opacity)
     self.container.select('.hoverbox')
-      .transition()
-      .style('display', 'none')
+    .transition()
+    .style('display', 'none')
+    if(self.activeBar >= 0){
+      var activeEl = self.container.selectAll('.bar')[0][self.activeBar]
+      self.mouseOver(d, self.activeBar, activeEl)
+    }
+
   }
   , setColor: function(colors) {
     this.options.barColors = colors
@@ -2186,7 +2295,7 @@ GeoDash.PieChart = ezoop.ExtendedClass(GeoDash.Chart, {
       .style("fill", function(d) { return self.color(d.data[self.options.label]) })
       .style("fill-opacity", this.options.opacity)
       .style("stroke-width", this.options.arcstroke)
-      .on('mouseover', function(d,i){
+      .on('mouseover', function(d, i){
         d3.select(this).style('fill-opacity', 1)
         if(self.options.hover) {
           var label = d.data[self.options.label]

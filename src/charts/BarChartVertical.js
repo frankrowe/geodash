@@ -195,14 +195,23 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
         }
       })
       .on('mouseover', function (d, i) {
-        self.mouseOver(d, i, this)
+        if(!GeoDash.Browser.touch) {
+          self.mouseOver(d, i, this)
+        }
       })
       .on('mouseout', function (d, i) {
-        self.mouseOut(d, i, this)
+        if(!GeoDash.Browser.touch) {
+          self.mouseOut(d, i, this)
+        }
       })
       .on('click', function (d, i) {
-        //self.mouseOut(d, i, this)
-        console.log('click')
+        if(self.activeBar === i) {
+          self.activeBar = -1
+          self.mouseOut(d, i, this)
+        } else {
+          self.activeBar = i
+          self.mouseOver(d, i, this)
+        }
       })
 
     bars.exit().remove()
@@ -226,7 +235,13 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
       output = 'NA'
     }
 
-    d3.select(el).style('opacity', 0.9)
+    self.container.selectAll('.bar')
+      .style('opacity', function(d, i) {
+        if(i !== self.activeBar) return self.options.opacity
+        else return 1
+      })
+    
+    d3.select(el).style('opacity', 1)
 
     self.container.select('.hoverbox')
       .html(output)
@@ -243,8 +258,13 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
     }
     d3.select(el).style('opacity', opacity)
     self.container.select('.hoverbox')
-      .transition()
-      .style('display', 'none')
+    .transition()
+    .style('display', 'none')
+    if(self.activeBar >= 0){
+      var activeEl = self.container.selectAll('.bar')[0][self.activeBar]
+      self.mouseOver(d, self.activeBar, activeEl)
+    }
+
   }
   , setColor: function(colors) {
     this.options.barColors = colors

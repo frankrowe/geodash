@@ -1,6 +1,7 @@
 /*
 Chart base class
 */
+
 GeoDash.Chart = ezoop.BaseClass({
   className: 'Chart'
   , defaults: {
@@ -9,6 +10,7 @@ GeoDash.Chart = ezoop.BaseClass({
   , initialize: function (el, options) {
     this.el = el
     this.options = {}
+    this.activeBar = -1
     this.setOptions(options)
     this.makeTitle()
     this.setUpChart()

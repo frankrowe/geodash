@@ -78,7 +78,7 @@ GeoDash.PieChart = ezoop.ExtendedClass(GeoDash.Chart, {
       .style("fill", function(d) { return self.color(d.data[self.options.label]) })
       .style("fill-opacity", this.options.opacity)
       .style("stroke-width", this.options.arcstroke)
-      .on('mouseover', function(d,i){
+      .on('mouseover', function(d, i){
         d3.select(this).style('fill-opacity', 1)
         if(self.options.hover) {
           var label = d.data[self.options.label]

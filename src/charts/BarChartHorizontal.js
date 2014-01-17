@@ -252,10 +252,11 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
         var stackPosition = i % self.stackNumber
         while(stackPosition > 0){
           var x = self.data[i - stackPosition].x
-          left +=self.x(x)
+          left += parseInt(self.x(x))
           stackPosition--
         }
         left += 1
+        left = parseInt(left)
         return left + 'px'
       })
       .style("top", function(d, i) {
@@ -271,6 +272,7 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
       })
       .style("width", function(d) {
         var w = Math.abs(self.x(d.x) - self.x(0))
+        w = parseInt(w)
         return w + 'px'
       })
       .style("height", function(d){
@@ -347,10 +349,23 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
 
     barsenter
       .on('mouseover', function (d, i) {
-        self.mouseOver(d, i)
+        if(!GeoDash.Browser.touch) {
+          self.mouseOver(d, i, this)
+        }
       })
       .on('mouseout', function (d, i) {
-        self.mouseOut(d, i)
+        if(!GeoDash.Browser.touch) {
+          self.mouseOut(d, i, this)
+        }
+      })
+      .on('click', function (d, i) {
+        if(self.activeBar === i) {
+          self.activeBar = -1
+          self.mouseOut(d, i, this)
+        } else {
+          self.activeBar = i
+          self.mouseOver(d, i, this)
+        }
       })
   }
   , updateXAxis: function() {
@@ -590,9 +605,12 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
     } else {
       output = 'NA'
     }
-
-    var bar = d3.select(self.container.selectAll('.bar')[0][i])
-    bar.style('opacity', 0.9)
+    self.container.selectAll('.bar')
+      .style('opacity', function(d, i) {
+        if(i !== self.activeBar) return self.options.opacity
+        else return 1
+      })
+    d3.select(el).style('opacity', 1)
 
     self.container.select('.hoverbox')
       .html(output)
@@ -607,12 +625,14 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
     for(var j = 0; j < self.options.highlight.length; j++) {
       if(self.options.highlight[j] == d) opacity =  1
     }
-  
-    var bar = d3.select(self.container.selectAll('.bar')[0][i])
-    bar.style('opacity', opacity)
+    d3.select(el).style('opacity', opacity)
     self.container.select('.hoverbox')
-      .transition()
-      .style('display', 'none')
+    .transition()
+    .style('display', 'none')
+    if(self.activeBar >= 0){
+      var activeEl = self.container.selectAll('.bar')[0][self.activeBar]
+      self.mouseOver(d, self.activeBar, activeEl)
+    }
   }
   , setColor: function(colors) {
     this.options.barColors = colors
