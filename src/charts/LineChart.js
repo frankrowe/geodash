@@ -21,6 +21,8 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
     , xInterval: 'auto'
     , dashed: false
     , time: true
+    , legendWidth: 80
+    , legend: false
     , axisLabelPadding: 20
     , yaxisLabelPadding: 25
     , class: 'chart-html linechart vertical'
@@ -142,6 +144,7 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
     this.updateChart()
     this.updateXAxis()
     this.updateYAxis()
+    this.updateLegend()
 
   }
   , updateChart: function() {

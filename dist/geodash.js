@@ -781,10 +781,11 @@ GeoDash.Chart = ezoop.BaseClass({
       .style("margin-left", this.options.margin.left + "px")
       .style("margin-right", this.options.margin.right + "px")
 
+
     this.xAxisElement = this.container.append("div")
       .attr("class", "x axis")
       .style("margin-left", function(){
-        return self.width - self.xrange + 'px'
+        return self.marginleft + 'px'
       })
       .style("width", function(){
         return self.xrange + 'px'
@@ -802,6 +803,9 @@ GeoDash.Chart = ezoop.BaseClass({
 
     this.yAxisElement = this.container.append("div")
       .attr("class", "y axis")
+      .style("width", function(){
+        return self.xrange + self.marginleft + 'px'
+      })
 
     if(self.options.yLabel) {
       this.yAxisElement.append("div")
@@ -823,27 +827,28 @@ GeoDash.Chart = ezoop.BaseClass({
         return self.xrange + 'px'
       })
       .style("margin-left", function(){
-        return self.width - self.xrange + 'px'
+        return self.marginleft + 'px'
       })
+
+    if(this.options.legend) {
+      this.container.append('div')
+        .attr('class', 'legend')
+        .style("width", this.options.legendWidth + 'px')
+        .style("background", function(){
+          var c = d3.select(self.el).style("background-color")
+          return c
+        })
+    }
 
     if(this.className === 'LineChart') {
       this.svg = this.container.select('.bars')
         .append('svg')
     }
     if(this.className === 'PieChart') {
-      var w = this.width
-      if(this.options.legend) {
-        w -= this.options.legendWidth
-        this.container.select('.bars')
-          .style('width', this.width - this.options.legendWidth + 'px')
-        this.container.append('div')
-          .attr('class', 'legend')
-          .style("width", this.options.legendWidth + 'px')
-      }
       this.svg = this.container.select('.bars')
         .append('svg')
         .append("g")
-         .attr("transform", "translate(" + w / 2 + "," + this.height / 2 + ")");
+         .attr("transform", "translate(" + self.xrange / 2 + "," + this.height / 2 + ")");
     }
 
     this.container.append('div')
@@ -853,13 +858,20 @@ GeoDash.Chart = ezoop.BaseClass({
   }
   , setXAxis: function() {
     var xrange = this.width
-    if(this.options.yLabel) {
-      xrange -= this.options.axisLabelPadding
+      , marginleft = 0
+    if(this.options.legend) {
+      xrange -= this.options.legendWidth
     }
     if(this.options.drawY) {
       xrange -= this.options.yaxisLabelPadding
+      marginleft += this.options.yaxisLabelPadding
+    }
+    if(this.options.yLabel) {
+      xrange -= this.options.axisLabelPadding
+      marginleft += this.options.axisLabelPadding
     }
     this.xrange = xrange
+    this.marginleft = marginleft
     this.x = d3.scale.ordinal()
       .rangeRoundBands([0, xrange], 0.05, this.options.outerPadding)
   }
@@ -911,6 +923,8 @@ GeoDash.Chart = ezoop.BaseClass({
           }
         })
         .style("width", function(){
+          
+          // return self.xrange + self.marginleft + 'px'
           if(self.options.yLabel) {
             return self.width - self.options.axisLabelPadding + "px"
           } else {
@@ -1007,6 +1021,46 @@ GeoDash.Chart = ezoop.BaseClass({
 
     }
   }
+  , updateLegend: function() {
+    if(this.options.legend) {
+
+      var block = {width: 10, height: 10, padding: 5}
+      var padding = 3
+      var legend = this.container.select('.legend')
+
+      var d = this.color.domain().slice().reverse()
+      
+      var legenditems = legend.selectAll(".legend-item")
+          .data(d)
+
+      var t = legenditems.select('.value')
+        .text(function(d) { return d })
+
+      var legenditem = legenditems.enter()
+          .append('div')
+          .attr('class', 'legend-item')
+
+      legenditem.append("div")
+        .attr("class", "swatch")
+        .style('float', 'left')
+        .style("width", block.width + 'px')
+        .style("height", block.height + 'px')
+        .style("margin-left", padding + 'px')
+        .style("background", this.color)
+
+      legenditem.append("div")
+          .attr("class", "value")
+          .style("width", this.options.legendWidth - block.width - padding*2 + 'px')
+          .style("padding-left", padding + 'px')
+          .text(function(d) { return d })
+
+      legenditems.exit().remove()
+
+      var lHeight = parseInt(legend.style('height'))
+      var middle = (this.height / 2) - (lHeight / 2)
+      legend.style('top', middle + 'px')
+    }
+  }
   , update: function () {
   }
   , makeTitle: function () {
@@ -1066,6 +1120,8 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
     , format: false
     , topPadding: 10
     , axisLabelPadding: 20
+    , legendWidth: 80
+    , legend: false
     , rightBarPadding: 10
     , outerPadding: 0.5
     , class: 'chart-html horizontal'
@@ -1084,18 +1140,25 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
   }
   , setXAxis: function() {
     var xrange = this.width
+      , marginleft = 0
+    if(this.options.legend) {
+      xrange -= this.options.legendWidth
+    }
     if(this.options.drawY){
       xrange -= this.options.yWidth
+      marginleft += this.options.yWidth
     }
     if(this.options.yLabel) {
       xrange -= this.options.axisLabelPadding
+      marginleft += this.options.axisLabelPadding
     }
     this.xrange = xrange
+    this.marginleft = marginleft
     this.x = d3.scale.linear()
       .range([0, xrange- this.options.rightBarPadding]).nice()
 
   }
-  ,setYAxis: function() {
+  , setYAxis: function() {
     var yrange = this.height
     if(this.options.drawX) {
       yrange -= this.options.axisLabelPadding
@@ -1109,6 +1172,7 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
   }
   , update: function (data) {
     var self = this
+    this.data = data
 
     if(this.options.barHeight !== 0) {
       var height = this.options.barHeight * data.length
@@ -1126,8 +1190,6 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
       this.setYAxis()
     }
 
-
-
     function makeValue(d, x, y) {
       if(d[x] != null){
         if(typeof d[x] === 'string') {
@@ -1144,12 +1206,14 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
     var tmpdata = []
       , y = this.options.y
       , x = this.options.x
+      , colordomain = []
 
     for(var i = 0; i < data.length; i++){
       var d = data[i]
         , total = 0
       if(typeof x == 'object') {
         this.stackNumber = x.length
+        colordomain = x
         x.forEach(function(_x){
           var obj = makeValue(d, _x, y)
           tmpdata.push(obj)
@@ -1157,30 +1221,32 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
         })
       } else {
         this.stackNumber = 1
+        colordomain = [x]
         var obj = makeValue(d, x, y)
         tmpdata.push(obj)
         total += obj.x
       }
       tmpdata[i].total = total
     }
-    this.data = tmpdata
+    this._data = tmpdata
 
     this.color = d3.scale.ordinal()
       .range(this.options.barColors)
-      .domain(x)
+      .domain(colordomain)
 
-    var extent = d3.extent(this.data, function(d) { return d.total })
+    var extent = d3.extent(this._data, function(d) { return d.total })
     if(extent[0] < 0){
       this.x.domain(extent)
     } else {
       this.x.domain([0, extent[1]])
     }
 
-    this.y.domain(this.data.map(function(d) { return d.y }))
+    this.y.domain(this._data.map(function(d) { return d.y }))
 
     this.updateChart()
     this.updateXAxis()
     this.updateYAxis()
+    this.updateLegend()
   }
   , updateChart: function() {
     var self = this
@@ -1189,7 +1255,7 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
     
     var bars = this.container.select(".bars")
         .selectAll(".bar")
-        .data(this.data)
+        .data(this._data)
 
     bars.transition()
       .attr("geodash-id", function (d) { return d.y })
@@ -1197,7 +1263,7 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
         var left = self.x(Math.min(0, d.x))
         var stackPosition = i % self.stackNumber
         while(stackPosition > 0){
-          var x = self.data[i - stackPosition].x
+          var x = self._data[i - stackPosition].x
           left +=self.x(x)
           stackPosition--
         }
@@ -1295,7 +1361,7 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
         var left = self.x(Math.min(0, d.x))
         var stackPosition = i % self.stackNumber
         while(stackPosition > 0){
-          var x = self.data[i - stackPosition].x
+          var x = self._data[i - stackPosition].x
           left += parseInt(self.x(x))
           stackPosition--
         }
@@ -1544,7 +1610,7 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
           return '0px'
         })
         .style("padding-right", function(d, i){
-          var value = self.data[i][x]
+          var value = self._data[i][x]
             , left = self.x(Math.min(0, value))
             , p = (barWidth - left) + 2
           return p + "px"
@@ -1593,7 +1659,7 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
           return '0px'
         })
         .style("padding-right", function(d, i){
-          var value = self.data[i][x]
+          var value = self._data[i][x]
             , left = self.x(Math.min(0, value))
             , p = (barWidth - left) + 2
           return p + "px"
@@ -1634,8 +1700,8 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
       , x
       , output = ''
 
-    var x = self.data[i].x
-    var y = self.data[i].y
+    var x = self._data[i].x
+    var y = self._data[i].y
     if(typeof self.options.x == 'object') {
       y += ' ' + self.options.x[i % self.stackNumber]
     }
@@ -1702,6 +1768,8 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
     , verticalX: false
     , invert: false
     , roundRadius: 3
+    , legendWidth: 80
+    , legend: false
     , axisLabelPadding: 20
     , yaxisLabelPadding: 25
     , class: 'chart-html vertical'
@@ -1717,26 +1785,12 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
   }
   , initialize: function (el, options) {
   }
-  , cleanData: function (data) {
-    var y = this.options.y
-      , x = this.options.x
-
-    for(var i = 0; i < data.length; i++){
-      var d = data[i]
-      if(d[y] != null){
-        if(typeof d[y] === 'string') {
-          d[y] = +d[y].replace(",", "")
-        }
-      }
-    }
-    return data
-  }
   , update: function (data) {
     var self = this
       , y = this.options.y
       , x = this.options.x
 
-    //this.data = data = this.cleanData(data)
+    this.data = data
     function makeValue(d, x, y) {
       if(d[y] != null){
         if(typeof d[y] === 'string') {
@@ -1753,12 +1807,14 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
     var tmpdata = []
       , y = this.options.y
       , x = this.options.x
+      , colordomain = []
 
     for(var i = 0; i < data.length; i++){
       var d = data[i]
         , total = 0
       if(typeof y == 'object') {
         this.stackNumber = y.length
+        colordomain = y
         y.forEach(function(_y){
           var obj = makeValue(d, x, _y)
           tmpdata.push(obj)
@@ -1766,21 +1822,22 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
         })
       } else {
         this.stackNumber = 1
+        colordomain = [y]
         var obj = makeValue(d, x, y)
         tmpdata.push(obj)
         total += obj.y
       }
       tmpdata[i].total = total
     }
-    this.data = tmpdata
+    this._data = tmpdata
 
     this.color = d3.scale.ordinal()
       .range(this.options.barColors)
-      .domain(y)
+      .domain(colordomain)
 
-    this.x.domain(this.data.map(function (d) { return d.x }))
+    this.x.domain(this._data.map(function (d) { return d.x }))
 
-    var extent = d3.extent(this.data, function(d) { return d.total })
+    var extent = d3.extent(this._data, function(d) { return d.total })
     if(extent[0] < 0){
       this.y.domain(extent)
     } else {
@@ -1790,6 +1847,7 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
     this.updateChart()
     this.updateXAxis()
     this.updateYAxis()
+    this.updateLegend()
   }
   , updateChart: function() {
     var self = this
@@ -1798,7 +1856,7 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
 
     var bars = this.container.select(".bars")
       .selectAll(".bar")
-      .data(this.data)
+      .data(this._data)
 
     bars.transition()
       .attr("geodash-id", function (d) { return d[x] })
@@ -1813,7 +1871,7 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
         }
         var stackPosition = i % self.stackNumber
         while(stackPosition > 0){
-          var y = self.data[i - stackPosition].y
+          var y = self._data[i - stackPosition].y
           bottom += parseInt(self.yrange - self.y(y))
           stackPosition--
         }
@@ -1834,7 +1892,9 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
         if(d[x] == self.options.highlight) return 1
         else return self.options.opacity
       })
-      .style("background-color", function(d) { return self.color(d[x]) })
+      .style("background-color", function(d, i) { 
+        return self.options.barColors[i%self.stackNumber]
+      })
       .style("border-top-right-radius", function(d, i){
         var notend = (i + 1) % self.stackNumber
         if(notend) {
@@ -1901,7 +1961,7 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
         }
         var stackPosition = i % self.stackNumber
         while(stackPosition > 0){
-          var y = self.data[i - stackPosition].y
+          var y = self._data[i - stackPosition].y
           bottom += parseInt(self.yrange - self.y(y))
           stackPosition--
         }
@@ -1994,6 +2054,7 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
       })
 
     bars.exit().remove()
+      
   }
   , mouseOver: function(d, i, el) {
     var self = this
@@ -2001,8 +2062,8 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
       , x
       , output = ''
 
-    var x = self.data[i].x
-    var y = self.data[i].y
+    var x = self._data[i].x
+    var y = self._data[i].y
     if(typeof self.options.y == 'object') {
       x += ' ' + self.options.y[i % self.stackNumber]
     }
@@ -2075,6 +2136,8 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
     , xInterval: 'auto'
     , dashed: false
     , time: true
+    , legendWidth: 80
+    , legend: false
     , axisLabelPadding: 20
     , yaxisLabelPadding: 25
     , class: 'chart-html linechart vertical'
@@ -2196,6 +2259,7 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
     this.updateChart()
     this.updateXAxis()
     this.updateYAxis()
+    this.updateLegend()
 
   }
   , updateChart: function() {
@@ -2433,41 +2497,7 @@ GeoDash.PieChart = ezoop.ExtendedClass(GeoDash.Chart, {
       t.exit().remove()
     }
 
-    if(this.options.legend) {
-
-      var block = {width: 10, height: 10, padding: 5}
-      var padding = 3
-      var legend = this.container.select('.legend')
-
-      var legenditems = legend.selectAll(".legend-item")
-          .data(this.color.domain().slice())
-
-      var t = legenditems.select('.value')
-        .text(function(d) { return d })
-
-      var legenditem = legenditems.enter()
-          .append('div')
-          .attr('class', 'legend-item')
-
-      legenditem.append("div")
-        .attr("class", "swatch")
-        .style('float', 'left')
-        .style("width", block.width + 'px')
-        .style("height", block.height + 'px')
-        .style("background", this.color)
-
-      legenditem.append("div")
-          .attr("class", "value")
-          .style("width", this.options.legendWidth - block.width - padding + 'px')
-          .style("padding-left", padding + 'px')
-          .text(function(d) { return d })
-
-      legenditems.exit().remove()
-
-      var lHeight = parseInt(legend.style('height'))
-      var middle = (this.height / 2) - (lHeight / 2)
-      legend.style('top', middle + 'px')
-    }
+    this.updateLegend()
   }
   , mouseOver: function(d, i, el) {
     var self = this

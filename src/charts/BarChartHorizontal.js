@@ -22,6 +22,8 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
     , format: false
     , topPadding: 10
     , axisLabelPadding: 20
+    , legendWidth: 80
+    , legend: false
     , rightBarPadding: 10
     , outerPadding: 0.5
     , class: 'chart-html horizontal'
@@ -40,18 +42,25 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
   }
   , setXAxis: function() {
     var xrange = this.width
+      , marginleft = 0
+    if(this.options.legend) {
+      xrange -= this.options.legendWidth
+    }
     if(this.options.drawY){
       xrange -= this.options.yWidth
+      marginleft += this.options.yWidth
     }
     if(this.options.yLabel) {
       xrange -= this.options.axisLabelPadding
+      marginleft += this.options.axisLabelPadding
     }
     this.xrange = xrange
+    this.marginleft = marginleft
     this.x = d3.scale.linear()
       .range([0, xrange- this.options.rightBarPadding]).nice()
 
   }
-  ,setYAxis: function() {
+  , setYAxis: function() {
     var yrange = this.height
     if(this.options.drawX) {
       yrange -= this.options.axisLabelPadding
@@ -65,6 +74,7 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
   }
   , update: function (data) {
     var self = this
+    this.data = data
 
     if(this.options.barHeight !== 0) {
       var height = this.options.barHeight * data.length
@@ -82,8 +92,6 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
       this.setYAxis()
     }
 
-
-
     function makeValue(d, x, y) {
       if(d[x] != null){
         if(typeof d[x] === 'string') {
@@ -100,12 +108,14 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
     var tmpdata = []
       , y = this.options.y
       , x = this.options.x
+      , colordomain = []
 
     for(var i = 0; i < data.length; i++){
       var d = data[i]
         , total = 0
       if(typeof x == 'object') {
         this.stackNumber = x.length
+        colordomain = x
         x.forEach(function(_x){
           var obj = makeValue(d, _x, y)
           tmpdata.push(obj)
@@ -113,30 +123,32 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
         })
       } else {
         this.stackNumber = 1
+        colordomain = [x]
         var obj = makeValue(d, x, y)
         tmpdata.push(obj)
         total += obj.x
       }
       tmpdata[i].total = total
     }
-    this.data = tmpdata
+    this._data = tmpdata
 
     this.color = d3.scale.ordinal()
       .range(this.options.barColors)
-      .domain(x)
+      .domain(colordomain)
 
-    var extent = d3.extent(this.data, function(d) { return d.total })
+    var extent = d3.extent(this._data, function(d) { return d.total })
     if(extent[0] < 0){
       this.x.domain(extent)
     } else {
       this.x.domain([0, extent[1]])
     }
 
-    this.y.domain(this.data.map(function(d) { return d.y }))
+    this.y.domain(this._data.map(function(d) { return d.y }))
 
     this.updateChart()
     this.updateXAxis()
     this.updateYAxis()
+    this.updateLegend()
   }
   , updateChart: function() {
     var self = this
@@ -145,7 +157,7 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
     
     var bars = this.container.select(".bars")
         .selectAll(".bar")
-        .data(this.data)
+        .data(this._data)
 
     bars.transition()
       .attr("geodash-id", function (d) { return d.y })
@@ -153,7 +165,7 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
         var left = self.x(Math.min(0, d.x))
         var stackPosition = i % self.stackNumber
         while(stackPosition > 0){
-          var x = self.data[i - stackPosition].x
+          var x = self._data[i - stackPosition].x
           left +=self.x(x)
           stackPosition--
         }
@@ -251,7 +263,7 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
         var left = self.x(Math.min(0, d.x))
         var stackPosition = i % self.stackNumber
         while(stackPosition > 0){
-          var x = self.data[i - stackPosition].x
+          var x = self._data[i - stackPosition].x
           left += parseInt(self.x(x))
           stackPosition--
         }
@@ -500,7 +512,7 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
           return '0px'
         })
         .style("padding-right", function(d, i){
-          var value = self.data[i][x]
+          var value = self._data[i][x]
             , left = self.x(Math.min(0, value))
             , p = (barWidth - left) + 2
           return p + "px"
@@ -549,7 +561,7 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
           return '0px'
         })
         .style("padding-right", function(d, i){
-          var value = self.data[i][x]
+          var value = self._data[i][x]
             , left = self.x(Math.min(0, value))
             , p = (barWidth - left) + 2
           return p + "px"
@@ -590,8 +602,8 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
       , x
       , output = ''
 
-    var x = self.data[i].x
-    var y = self.data[i].y
+    var x = self._data[i].x
+    var y = self._data[i].y
     if(typeof self.options.x == 'object') {
       y += ' ' + self.options.x[i % self.stackNumber]
     }

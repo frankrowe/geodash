@@ -17,6 +17,8 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
     , verticalX: false
     , invert: false
     , roundRadius: 3
+    , legendWidth: 80
+    , legend: false
     , axisLabelPadding: 20
     , yaxisLabelPadding: 25
     , class: 'chart-html vertical'
@@ -32,26 +34,12 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
   }
   , initialize: function (el, options) {
   }
-  , cleanData: function (data) {
-    var y = this.options.y
-      , x = this.options.x
-
-    for(var i = 0; i < data.length; i++){
-      var d = data[i]
-      if(d[y] != null){
-        if(typeof d[y] === 'string') {
-          d[y] = +d[y].replace(",", "")
-        }
-      }
-    }
-    return data
-  }
   , update: function (data) {
     var self = this
       , y = this.options.y
       , x = this.options.x
 
-    //this.data = data = this.cleanData(data)
+    this.data = data
     function makeValue(d, x, y) {
       if(d[y] != null){
         if(typeof d[y] === 'string') {
@@ -68,12 +56,14 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
     var tmpdata = []
       , y = this.options.y
       , x = this.options.x
+      , colordomain = []
 
     for(var i = 0; i < data.length; i++){
       var d = data[i]
         , total = 0
       if(typeof y == 'object') {
         this.stackNumber = y.length
+        colordomain = y
         y.forEach(function(_y){
           var obj = makeValue(d, x, _y)
           tmpdata.push(obj)
@@ -81,21 +71,22 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
         })
       } else {
         this.stackNumber = 1
+        colordomain = [y]
         var obj = makeValue(d, x, y)
         tmpdata.push(obj)
         total += obj.y
       }
       tmpdata[i].total = total
     }
-    this.data = tmpdata
+    this._data = tmpdata
 
     this.color = d3.scale.ordinal()
       .range(this.options.barColors)
-      .domain(y)
+      .domain(colordomain)
 
-    this.x.domain(this.data.map(function (d) { return d.x }))
+    this.x.domain(this._data.map(function (d) { return d.x }))
 
-    var extent = d3.extent(this.data, function(d) { return d.total })
+    var extent = d3.extent(this._data, function(d) { return d.total })
     if(extent[0] < 0){
       this.y.domain(extent)
     } else {
@@ -105,6 +96,7 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
     this.updateChart()
     this.updateXAxis()
     this.updateYAxis()
+    this.updateLegend()
   }
   , updateChart: function() {
     var self = this
@@ -113,7 +105,7 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
 
     var bars = this.container.select(".bars")
       .selectAll(".bar")
-      .data(this.data)
+      .data(this._data)
 
     bars.transition()
       .attr("geodash-id", function (d) { return d[x] })
@@ -128,7 +120,7 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
         }
         var stackPosition = i % self.stackNumber
         while(stackPosition > 0){
-          var y = self.data[i - stackPosition].y
+          var y = self._data[i - stackPosition].y
           bottom += parseInt(self.yrange - self.y(y))
           stackPosition--
         }
@@ -149,7 +141,9 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
         if(d[x] == self.options.highlight) return 1
         else return self.options.opacity
       })
-      .style("background-color", function(d) { return self.color(d[x]) })
+      .style("background-color", function(d, i) { 
+        return self.options.barColors[i%self.stackNumber]
+      })
       .style("border-top-right-radius", function(d, i){
         var notend = (i + 1) % self.stackNumber
         if(notend) {
@@ -216,7 +210,7 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
         }
         var stackPosition = i % self.stackNumber
         while(stackPosition > 0){
-          var y = self.data[i - stackPosition].y
+          var y = self._data[i - stackPosition].y
           bottom += parseInt(self.yrange - self.y(y))
           stackPosition--
         }
@@ -309,6 +303,7 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
       })
 
     bars.exit().remove()
+      
   }
   , mouseOver: function(d, i, el) {
     var self = this
@@ -316,8 +311,8 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
       , x
       , output = ''
 
-    var x = self.data[i].x
-    var y = self.data[i].y
+    var x = self._data[i].x
+    var y = self._data[i].y
     if(typeof self.options.y == 'object') {
       x += ' ' + self.options.y[i % self.stackNumber]
     }

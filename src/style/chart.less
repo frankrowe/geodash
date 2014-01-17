@@ -2,6 +2,21 @@
 
 .geodash {
   font-family: sans-serif;
+  .legend {
+    position: absolute;
+    padding-left: 5px;
+    top: 0px;
+    right: 0px;
+    .legend-item {
+      text-align: left;
+      overflow: hidden;
+      .value {
+        float: left;
+        color: #b1b1b1;
+        font-size: 11px;
+      }
+    }
+  }
 }
 
 .axis path,
@@ -35,20 +50,6 @@
 .piechart-svg {
   .arc {
     stroke: #fff;
-  }
-  .legend {
-    position: absolute;
-    top: 0px;
-    right: 0px;
-    .legend-item {
-      text-align: left;
-      overflow: hidden;
-      .value {
-        float: left;
-        color: #b1b1b1;
-        font-size: 11px;
-      }
-    }
   }
 }
 

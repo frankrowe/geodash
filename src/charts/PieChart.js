@@ -120,41 +120,7 @@ GeoDash.PieChart = ezoop.ExtendedClass(GeoDash.Chart, {
       t.exit().remove()
     }
 
-    if(this.options.legend) {
-
-      var block = {width: 10, height: 10, padding: 5}
-      var padding = 3
-      var legend = this.container.select('.legend')
-
-      var legenditems = legend.selectAll(".legend-item")
-          .data(this.color.domain().slice())
-
-      var t = legenditems.select('.value')
-        .text(function(d) { return d })
-
-      var legenditem = legenditems.enter()
-          .append('div')
-          .attr('class', 'legend-item')
-
-      legenditem.append("div")
-        .attr("class", "swatch")
-        .style('float', 'left')
-        .style("width", block.width + 'px')
-        .style("height", block.height + 'px')
-        .style("background", this.color)
-
-      legenditem.append("div")
-          .attr("class", "value")
-          .style("width", this.options.legendWidth - block.width - padding + 'px')
-          .style("padding-left", padding + 'px')
-          .text(function(d) { return d })
-
-      legenditems.exit().remove()
-
-      var lHeight = parseInt(legend.style('height'))
-      var middle = (this.height / 2) - (lHeight / 2)
-      legend.style('top', middle + 'px')
-    }
+    this.updateLegend()
   }
   , mouseOver: function(d, i, el) {
     var self = this

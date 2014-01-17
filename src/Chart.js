@@ -55,10 +55,11 @@ GeoDash.Chart = ezoop.BaseClass({
       .style("margin-left", this.options.margin.left + "px")
       .style("margin-right", this.options.margin.right + "px")
 
+
     this.xAxisElement = this.container.append("div")
       .attr("class", "x axis")
       .style("margin-left", function(){
-        return self.width - self.xrange + 'px'
+        return self.marginleft + 'px'
       })
       .style("width", function(){
         return self.xrange + 'px'
@@ -76,6 +77,9 @@ GeoDash.Chart = ezoop.BaseClass({
 
     this.yAxisElement = this.container.append("div")
       .attr("class", "y axis")
+      .style("width", function(){
+        return self.xrange + self.marginleft + 'px'
+      })
 
     if(self.options.yLabel) {
       this.yAxisElement.append("div")
@@ -97,27 +101,28 @@ GeoDash.Chart = ezoop.BaseClass({
         return self.xrange + 'px'
       })
       .style("margin-left", function(){
-        return self.width - self.xrange + 'px'
+        return self.marginleft + 'px'
       })
+
+    if(this.options.legend) {
+      this.container.append('div')
+        .attr('class', 'legend')
+        .style("width", this.options.legendWidth + 'px')
+        .style("background", function(){
+          var c = d3.select(self.el).style("background-color")
+          return c
+        })
+    }
 
     if(this.className === 'LineChart') {
       this.svg = this.container.select('.bars')
         .append('svg')
     }
     if(this.className === 'PieChart') {
-      var w = this.width
-      if(this.options.legend) {
-        w -= this.options.legendWidth
-        this.container.select('.bars')
-          .style('width', this.width - this.options.legendWidth + 'px')
-        this.container.append('div')
-          .attr('class', 'legend')
-          .style("width", this.options.legendWidth + 'px')
-      }
       this.svg = this.container.select('.bars')
         .append('svg')
         .append("g")
-         .attr("transform", "translate(" + w / 2 + "," + this.height / 2 + ")");
+         .attr("transform", "translate(" + self.xrange / 2 + "," + this.height / 2 + ")");
     }
 
     this.container.append('div')
@@ -127,13 +132,20 @@ GeoDash.Chart = ezoop.BaseClass({
   }
   , setXAxis: function() {
     var xrange = this.width
-    if(this.options.yLabel) {
-      xrange -= this.options.axisLabelPadding
+      , marginleft = 0
+    if(this.options.legend) {
+      xrange -= this.options.legendWidth
     }
     if(this.options.drawY) {
       xrange -= this.options.yaxisLabelPadding
+      marginleft += this.options.yaxisLabelPadding
+    }
+    if(this.options.yLabel) {
+      xrange -= this.options.axisLabelPadding
+      marginleft += this.options.axisLabelPadding
     }
     this.xrange = xrange
+    this.marginleft = marginleft
     this.x = d3.scale.ordinal()
       .rangeRoundBands([0, xrange], 0.05, this.options.outerPadding)
   }
@@ -185,6 +197,8 @@ GeoDash.Chart = ezoop.BaseClass({
           }
         })
         .style("width", function(){
+          
+          // return self.xrange + self.marginleft + 'px'
           if(self.options.yLabel) {
             return self.width - self.options.axisLabelPadding + "px"
           } else {
@@ -279,6 +293,46 @@ GeoDash.Chart = ezoop.BaseClass({
           }
         })
 
+    }
+  }
+  , updateLegend: function() {
+    if(this.options.legend) {
+
+      var block = {width: 10, height: 10, padding: 5}
+      var padding = 3
+      var legend = this.container.select('.legend')
+
+      var d = this.color.domain().slice().reverse()
+      
+      var legenditems = legend.selectAll(".legend-item")
+          .data(d)
+
+      var t = legenditems.select('.value')
+        .text(function(d) { return d })
+
+      var legenditem = legenditems.enter()
+          .append('div')
+          .attr('class', 'legend-item')
+
+      legenditem.append("div")
+        .attr("class", "swatch")
+        .style('float', 'left')
+        .style("width", block.width + 'px')
+        .style("height", block.height + 'px')
+        .style("margin-left", padding + 'px')
+        .style("background", this.color)
+
+      legenditem.append("div")
+          .attr("class", "value")
+          .style("width", this.options.legendWidth - block.width - padding*2 + 'px')
+          .style("padding-left", padding + 'px')
+          .text(function(d) { return d })
+
+      legenditems.exit().remove()
+
+      var lHeight = parseInt(legend.style('height'))
+      var middle = (this.height / 2) - (lHeight / 2)
+      legend.style('top', middle + 'px')
     }
   }
   , update: function () {
