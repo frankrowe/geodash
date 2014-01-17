@@ -2295,26 +2295,24 @@ GeoDash.PieChart = ezoop.ExtendedClass(GeoDash.Chart, {
       .style("fill", function(d) { return self.color(d.data[self.options.label]) })
       .style("fill-opacity", this.options.opacity)
       .style("stroke-width", this.options.arcstroke)
-      .on('mouseover', function(d, i){
-        d3.select(this).style('fill-opacity', 1)
-        if(self.options.hover) {
-          var label = d.data[self.options.label]
-          var value = self.options.formatter(d.value)
-          var percent = self.options.formatPercent((d.value/self.total)*100)
-          var view = {
-            label: label
-            , value: value
-            , percent: percent
-          }
-          output = Mustache.render(self.options.hoverTemplate, view)
-          self.container.select('.hoverbox').html(output)
-          self.container.select('.hoverbox').style('display', 'block')
+      .on('mouseover', function (d, i) {
+        if(!GeoDash.Browser.touch) {
+          self.mouseOver(d, i, this)
         }
       })
-      .on('mouseout', function(d,i){
-        self.container.select('.hoverbox').html('')
-        self.container.select('.hoverbox').style('display', 'none')
-        d3.select(this).style('fill-opacity', self.options.opacity  )
+      .on('mouseout', function (d, i) {
+        if(!GeoDash.Browser.touch) {
+          self.mouseOut(d, i, this)
+        }
+      })
+      .on('click', function (d, i) {
+        if(self.activeBar === i) {
+          self.activeBar = -1
+          self.mouseOut(d, i, this)
+        } else {
+          self.activeBar = i
+          self.mouseOver(d, i, this)
+        }
       })
 
     g.exit().remove()
@@ -2374,6 +2372,29 @@ GeoDash.PieChart = ezoop.ExtendedClass(GeoDash.Chart, {
       var middle = (this.height / 2) - (lHeight / 2)
       legend.style('top', middle + 'px')
     }
+  }
+  , mouseOver: function(d, i, el) {
+    var self = this
+    d3.select(el).style('fill-opacity', 1)
+    if(self.options.hover) {
+      var label = d.data[self.options.label]
+      var value = self.options.formatter(d.value)
+      var percent = self.options.formatPercent((d.value/self.total)*100)
+      var view = {
+        label: label
+        , value: value
+        , percent: percent
+      }
+      output = Mustache.render(self.options.hoverTemplate, view)
+      self.container.select('.hoverbox').html(output)
+      self.container.select('.hoverbox').style('display', 'block')
+    }
+  }
+  , mouseOut: function(d, i, el) {
+    var self = this
+    self.container.select('.hoverbox').html('')
+    self.container.select('.hoverbox').style('display', 'none')
+    d3.select(el).style('fill-opacity', self.options.opacity)
   }
 });
 //BarChart extends Chart
