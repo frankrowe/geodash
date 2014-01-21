@@ -2128,7 +2128,7 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
     , interpolate: 'monotone'
     , dotRadius: 3
     , title: false
-    , opacity: 0.5
+    , opacity: 0.8
     , strokeWidth: 2
     , drawX: true
     , drawY: true
@@ -2156,75 +2156,100 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
   , initialize: function (el, options) {
   }
   , update: function(data) {
+
     var self = this
+      , y = this.options.y
+      , x = this.options.x
+
     this.data = data
+
+    var colordomain
+    for(var i = 0; i < data.length; i++){
+      if(typeof y == 'object') {
+        this.stackNumber = y.length
+        colordomain = y
+      } else {
+        this.stackNumber = 1
+        colordomain = [y]
+      }
+    }
+
     this.color = d3.scale.ordinal()
       .range(this.options.colors)
-    
-    this.color.domain(d3.keys(data[0]).filter(function(key) { return key !== self.options.x }))
+      .domain(colordomain)
 
-    this.linedata = this.color.domain().map(function(name) {
-      return {
+    this.linedata = []
+    this.color.domain().map(function(name) {
+      var values = []
+      data.map(function(d) {
+        var x = d[self.options.x]
+          , y
+        if(d[name] === null) {
+          y = null
+        } else {
+          y = +d[name]
+        }
+        values.push({x: x, y: y})
+      })
+      var l = {
         name: name,
-        values: data.map(function(d) {
-          var date = d[self.options.x]
-          var value
-          if(d[name] === null) {
-            value = null
-          } else {
-            value = +d[name]
-          }
-          return {date: date, value: value}
-        })
+        values: values
       }
+      self.linedata.push(l)
     })
-    
+
     /*
       dashed: [{
         line: 0,
-        span: [{
+        span: {
           start: 0,
-          end: 1
-        }]
+          howMany: 1
+        }
       },{
         line: 1,
-        span: [{
+        span: {
           start: 0,
-          end: 2
-        }]
+          howMany: 2
+        }
       }]
     */
     if(this.options.dashed){
-      var dashedlines = [];
       this.options.dashed.forEach(function(dash_options, idx){
-        var line = self.linedata[dash_options.line];
-        if(typeof line !== 'undefined'){
-          var dashedline = {};
-          dashedline.name = JSON.parse(JSON.stringify(line.name));
-          dashedline.values = [];
-          dashedline.dashed = true;
-          dash_options.span.forEach(function(span, idx){
-            for(var i = span.start; i <= span.end; i++){
-              dashedline.values.push({
-                date: line.values[i].date,
-                value: JSON.parse(JSON.stringify(line.values[i].value))
-              });
-              if(i !== span.end) line.values[i].value = null;
-            }
-          });
-          dashedlines.push(dashedline);
+        var line = self.linedata[dash_options.line]
+        if(typeof line !== 'undefined') {
+          var linelength = line.values.length - 1
+          var dashedline = {}
+          dashedline.name = JSON.parse(JSON.stringify(line.name))
+          dashedline.values = []
+          dashedline.dashed = true
+          var span = dash_options.span
+          var end = span.start + span.howMany
+          if(end > linelength) {
+            end = linelength
+          }
+          for(var i = span.start; i <= end; i++) {
+            dashedline.values.push({
+              x: line.values[i].x,
+              y: line.values[i].y
+            })
+          }
+          if(span.start > 0) {
+            var newline = {}
+            newline.name = JSON.parse(JSON.stringify(line.name))
+            newline.values = line.values.slice(0, span.start + 1)
+            self.linedata.push(newline)
+          }
+          line.values = line.values.slice(span.start + span.howMany)
+          self.linedata.push(dashedline)
         }
-      });
-      dashedlines.forEach(function(dashedline){
-        self.linedata.push(dashedline);
-      });
+      })
     }
     
     //remove NaNs
     for(var i = 0; i < this.linedata.length; i++) {
       var one_line = []
       for(var j = 0; j < this.linedata[i].values.length; j++){
-        var value = this.linedata[i].values[j].value
+        var value = this.linedata[i].values[j].y
         if(!isNaN(value) && value !== null) one_line.push(this.linedata[i].values[j])
       }
       this.linedata[i].values = one_line
@@ -2247,8 +2272,8 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
     this.x.domain(this.xLine.ticks())
 
     this.y.domain([
-      d3.min(this.linedata, function(c) { return d3.min(c.values, function(v) { return v.value; }) }),
-      d3.max(this.linedata, function(c) { return d3.max(c.values, function(v) { return v.value; }) })
+      d3.min(this.linedata, function(c) { return d3.min(c.values, function(v) { return v.y; }) }),
+      d3.max(this.linedata, function(c) { return d3.max(c.values, function(v) { return v.y; }) })
     ])
 
     var ydomain = this.y.domain()
@@ -2268,8 +2293,8 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
 
     this.line = d3.svg.line()
       .interpolate(this.options.interpolate)
-      .x(function(d) { return self.x(d.date) + self.x.rangeBand()/2 })
-      .y(function(d) { return self.y(d.value) })
+      .x(function(d) { return self.x(d.x) + self.x.rangeBand()/2 })
+      .y(function(d) { return self.y(d.y) })
 
     var delay = function(d, i) { return i * 10 }
 
@@ -2315,29 +2340,29 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
           .data(one_line);
 
       dots.transition().duration(500).delay(delay)
-        .attr("data", function(d){ return d.value; })
+        .attr("data", function(d){ return d.y; })
         .style("fill", function(d) { return self.color(self.linedata[i].name); })
-        .attr("cx", function(d) { return self.x(d.date) + self.x.rangeBand()/2 })
-        .attr("cy", function(d) { return self.y(d.value); });
+        .attr("cx", function(d) { return self.x(d.x) + self.x.rangeBand()/2 })
+        .attr("cy", function(d) { return self.y(d.y); });
 
       dots.enter().append("circle")
         .attr("class", "dot")
         .attr("r", this.options.dotRadius)
         .style("fill", function(d) { return self.color(self.linedata[i].name); })
         .style("fill-opacity", self.options.opacity)
-        .attr("data", function(d){ return d.value; })
+        .attr("data", function(d){ return d.y; })
         .on('mouseover', function(d, i) {self.mouseOver(d, i, this); })
         .on('mouseout', function(d, i) {self.mouseOut(d, i, this); })
-        .attr("cx", function(d) { return self.x(d.date) + self.x.rangeBand()/2 })
-        .attr("cy", function(d) { return self.y(d.value); });
+        .attr("cx", function(d) { return self.x(d.x) + self.x.rangeBand()/2 })
+        .attr("cy", function(d) { return self.y(d.y); });
 
       dots.exit().remove();
     }
   }
   , mouseOver: function(d, i, el){
     var self = this
-      , y = d.value
-      , x = d.date
+      , y = d.y
+      , x = d.x
       , output = ''
 
     if(self.options.xFormat) {
