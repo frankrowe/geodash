@@ -15,98 +15,92 @@ Requirements
 
 #### Bar Chart
 ```javascript
-var barchart = new GeoDash.BarChartVertical('.barchart', {
-  x: 'name'
-  , y: 'score'
-  , barColors: ['#f00']
-  , title: 'Horizontal Bar Chart'
-  , drawX: true
-  , drawY: true
-  , verticalX: true
-  , money: true
-  , numberTicks: 5
-  , yWidth: 6
+var barchartvertical = new GeoDash.BarChartVertical('.barchartvertical', {
+  x: 'id'
+  , y: ['2011', '2012', '2013']
+  , barColors: ["#ef3b2c","#cb181d","#a50f15"]
+  , title: 'Vertical Bar Chart'
 })
 
-var data = [
+var verticaldata = [
   {
-    'name': 'steve'
-    , 'score': 999999
-  }
-  ,{
-    'name': 'woz'
-    , 'score': 4
-  }
-  ,{
-    'name': 'jonny'
-    , 'score': 3
+    "id": "Mon",
+    "2011": "42235.7",
+    "2012": "42235.7",
+    "2013": "42235.7"
+  },
+  {
+    "id": "Tue",
+    "2011": "165113.8",
+    "2012": "42235.7",
+    "2013": "42235.7"
   }
 ]
-
-barchart.update(data)
+barchartvertical.update(verticaldata)
 ```
 
 #### Line Chart
 ```javascript
 var linechart = new GeoDash.LineChart(".linechart", {
   x: 'date'
-  , y: 'numCats'
-  , width: 'auto'
-  , height: 'auto'
-  , colors: ["#f00", "#00f"]
+  , y: ['numCats', 'goalCats']
+  , colors: colors
   , title: 'Line Chart'
   , interpolate: 'monotone'
-  , dotRadius: 3
-  , xInterval: 
+  , xInterval: 5
+  , xFormat: d3.time.format("%Y")
+  , dashed: [{
+    line: 0,
+    span: {
+      start: 1,
+      howMany: 3
+    }
+  }]
 })
 
-var data = [
+var parseDate = d3.time.format("%Y").parse
+var linedata = [
   {
-    "date":"2011-01-01T05:00:00.000Z"
-    , "numCats":159773
-    , "goalCats": 100000
-  }
-  ,{
-    "date":"2012-01-01T05:00:00.000Z"
-    , "numCats":70920
-    , "goalCats": 100000
-  }
-  ,{
-    "date":"2013-01-01T05:00:00.000Z"
-    , "numCats":97755
-    , "goalCats": 100000
+    "date":parseDate("2007"),
+    "numCats":92817,
+    "goalCats": 100000
+  },
+  {
+    "date":parseDate("2008"),
+    "numCats":82705,
+    "goalCats": 100000
   }
 ]
 
-linechart.update(data)
+linechart.update(linedata)
 ```
 
 #### Pie Chart
 ```javascript
 var piechart = new GeoDash.PieChart('.piechart', {
-  label: 'source'
-  , value: 'percent'
-  , colors: ["#b30000", "#e60000", "#ff4d4d"]
-  , opacity: 0.7
-  , innerRadius: 10
+  label: 'id'
+  , value: 'value'
+  , colors: colors
+  , opacity: 0.8
+  , legend: true
   , title: 'Pie Chart'
-  , hover: true
 })
 
-var data = [
+var piedata = [
   {
-    "source":"lol",
-    "percent":2
-  }
-  ,{
-    "source":"cats",
-    "percent":96
-  }
-  ,{
-    "source":"#woah",
-    "percent":2
+    "id":"lol",
+    "value":33
+  },
+  {
+    "id":"cats",
+    "value":11
+  },
+  {
+    "id":"cool",
+    "value":2
   }
 ]
 
-piechart.update(data)
+
+piechart.update(piedata)
 ```

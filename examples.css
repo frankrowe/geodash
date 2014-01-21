@@ -1,0 +1,83 @@
+body {
+  font-family: arial, sans-serif;
+}
+a {
+  color: #b1b1b1;
+}
+.wrapper {
+  margin: 20px auto;
+  width: 700px;
+}
+.title h1 {
+  float: left;
+  font-size: 32px;
+  margin: 0;
+}
+.title a {
+  font-size: 14px;
+  margin-top: 14px;
+  float: right;
+}
+.description {
+  color: #b1b1b1;
+  font-size: 14px;
+  margin: 20px 0 20px 0;
+}
+.description p {
+  padding: 0 0 5px 0;
+  margin: 0;
+}
+.charts {
+  width: auto;
+  margin: 0px auto;
+  text-align: center;
+  background: #dfdfdf;
+  overflow: auto;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  display: inline-block;
+}
+.barcharthorizontal {
+  width: 315px;
+  height: 315px;
+}
+.barchartvertical {
+  width: 315px;
+  height: 315px;
+}
+.piechart {
+  width: 315px;
+  height: 315px;
+}
+.linechart {
+  width: 315px;
+  height: 315px;
+}
+.chart {
+  float: left;
+  background: #fff;
+  margin: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  overflow: hidden;
+}
+.row {
+  overflow: auto;
+}
+.barchart2 {
+  width: 652px;
+  height: 315px;
+}
+.barcharthorizontal2 {
+  width: 652px;
+  height: 315px;
+}
+.linechart2 {
+  width: 652px;
+  height: 315px;
+}
+#randomize4 {
+  float: left;
+  margin-left: 140px;
+}
