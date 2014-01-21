@@ -1,6 +1,6 @@
 function makeid() {
-  var text = ""
-    , possible = "abcdefghijklmnopqrstuvwxyz";
+  var text = ''
+    , possible = 'abcdefghijklmnopqrstuvwxyz';
   for( var i=0; i < 5; i++ ) {
     text += possible.charAt(Math.floor(Math.random() * possible.length))
   }
@@ -72,145 +72,145 @@ window.onload = function() {
 
 var verticaldata = [
   {
-    "id": "Mon",
-    "2011": "42235.7",
-    "2012": "42235.7",
-    "2013": "42235.7"
+    'id': 'Mon',
+    '2011': '42235.7',
+    '2012': '42235.7',
+    '2013': '42235.7'
   },
   {
-    "id": "Tue",
-    "2011": "165113.8",
-    "2012": "42235.7",
-    "2013": "42235.7"
+    'id': 'Tue',
+    '2011': '165113.8',
+    '2012': '42235.7',
+    '2013': '42235.7'
   },
   {
-    "id": "Wed",
-    "geocode": "45",
-    "2011": "64447.3",
-    "2012": "42235.7",
-    "2013": "42235.7"
+    'id': 'Wed',
+    'geocode': '45',
+    '2011': '64447.3',
+    '2012': '42235.7',
+    '2013': '42235.7'
   },
   {
-    "id": "Thu",
-    "2011": "12444.0",
-    "2012": "42235.7",
-    "2013": "42235.7"
+    'id': 'Thu',
+    '2011': '12444.0',
+    '2012': '42235.7',
+    '2013': '42235.7'
   },
   {
-    "id": "Fri",
-    "2011": "22444.0",
-    "2012": "42235.7",
-    "2013": "42235.7"
+    'id': 'Fri',
+    '2011': '22444.0',
+    '2012': '42235.7',
+    '2013': '42235.7'
   },
   {
-    "id": "Sat",
-    "2011": "62444.0",
-    "2012": "42235.7",
-    "2013": "42235.7"
+    'id': 'Sat',
+    '2011': '62444.0',
+    '2012': '42235.7',
+    '2013': '42235.7'
   },
   {
-    "id": "Sun",
-    "2011": "92444.0",
-    "2012": "42235.7",
-    "2013": "42235.7"
+    'id': 'Sun',
+    '2011': '92444.0',
+    '2012': '42235.7',
+    '2013': '42235.7'
   }
 ]
 
 var piedata = [
   {
-    "id":"lol",
-    "value":33
+    'id':'lol',
+    'value':33
   },
   {
-    "id":"cats",
-    "value":11
+    'id':'cats',
+    'value':11
   },
   {
-    "id":"cool",
-    "value":2
+    'id':'cool',
+    'value':2
   }
 ]
 
-var parseDate = d3.time.format("%Y").parse
+var parseDate = d3.time.format('%Y').parse
 var linedata = [
   {
-    "date":parseDate("2007"),
-    "numCats":92817,
-    "goalCats": 100000
+    'date':parseDate('2007'),
+    'numCats':92817,
+    'goalCats': 100000
   },
   {
-    "date":parseDate("2008"),
-    "numCats":82705,
-    "goalCats": 100000
+    'date':parseDate('2008'),
+    'numCats':82705,
+    'goalCats': 100000
   },
   {
-    "date":parseDate("2009"),
-    "numCats":75920,
-    "goalCats": 100000
+    'date':parseDate('2009'),
+    'numCats':75920,
+    'goalCats': 100000
   },
   {
-    "date":parseDate("2010"),
-    "numCats":76920,
-    "goalCats": 100000
+    'date':parseDate('2010'),
+    'numCats':76920,
+    'goalCats': 100000
   },
   {
-    "date":parseDate("2011"),
-    "numCats":84123,
-    "goalCats": 100000
+    'date':parseDate('2011'),
+    'numCats':84123,
+    'goalCats': 100000
   },
   {
-    "date":parseDate("2012"),
-    "numCats":99109,
-    "goalCats": 100000
+    'date':parseDate('2012'),
+    'numCats':99109,
+    'goalCats': 100000
   },
   {
-    "date":parseDate("2013"),
-    "numCats":145897,
-    "goalCats": 100000
+    'date':parseDate('2013'),
+    'numCats':145897,
+    'goalCats': 100000
   }
 ]
 
 var horizontaldata = [
   {
-    "geo": "Allegany",
-    "geocode": "1",
-    "2011": "74,692",
-    "2012": "73,692",
-    "2013": "444403"
+    'geo': 'Allegany',
+    'geocode': '1',
+    '2011': '74,692',
+    '2012': '73,692',
+    '2013': '444403'
   },
   {
-    "geo": "Anne Arundel",
-    "geocode": "3",
-    "2011": "544403",
-    "2012": "444403",
-    "2013": "444403"
+    'geo': 'Anne Arundel',
+    'geocode': '3',
+    '2011': '544403',
+    '2012': '444403',
+    '2013': '444403'
   },
   {
-    "geo": "Baltimore City",
-    "geocode": "510",
-    "2011": "619493",
-    "2012": "519493",
-    "2013": "444403"
+    'geo': 'Baltimore City',
+    'geocode': '510',
+    '2011': '619493',
+    '2012': '519493',
+    '2013': '444403'
   },
   {
-    "geo": "Baltimore",
-    "geocode": "5",
-    "2011": "809941",
-    "2012": "709941",
-    "2013": "444403"
+    'geo': 'Baltimore',
+    'geocode': '5',
+    '2011': '809941',
+    '2012': '709941',
+    '2013': '444403'
   },
   {
-    "geo": "Calvert",
-    "geocode": "9",
-    "2011": "89256",
-    "2012": "79256",
-    "2013": "444403"
+    'geo': 'Calvert',
+    'geocode': '9',
+    '2011': '89256',
+    '2012': '79256',
+    '2013': '444403'
   },
   {
-    "geo": "Caroline",
-    "geocode": "11",
-    "2011": "32985",
-    "2012": "22985",
-    "2013": "444403"
+    'geo': 'Caroline',
+    'geocode': '11',
+    '2011': '32985',
+    '2012': '22985',
+    '2013': '444403'
   }
 ]
