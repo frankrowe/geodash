@@ -50,7 +50,7 @@
 </div>
   <script type="text/javascript">
 
-    var colors = ["#ef3b2c","#cb181d","#a50f15"].reverse()
+    var colors = ['#a50f15', '#cb181d','#ef3b2c']
 
     /*
     +------------------------------------------+
@@ -81,7 +81,7 @@
       , money: true
       , numberTicks: 5
       , yWidth: 60
-      , hoverTemplate: "{{y}}: ${{x}}"
+      , hoverTemplate: '{{y}}: ${{x}}'
     })
 
     barcharthorizontal.update(horizontaldata)
@@ -109,14 +109,14 @@
     +------------------------------------------+
     */
 
-    var linechart = new GeoDash.LineChart(".linechart", {
+    var linechart = new GeoDash.LineChart('.linechart', {
       x: 'date'
       , y: ['numCats', 'goalCats']
       , colors: colors
       , title: 'Line Chart'
       , interpolate: 'monotone'
       , xInterval: 5
-      , xFormat: d3.time.format("%Y")
+      , xFormat: d3.time.format('%Y')
       , dashed: [{
         line: 0,
         span: {
@@ -170,7 +170,7 @@
     +------------------------------------------+
     */
 
-    var linechart2 = new GeoDash.LineChart(".linechart2", {
+    var linechart2 = new GeoDash.LineChart('.linechart2', {
       x: 'date'
       , y: ['numCats', 'goalCats']
       , colors: colors
@@ -178,7 +178,7 @@
       , interpolate: 'monotone'
       , xInterval: 5
       , yLabel: 'Number of Cats'
-      , xFormat: d3.time.format("%Y")
+      , xFormat: d3.time.format('%Y')
       , dashed: [{
         line: 1,
         span: [{
