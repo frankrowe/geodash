@@ -6,8 +6,8 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
     , y: 'y'
     , barColors: ['#f00']
     , opacity: 0.7
-    , drawX: false
-    , drawY: false
+    , drawX: true
+    , drawY: true
     , percent: false
     , money: false
     , title: false

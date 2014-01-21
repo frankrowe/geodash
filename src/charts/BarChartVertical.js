@@ -6,8 +6,8 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
     , y: 'y'
     , barColors: ['#f00']
     , opacity: 0.7
-    , drawX: false
-    , drawY: false
+    , drawX: true
+    , drawY: true
     , xLabel: false
     , yLabel: false
     , percent: false
