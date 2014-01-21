@@ -36,6 +36,7 @@ var verticaldata = [
     "2013": "42235.7"
   }
 ]
+
 barchartvertical.update(verticaldata)
 ```
 
@@ -100,7 +101,6 @@ var piedata = [
     "value":2
   }
 ]
-
 
 piechart.update(piedata)
 ```
