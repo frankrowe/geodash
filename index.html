@@ -132,6 +132,8 @@
 </div>
   <script type="text/javascript">
 
+    var colors = ["#ef3b2c","#cb181d","#a50f15"].reverse()
+
     function makeid() {
       var text = ""
         , possible = "abcdefghijklmnopqrstuvwxyz";
@@ -180,7 +182,7 @@
     var piechart = new GeoDash.PieChart('.piechart', {
       label: 'id',
       value: 'value',
-      colors: ["#ac0000", "#e60000", "#ff4d4d"],
+      colors: colors,
       opacity: 0.8,
       innerRadius: 10,
       legend: true,
@@ -211,7 +213,7 @@
       y: ['numCats', 'goalCats'],
       width: 'auto',
       height: 'auto',
-      colors: ["#930000", "#ff4d4d"],
+      colors: colors,
       title: 'Line Chart',
       interpolate: 'monotone',
       dotRadius: 3,
@@ -306,7 +308,7 @@
     var barcharthtml = new GeoDash.BarChartHorizontal('.barcharthorizontal', {
       x: ['2011', '2012', '2013'],
       y: 'geo',
-      barColors: ["#ac0000", "#e60000", "#ff4d4d"],
+      barColors: colors,
       title: 'Horizontal Bar Chart',
       drawX: true,
       drawY: true,
@@ -366,7 +368,7 @@
     var barchartvertical = new GeoDash.BarChartVertical('.barchartvertical', {
       x: 'id',
       y: ['2011', '2012', '2013'],
-      barColors: ["#ac0000", "#e60000", "#ff4d4d"],
+      barColors: colors,
       title: 'Vertical Bar Chart',
       legendWidth: 60,
       drawX: true,
@@ -378,7 +380,7 @@
     var barchart2 = new GeoDash.BarChartVertical('.barchart2', {
       x: 'id',
       y: 'value',
-      barColors: ['#ac0000'],
+      barColors: colors,
       title: 'Update Bar Chart',
       drawX: true,
       drawY: true,
@@ -398,7 +400,7 @@
     var barcharthorizontal2 = new GeoDash.BarChartHorizontal('.barcharthorizontal2', {
       x: 'value',
       y: 'id',
-      barColors: ['#ac0000'],
+      barColors: colors,
       title: 'Horizontal Bar Chart',
       drawX: true,
       drawY: true,
@@ -427,7 +429,7 @@
       interpolate: 'monotone',
       dotRadius: 3,
       xInterval: 5,
-      yLabel: 'lol',
+      yLabel: 'Number of Cats',
       xFormat: d3.time.format("%Y"),
       dashed: [{
         line: 1,
@@ -438,7 +440,7 @@
       }]
     })
 
-    //linechart2.update(linedata)
+    linechart2.update(linedata)
     document.getElementById('randomize3').onclick = function() {
       linechart2.update(randomizeLine())
     }

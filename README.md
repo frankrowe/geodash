@@ -7,7 +7,7 @@ http://apps.esrgc.org/dashboards/geodash/
 
 This is an alpha build under heavy development. Expect API breaks in new versions.
 
-![Image](test/geodashcharts2.png?raw=true)
+![Image](test/geodashcharts3.png?raw=true)
 
 
 Requirements
