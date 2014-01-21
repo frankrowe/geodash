@@ -1,7 +1,8 @@
 GeoDash.js
 =======
 
-A D3 wrapper for charts.
+An interactive chart library.
+Builit on d3.js.
 
 http://apps.esrgc.org/dashboards/geodash/
 
@@ -9,9 +10,6 @@ This is an alpha build under heavy development. Expect API breaks in new version
 
 ![Image](test/geodashcharts3.png?raw=true)
 
-
-Requirements
- - D3.js
 
 #### Bar Chart
 ```javascript
