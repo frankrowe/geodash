@@ -18,6 +18,7 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
     , invert: false
     , roundRadius: 3
     , legendWidth: 80
+    , legendPosition: 'middle'
     , legend: false
     , axisLabelPadding: 20
     , yaxisLabelPadding: 25

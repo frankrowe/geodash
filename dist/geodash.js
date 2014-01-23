@@ -848,7 +848,7 @@ GeoDash.Chart = ezoop.BaseClass({
       this.svg = this.container.select('.bars')
         .append('svg')
         .append("g")
-         .attr("transform", "translate(" + self.xrange / 2 + "," + this.height / 2 + ")");
+         .attr("transform", "translate(" + self.xrange / 2 + "," + this.height / 2 + ")")
     }
 
     this.container.append('div')
@@ -1056,9 +1056,17 @@ GeoDash.Chart = ezoop.BaseClass({
 
       legenditems.exit().remove()
 
-      var lHeight = parseInt(legend.style('height'))
-      var middle = (this.height / 2) - (lHeight / 2)
-      legend.style('top', middle + 'px')
+
+      if(this.options.legendPosition == 'middle') {
+        var lHeight = parseInt(legend.style('height'))
+        var middle = (this.height / 2) - (lHeight / 2)
+        legend.style('top', middle + 'px')
+      } else if(this.options.legendPosition == 'top') {
+        legend.style('top', '0px')
+      } else if(this.options.legendPosition == 'bottom') {
+        legend.style('bottom', '0px')
+      }
+      
     }
   }
   , update: function () {
@@ -1121,6 +1129,7 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
     , topPadding: 10
     , axisLabelPadding: 20
     , legendWidth: 80
+    , legendPosition: 'middle'
     , legend: false
     , rightBarPadding: 10
     , outerPadding: 0.5
@@ -1770,6 +1779,7 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
     , invert: false
     , roundRadius: 3
     , legendWidth: 80
+    , legendPosition: 'middle'
     , legend: false
     , axisLabelPadding: 20
     , yaxisLabelPadding: 25
@@ -2138,6 +2148,7 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
     , dashed: false
     , time: true
     , legendWidth: 80
+    , legendPosition: 'middle'
     , legend: false
     , axisLabelPadding: 20
     , yaxisLabelPadding: 25
@@ -2416,6 +2427,7 @@ GeoDash.PieChart = ezoop.ExtendedClass(GeoDash.Chart, {
     , title: false
     , padding: 10
     , legend: false
+    , legendPosition: 'middle'
     , hover: true
     , arclabels: false
     , class: 'chart-html piechart-svg'
@@ -2441,10 +2453,7 @@ GeoDash.PieChart = ezoop.ExtendedClass(GeoDash.Chart, {
   , update: function(data){
     var self = this
 
-    var diameter = Math.min(this.width, this.height)
-    if(this.options.legend) {
-      diameter -= this.options.legendWidth
-    }
+    var diameter = Math.min(this.xrange, this.yrange)
     var radius = diameter / 2
 
     this.arc = d3.svg.arc()

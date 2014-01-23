@@ -23,6 +23,7 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
     , topPadding: 10
     , axisLabelPadding: 20
     , legendWidth: 80
+    , legendPosition: 'middle'
     , legend: false
     , rightBarPadding: 10
     , outerPadding: 0.5

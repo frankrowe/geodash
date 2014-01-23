@@ -122,7 +122,7 @@ GeoDash.Chart = ezoop.BaseClass({
       this.svg = this.container.select('.bars')
         .append('svg')
         .append("g")
-         .attr("transform", "translate(" + self.xrange / 2 + "," + this.height / 2 + ")");
+         .attr("transform", "translate(" + self.xrange / 2 + "," + this.height / 2 + ")")
     }
 
     this.container.append('div')
@@ -330,9 +330,17 @@ GeoDash.Chart = ezoop.BaseClass({
 
       legenditems.exit().remove()
 
-      var lHeight = parseInt(legend.style('height'))
-      var middle = (this.height / 2) - (lHeight / 2)
-      legend.style('top', middle + 'px')
+
+      if(this.options.legendPosition == 'middle') {
+        var lHeight = parseInt(legend.style('height'))
+        var middle = (this.height / 2) - (lHeight / 2)
+        legend.style('top', middle + 'px')
+      } else if(this.options.legendPosition == 'top') {
+        legend.style('top', '0px')
+      } else if(this.options.legendPosition == 'bottom') {
+        legend.style('bottom', '0px')
+      }
+      
     }
   }
   , update: function () {
