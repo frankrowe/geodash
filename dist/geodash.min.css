@@ -113,7 +113,6 @@
 }
 .chart-html.vertical .axis.x .tick .gd-label {
   overflow: hidden;
-  height: 12px;
   padding-top: 5px;
 }
 .chart-html.vertical .axis.x .line {
