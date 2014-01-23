@@ -40,7 +40,7 @@ GeoDash.PieChart = ezoop.ExtendedClass(GeoDash.Chart, {
     var self = this
 
     var diameter = Math.min(this.xrange, this.yrange)
-    var radius = diameter / 2
+    var radius = ( diameter / 2 ) - 4
 
     this.arc = d3.svg.arc()
       .outerRadius(radius)
