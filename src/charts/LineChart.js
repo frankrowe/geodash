@@ -160,12 +160,13 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
       d3.min(this.linedata, function(c) { return d3.min(c.values, function(v) { return v.y; }) }),
       d3.max(this.linedata, function(c) { return d3.max(c.values, function(v) { return v.y; }) })
     ])
-
     var ydomain = this.y.domain()
-    this.y.domain([
-      ydomain[0] - ydomain[0]*.10,
-      ydomain[1] + ydomain[1]*.10
-    ])
+
+    var range = ydomain[1] - ydomain[0]
+    var ypadding = range * .10
+    var min = ydomain[0] - ypadding
+    var max = ydomain[1] + ypadding
+    this.y.domain([min, max])
 
     this.updateChart()
     this.updateXAxis()
