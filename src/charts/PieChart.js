@@ -16,7 +16,7 @@ GeoDash.PieChart = ezoop.ExtendedClass(GeoDash.Chart, {
     , legendPosition: 'middle'
     , hover: true
     , arclabels: false
-    , class: 'chart-html piechart-svg'
+    , gdClass: 'chart-html piechart-svg'
     , formatter: d3.format(',.0f')
     , formatPercent: d3.format('.2f')
     , hoverTemplate: "{{label}}: {{value}} ({{percent}}%)"

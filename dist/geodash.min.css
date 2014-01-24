@@ -1,3 +1,10 @@
+.geodash-oldie .yAxisLabel {
+  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+  top: 0px;
+}
+.geodash-oldie .yAxisLabel .gd-label {
+  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+}
 .geodash-title {
   height: 30px;
   line-height: 30px;
@@ -8,6 +15,7 @@
 }
 .chart-html {
   position: relative;
+  background-color: inherit;
 }
 .chart-html .bars {
   position: relative;
@@ -54,16 +62,10 @@
   position: absolute;
   text-align: center;
   bottom: 0%;
-  /* Safari */
   -webkit-transform: rotate(-90deg);
-  /* Firefox */
   -moz-transform: rotate(-90deg);
-  /* IE */
   -ms-transform: rotate(-90deg);
-  /* Opera */
   -o-transform: rotate(-90deg);
-  /* Internet Explorer */
-  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
   transform-origin: top left;
   -webkit-transform-origin: top left;
 }

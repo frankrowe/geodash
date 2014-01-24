@@ -27,7 +27,7 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
     , legend: false
     , rightBarPadding: 10
     , outerPadding: 0.5
-    , class: 'chart-html horizontal'
+    , gdClass: 'chart-html horizontal'
     , hoverTemplate: "{{y}}: {{x}}"
     , formatter: d3.format(",")
     , xFormat: false
@@ -471,12 +471,15 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
         .style("bottom", "0px")
         .style("background", function(){
           var c = d3.select(self.el).style("background-color")
+          if(!c) {
+            return '#fff'
+          }
           return c
         })
-        .style("margin-left", function(d){
+        .style("margin", function(d){
           var width = d3.select(this).style('width')
           var m = (parseInt(width)/2*-1)
-          return m + 'px'
+          return '0 0 0 ' + m + 'px'
         })
         .style("height", self.options.axisLabelPadding + 'px')
         .style("line-height", self.options.axisLabelPadding + 'px')
@@ -513,11 +516,11 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
         .style("right", function(d){
           return '0px'
         })
-        .style("padding-right", function(d, i){
+        .style("padding", function(d, i){
           var value = self._data[i][x]
             , left = self.x(Math.min(0, value))
             , p = (barWidth - left) + 2
-          return p + "px"
+          return '0 ' + p + 'px' + ' 0 0'
         })
         .style("height", function(d){
           if(self.options.barHeight !== 0) {
@@ -562,11 +565,11 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
         .style("right", function(d){
           return '0px'
         })
-        .style("padding-right", function(d, i){
+        .style("padding", function(d, i){
           var value = self._data[i][x]
             , left = self.x(Math.min(0, value))
             , p = (barWidth - left) + 2
-          return p + "px"
+          return '0 ' + p + 'px' + ' 0 0'
         })
         .style("height", function(d){
           if(self.options.barHeight !== 0) {

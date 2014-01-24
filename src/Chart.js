@@ -39,27 +39,33 @@ GeoDash.Chart = ezoop.BaseClass({
     this.setYAxis()
 
     this.formatPercent = d3.format(".0%")
-    this.formatLarge = d3.format("s")
+    this.formatLarge = d3.format(".1s")
     this.formatComma = d3.format(",")
     this.formatPercentAxisLabel = d3.format("p")
     this.formatMoney = d3.format("$")
 
     this.container = d3.select(this.el).append("div")
       .attr("class", function() {
-        return "geodash " + self.options.class
+        var c = "geodash " + self.options.gdClass
+        if(GeoDash.Browser.ielt9) {
+          c += ' geodash-oldie'
+        }
+        return c
       })
       .style("width", this.width + "px")
       .style("height", this.height + "px")
-      .style("margin-top", this.options.margin.top + "px")
-      .style("margin-bottom", this.options.margin.bottom + "px")
-      .style("margin-left", this.options.margin.left + "px")
-      .style("margin-right", this.options.margin.right + "px")
-
+      .style("margin", function(){
+        var m = self.options.margin.top + "px " +
+          self.options.margin.right + "px " +
+          self.options.margin.bottom + "px " +
+          self.options.margin.left + "px"
+        return m
+      })
 
     this.xAxisElement = this.container.append("div")
       .attr("class", "x axis")
-      .style("margin-left", function(){
-        return self.marginleft + 'px'
+      .style("margin", function(){
+        return "0 0 0 " + self.marginleft + 'px'
       })
       .style("width", function(){
         return self.xrange + 'px'
@@ -100,8 +106,8 @@ GeoDash.Chart = ezoop.BaseClass({
       .style("width", function(){
         return self.xrange + 'px'
       })
-      .style("margin-left", function(){
-        return self.marginleft + 'px'
+      .style("margin", function(){
+        return "0 0 0 " + self.marginleft + 'px'
       })
 
     if(this.options.legend) {
@@ -217,6 +223,7 @@ GeoDash.Chart = ezoop.BaseClass({
         .append('div')
         .attr("class", "gd-label")
         .text(function(d){
+          console.log(d, self.formatLarge(d))
           var label = self.formatLarge(d)
           if (self.options.money) {
             label = '$' + label
@@ -226,14 +233,18 @@ GeoDash.Chart = ezoop.BaseClass({
           }
           return label
         })
-        .style("margin-top", function(d){
+        .style("margin", function(d){
           var h = d3.select(this).style('height')
           var m = (parseInt(h)/2*-1)
-          return m + 'px'
+          return m + 'px' + ' 0 0 0'
         })
         .style("width", self.options.yaxisLabelPadding + 'px')
-        .style("background", function(){
-          var c = d3.select(self.el).style("background-color")
+        .style("background-color", function(){
+          var c = self.container.style("background-color")
+          //IE8 can't get bg color?
+          if(!c) {
+            return '#fff'
+          }
           return c
         })
     }
@@ -251,9 +262,9 @@ GeoDash.Chart = ezoop.BaseClass({
         .style("width", self.x.rangeBand() + 'px')
 
       ticks.select('.line')
-        .style("margin-left", function(d, i){
+        .style("margin", function(d, i){
           var m = self.x.rangeBand() / 2
-          return m + 'px'
+          return '0 0 0 ' + m + 'px'
         })
       ticks.select('.gd-label')
         .text(function(d){
@@ -278,9 +289,9 @@ GeoDash.Chart = ezoop.BaseClass({
 
       newTicks.append('div')
         .attr("class", "line")
-        .style("margin-left", function(d, i){
+        .style("margin", function(d, i){
           var m = self.x.rangeBand() / 2
-          return m + 'px'
+          return '0 0 0 ' + m + 'px'
         })
 
       newTicks.append('div')
@@ -292,7 +303,6 @@ GeoDash.Chart = ezoop.BaseClass({
             return d
           }
         })
-
     }
   }
   , updateLegend: function() {
@@ -319,7 +329,7 @@ GeoDash.Chart = ezoop.BaseClass({
         .style('float', 'left')
         .style("width", block.width + 'px')
         .style("height", block.height + 'px')
-        .style("margin-left", padding + 'px')
+        .style("margin", '0 0 0 ' + padding + 'px')
         .style("background", this.color)
 
       legenditem.append("div")

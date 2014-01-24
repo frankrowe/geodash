@@ -16,7 +16,7 @@ gulp.task('less', function () {
 })
 
 gulp.task('minify', function(){
-  gulp.src(['src/lib/ezoop.js', 'src/GeoDash.js', 'src/Chart.js', 'src/charts/*.js'])
+  gulp.src(['src/lib/ezoop.js', 'src/Chart.js', 'src/charts/*.js'])
     .pipe(concat('geodash.js'))
     .pipe(gulp.dest('dist/'))
     .pipe(rename('geodash.min.js'))
@@ -26,12 +26,44 @@ gulp.task('minify', function(){
 })
 
 var gulpconcat = function(){
-  gulp.src(['src/lib/*.js', '!src/lib/ezoop.js', 'dist/geodash.min.js'])
+
+  gulp.src([
+    'src/GeoDash.js'
+    , 'src/lib/d3.v3.min.js'
+    , 'src/lib/mustache.js'
+    , 'dist/geodash.min.js'
+    ])
     .pipe(concat('geodash.min.js'))
     .pipe(gulp.dest('dist/'))
 
-  gulp.src(['src/lib/*.js', '!src/lib/ezoop.js', 'dist/geodash.js'])
+  gulp.src([
+    'src/GeoDash.js'
+    , 'src/lib/aight.min.js'
+    , 'src/lib/d3.v3.min.js'
+    , 'src/lib/aight.d3.min.js'
+    , 'src/lib/mustache.js'
+    ])
+    .pipe(concat('geodash.ie8.min.js'))
+    .pipe(gulp.dest('dist/'))
+
+  gulp.src([
+    'src/GeoDash.js'
+    , 'src/lib/d3.v3.min.js'
+    , 'src/lib/mustache.js'
+    , 'dist/geodash.js'
+    ])
     .pipe(concat('geodash.js'))
+    .pipe(gulp.dest('dist/'))
+
+  gulp.src([
+    'src/GeoDash.js'
+    , 'src/lib/aight.min.js'
+    , 'src/lib/d3.v3.min.js'
+    , 'src/lib/aight.d3.min.js'
+    , 'src/lib/mustache.js'
+    , 'dist/geodash.js'
+    ])
+    .pipe(concat('geodash.ie8.js'))
     .pipe(gulp.dest('dist/'))
 }
 
