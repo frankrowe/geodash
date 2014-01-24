@@ -951,7 +951,6 @@ GeoDash.Chart = ezoop.BaseClass({
         .append('div')
         .attr("class", "gd-label")
         .text(function(d){
-          console.log(d, self.formatLarge(d))
           var label = self.formatLarge(d)
           if (self.options.money) {
             label = '$' + label
