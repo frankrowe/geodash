@@ -98,16 +98,16 @@
     +------------------------------------------+
     */
 
-    // var piechart = new GeoDash.PieChart('.piechart', {
-    //   label: 'id'
-    //   , value: 'value'
-    //   , colors: colors
-    //   , opacity: 0.8
-    //   , legend: true
-    //   , title: 'Pie Chart'
-    // })
+    var piechart = new GeoDash.PieChart('.piechart', {
+      label: 'id'
+      , value: 'value'
+      , colors: colors
+      , opacity: 0.8
+      , legend: true
+      , title: 'Pie Chart'
+    })
 
-    // piechart.update(piedata)
+    piechart.update(piedata)
 
     /*
     +------------------------------------------+
@@ -115,24 +115,24 @@
     +------------------------------------------+
     */
 
-    // var linechart = new GeoDash.LineChart('.linechart', {
-    //   x: 'date'
-    //   , y: ['numCats', 'goalCats']
-    //   , colors: colors
-    //   , title: 'Line Chart'
-    //   , interpolate: 'monotone'
-    //   , xInterval: 5
-    //   , xFormat: d3.time.format('%Y')
-    //   , dashed: [{
-    //     line: 0,
-    //     span: {
-    //       start: 1,
-    //       howMany: 3
-    //     }
-    //   }]
-    // })
+    var linechart = new GeoDash.LineChart('.linechart', {
+      x: 'date'
+      , y: ['numCats', 'goalCats']
+      , colors: colors
+      , title: 'Line Chart'
+      , interpolate: 'monotone'
+      , xInterval: 5
+      , xFormat: d3.time.format('%Y')
+      , dashed: [{
+        line: 0,
+        span: {
+          start: 1,
+          howMany: 3
+        }
+      }]
+    })
 
-    // linechart.update(linedata)
+    linechart.update(linedata)
 
     /*
     +------------------------------------------+
@@ -176,25 +176,25 @@
     +------------------------------------------+
     */
 
-    // var linechart2 = new GeoDash.LineChart('.linechart2', {
-    //   x: 'date'
-    //   , y: ['numCats', 'goalCats']
-    //   , colors: colors
-    //   , title: 'Line Chart'
-    //   , interpolate: 'monotone'
-    //   , xInterval: 5
-    //   , yLabel: 'Number of Cats'
-    //   , xFormat: d3.time.format('%Y')
-    //   , dashed: [{
-    //     line: 1,
-    //     span: {
-    //       start: 0,
-    //       howMany: 2
-    //     }
-    //   }]
-    // })
+    var linechart2 = new GeoDash.LineChart('.linechart2', {
+      x: 'date'
+      , y: ['numCats', 'goalCats']
+      , colors: colors
+      , title: 'Line Chart'
+      , interpolate: 'monotone'
+      , xInterval: 5
+      , yLabel: 'Number of Cats'
+      , xFormat: d3.time.format('%Y')
+      , dashed: [{
+        line: 1,
+        span: {
+          start: 0,
+          howMany: 2
+        }
+      }]
+    })
 
-    // linechart2.update(linedata)
+    linechart2.update(linedata)
 
   </script>
 </body>
