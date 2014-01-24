@@ -26,6 +26,7 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
     , legend: false
     , axisLabelPadding: 20
     , yaxisLabelPadding: 25
+    , yTicksCount: 10
     , gdClass: 'chart-html linechart vertical'
     , xFormat: d3.time.format("%Y-%m-%d")
     , hoverTemplate: "{{x}}: {{y}}"
@@ -41,7 +42,7 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
   , initialize: function (el, options) {
   }
   , update: function(data) {
-    if(GeoDash.Browser.ielt9) return
+    //if(GeoDash.Browser.ielt9) return
     var self = this
       , y = this.options.y
       , x = this.options.x
@@ -148,14 +149,13 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
         .range([0, this.xrange]);
     }
     this.xLine.domain(d3.extent(this.data, function(d) { return d[self.options.x] }))
+    var xTicks = []
     if(self.options.xInterval == 'auto') {
-      this.xLine.ticks(data.length);
+      xTicks = this.xLine.ticks(data.length);
     } else {
-      this.xLine.ticks(self.options.xInterval);
+      xTicks = this.xLine.ticks(self.options.xInterval);
     }
-
-    this.x.domain(this.xLine.ticks())
-
+    this.x.domain(xTicks)
     this.y.domain([
       d3.min(this.linedata, function(c) { return d3.min(c.values, function(v) { return v.y; }) }),
       d3.max(this.linedata, function(c) { return d3.max(c.values, function(v) { return v.y; }) })
@@ -179,7 +179,9 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
 
     this.line = d3.svg.line()
       .interpolate(this.options.interpolate)
-      .x(function(d) { return self.x(d.x) + self.x.rangeBand()/2 })
+      .x(function(d) { 
+        return self.x(d.x) + self.x.rangeBand()/2 
+      })
       .y(function(d) { return self.y(d.y) })
 
     var delay = function(d, i) { return i * 10 }
@@ -187,16 +189,16 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
     var line_groups = this.svg.selectAll(".line_group")
       .data(this.linedata)
 
-    var lines = this.svg.selectAll(".line")
+    var lines = this.svg.selectAll(".chart-line")
       .data(this.linedata)
 
     lines.transition()
       //.duration(500).delay(delay)
-      .style("stroke", function(d) { return self.color(d.name) })
-      .style("stroke-dasharray", function(d){
-        if(d.dashed) return "5, 5"
-        else return "none"
-      })
+      .attr("stroke", function(d) { return self.color(d.name) })
+      // .attr("stroke-dasharray", function(d){
+      //   if(d.dashed) return "5, 5"
+      //   else return "none"
+      // })
       .attr("d", function(d) { return self.line(d.values); })
 
     lines.enter()
@@ -205,15 +207,16 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
         return 'line_group line_group' + i;
       })
       .append('path')
-      .attr("class", "line")
+      .attr("class", "chart-line")
       .attr("d", function(d) { return self.line(d.values); })
-      .style("stroke", function(d) { return self.color(d.name); })
-      .style("stroke-width", self.options.strokeWidth)
-      .style("stroke-dasharray", function(d){
-        if(d.dashed) return "5, 5";
-        else return "none";
+      .attr("fill", "none")
+      .attr("stroke", function(d) { return self.color(d.name); })
+      .attr("stroke-width", self.options.strokeWidth)
+      .attr("stroke-dasharray", function(d){
+        if(d.dashed) return "4 3";
+        //else return "none";
       })
-      .style("stroke-opacity", self.options.opacity);
+      .attr("stroke-opacity", self.options.opacity);
 
     var exitdots = lines.exit().selectAll('.dot');
     lines.exit().remove();
@@ -227,15 +230,15 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
 
       dots.transition().duration(500).delay(delay)
         .attr("data", function(d){ return d.y; })
-        .style("fill", function(d) { return self.color(self.linedata[i].name); })
+        .attr("fill", function(d) { return self.color(self.linedata[i].name); })
         .attr("cx", function(d) { return self.x(d.x) + self.x.rangeBand()/2 })
         .attr("cy", function(d) { return self.y(d.y); });
 
       dots.enter().append("circle")
         .attr("class", "dot")
         .attr("r", this.options.dotRadius)
-        .style("fill", function(d) { return self.color(self.linedata[i].name); })
-        .style("fill-opacity", self.options.opacity)
+        .attr("fill", function(d) { return self.color(self.linedata[i].name); })
+        .attr("fill-opacity", self.options.opacity)
         .attr("data", function(d){ return d.y; })
         .on('mouseover', function(d, i) {self.mouseOver(d, i, this); })
         .on('mouseout', function(d, i) {self.mouseOut(d, i, this); })

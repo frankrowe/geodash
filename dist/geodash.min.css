@@ -155,10 +155,14 @@
   text-align: left;
   overflow: hidden;
 }
+.geodash .legend .legend-item .swatch {
+  float: left;
+}
 .geodash .legend .legend-item .value {
   float: left;
   color: #b1b1b1;
   font-size: 11px;
+  padding: 0 0 0 3px;
 }
 .axis path,
 .axis line {
@@ -182,7 +186,7 @@
 .linechart-svg path.domain {
   display: none;
 }
-.piechart-svg .arc {
+.piechart-svg .arc path {
   stroke: #fff;
 }
 .hoverbox {

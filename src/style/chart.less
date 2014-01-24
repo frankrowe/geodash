@@ -9,10 +9,14 @@
     .legend-item {
       text-align: left;
       overflow: hidden;
+      .swatch {
+        float: left;
+      }
       .value {
         float: left;
         color: #b1b1b1;
         font-size: 11px;
+        padding: 0 0 0 3px;
       }
     }
   }
@@ -47,7 +51,7 @@
 }
 
 .piechart-svg {
-  .arc {
+  .arc path {
     stroke: #fff;
   }
 }

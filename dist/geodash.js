@@ -839,24 +839,34 @@ GeoDash.Chart = ezoop.BaseClass({
     if(this.options.legend) {
       this.container.append('div')
         .attr('class', 'legend')
-        .style("width", this.options.legendWidth + 'px')
+        .attr("width", this.options.legendWidth + 'px')
         .style("background", function(){
           var c = d3.select(self.el).style("background-color")
           return c
         })
     }
 
-    if(!GeoDash.Browser.ielt9) {
-      if(this.className === 'LineChart') {
-        this.svg = this.container.select('.bars')
-          .append('svg')
-      }
-      if(this.className === 'PieChart') {
-        this.svg = this.container.select('.bars')
-          .append('svg')
-          .append("g")
-           .attr("transform", "translate(" + self.xrange / 2 + "," + this.height / 2 + ")")
-      }
+    if(this.className === 'LineChart') {
+      this.svg = this.container.select('.bars')
+        .append('svg')
+        .attr("height", function(){
+          return self.yrange + "px"
+        })
+        .attr("width", function(){
+          return self.xrange + 'px'
+        })
+    }
+    if(this.className === 'PieChart') {
+      this.svg = this.container.select('.bars')
+        .append('svg')
+        .attr("height", function(){
+          return self.yrange + "px"
+        })
+        .attr("width", function(){
+          return self.xrange + 'px'
+        })
+        .append("g")
+         .attr("transform", "translate(" + self.xrange / 2 + "," + self.yrange / 2 + ")")
     }
 
     this.container.append('div')
@@ -898,7 +908,7 @@ GeoDash.Chart = ezoop.BaseClass({
   , updateYAxis: function() {
     var self = this
     if (this.options.drawY) {
-      var ticks = this.y.ticks()
+      var ticks = this.y.ticks(self.options.yTicksCount)
       var tickElements = this.yAxisElement
         .selectAll(".tick")
         .data(ticks)
@@ -1053,16 +1063,15 @@ GeoDash.Chart = ezoop.BaseClass({
 
       legenditem.append("div")
         .attr("class", "swatch")
-        .style('float', 'left')
         .style("width", block.width + 'px')
         .style("height", block.height + 'px')
-        .style("margin", '0 0 0 ' + padding + 'px')
+        //.style("margin", '0 0 0 ' + padding + 'px')
         .style("background", this.color)
 
       legenditem.append("div")
           .attr("class", "value")
           .style("width", this.options.legendWidth - block.width - padding*2 + 'px')
-          .style("padding-left", padding + 'px')
+          // .style("padding-left", padding + 'px')
           .text(function(d) { return d })
 
       legenditems.exit().remove()
@@ -1133,7 +1142,7 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
     , invert: false
     , barHeight: 0
     , padding: 2
-    , numberTicks: 10
+    , xTicksCount: 10
     , yWidth: 0
     , round: true
     , format: false
@@ -1508,7 +1517,7 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
 
     if(this.options.drawX){
       var chartHeight = this.container.select('.bars').style('height')
-      var ticks = this.x.ticks(self.options.numberTicks)
+      var ticks = this.x.ticks(self.options.xTicksCount)
       var tickElements = this.xAxisElement
         .selectAll(".tick")
         .data(ticks)
@@ -1797,6 +1806,7 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
     , legend: false
     , axisLabelPadding: 20
     , yaxisLabelPadding: 25
+    , yTicksCount: 10
     , gdClass: 'chart-html vertical'
     , outerPadding: 0.5
     , hoverTemplate: "{{x}}: {{y}}"
@@ -2166,6 +2176,7 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
     , legend: false
     , axisLabelPadding: 20
     , yaxisLabelPadding: 25
+    , yTicksCount: 10
     , gdClass: 'chart-html linechart vertical'
     , xFormat: d3.time.format("%Y-%m-%d")
     , hoverTemplate: "{{x}}: {{y}}"
@@ -2181,7 +2192,7 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
   , initialize: function (el, options) {
   }
   , update: function(data) {
-    if(GeoDash.Browser.ielt9) return
+    //if(GeoDash.Browser.ielt9) return
     var self = this
       , y = this.options.y
       , x = this.options.x
@@ -2288,14 +2299,13 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
         .range([0, this.xrange]);
     }
     this.xLine.domain(d3.extent(this.data, function(d) { return d[self.options.x] }))
+    var xTicks = []
     if(self.options.xInterval == 'auto') {
-      this.xLine.ticks(data.length);
+      xTicks = this.xLine.ticks(data.length);
     } else {
-      this.xLine.ticks(self.options.xInterval);
+      xTicks = this.xLine.ticks(self.options.xInterval);
     }
-
-    this.x.domain(this.xLine.ticks())
-
+    this.x.domain(xTicks)
     this.y.domain([
       d3.min(this.linedata, function(c) { return d3.min(c.values, function(v) { return v.y; }) }),
       d3.max(this.linedata, function(c) { return d3.max(c.values, function(v) { return v.y; }) })
@@ -2319,7 +2329,9 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
 
     this.line = d3.svg.line()
       .interpolate(this.options.interpolate)
-      .x(function(d) { return self.x(d.x) + self.x.rangeBand()/2 })
+      .x(function(d) { 
+        return self.x(d.x) + self.x.rangeBand()/2 
+      })
       .y(function(d) { return self.y(d.y) })
 
     var delay = function(d, i) { return i * 10 }
@@ -2327,16 +2339,16 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
     var line_groups = this.svg.selectAll(".line_group")
       .data(this.linedata)
 
-    var lines = this.svg.selectAll(".line")
+    var lines = this.svg.selectAll(".chart-line")
       .data(this.linedata)
 
     lines.transition()
       //.duration(500).delay(delay)
-      .style("stroke", function(d) { return self.color(d.name) })
-      .style("stroke-dasharray", function(d){
-        if(d.dashed) return "5, 5"
-        else return "none"
-      })
+      .attr("stroke", function(d) { return self.color(d.name) })
+      // .attr("stroke-dasharray", function(d){
+      //   if(d.dashed) return "5, 5"
+      //   else return "none"
+      // })
       .attr("d", function(d) { return self.line(d.values); })
 
     lines.enter()
@@ -2345,15 +2357,16 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
         return 'line_group line_group' + i;
       })
       .append('path')
-      .attr("class", "line")
+      .attr("class", "chart-line")
       .attr("d", function(d) { return self.line(d.values); })
-      .style("stroke", function(d) { return self.color(d.name); })
-      .style("stroke-width", self.options.strokeWidth)
-      .style("stroke-dasharray", function(d){
-        if(d.dashed) return "5, 5";
-        else return "none";
+      .attr("fill", "none")
+      .attr("stroke", function(d) { return self.color(d.name); })
+      .attr("stroke-width", self.options.strokeWidth)
+      .attr("stroke-dasharray", function(d){
+        if(d.dashed) return "4 3";
+        //else return "none";
       })
-      .style("stroke-opacity", self.options.opacity);
+      .attr("stroke-opacity", self.options.opacity);
 
     var exitdots = lines.exit().selectAll('.dot');
     lines.exit().remove();
@@ -2367,15 +2380,15 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
 
       dots.transition().duration(500).delay(delay)
         .attr("data", function(d){ return d.y; })
-        .style("fill", function(d) { return self.color(self.linedata[i].name); })
+        .attr("fill", function(d) { return self.color(self.linedata[i].name); })
         .attr("cx", function(d) { return self.x(d.x) + self.x.rangeBand()/2 })
         .attr("cy", function(d) { return self.y(d.y); });
 
       dots.enter().append("circle")
         .attr("class", "dot")
         .attr("r", this.options.dotRadius)
-        .style("fill", function(d) { return self.color(self.linedata[i].name); })
-        .style("fill-opacity", self.options.opacity)
+        .attr("fill", function(d) { return self.color(self.linedata[i].name); })
+        .attr("fill-opacity", self.options.opacity)
         .attr("data", function(d){ return d.y; })
         .on('mouseover', function(d, i) {self.mouseOver(d, i, this); })
         .on('mouseout', function(d, i) {self.mouseOut(d, i, this); })
@@ -2466,7 +2479,7 @@ GeoDash.PieChart = ezoop.ExtendedClass(GeoDash.Chart, {
       .range(colors);
   }
   , update: function(data){
-    if(GeoDash.Browser.ielt9) return
+    //if(GeoDash.Browser.ielt9) return
     var self = this
 
     var diameter = Math.min(this.xrange, this.yrange)
@@ -2493,19 +2506,22 @@ GeoDash.PieChart = ezoop.ExtendedClass(GeoDash.Chart, {
       }
     })
 
-    var g = this.svg.selectAll("path")
+    var g = this.svg.selectAll(".arc")
       .data(this.pie(data))
+      
 
-    g.style("fill", function(d) { return self.color(d.data[self.options.label]) })
+    g.select('path')
+      .style("fill", function(d) { return self.color(d.data[self.options.label]) })
       .attr("d", this.arc)
 
     g.enter()
-      .append("path")
+      .append("g")
       .attr("class", "arc")
+      .append("path")
       .attr("d", this.arc)
-      .style("fill", function(d) { return self.color(d.data[self.options.label]) })
-      .style("fill-opacity", this.options.opacity)
-      .style("stroke-width", this.options.arcstroke)
+      .attr("fill", function(d) { return self.color(d.data[self.options.label]) })
+      .attr("fill-opacity", this.options.opacity)
+      .attr("stroke-width", this.options.arcstroke)
       .on('mouseover', function (d, i) {
         if(!GeoDash.Browser.touch) {
           self.mouseOver(d, i, this)

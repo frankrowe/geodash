@@ -39,9 +39,10 @@ var gulpconcat = function(){
   gulp.src([
     'src/GeoDash.js'
     , 'src/lib/aight.min.js'
-    , 'src/lib/d3.v3.min.js'
+    , 'src/lib/r2d3.min.js'
     , 'src/lib/aight.d3.min.js'
     , 'src/lib/mustache.js'
+    , 'dist/geodash.min.js'
     ])
     .pipe(concat('geodash.ie8.min.js'))
     .pipe(gulp.dest('dist/'))
@@ -58,7 +59,7 @@ var gulpconcat = function(){
   gulp.src([
     'src/GeoDash.js'
     , 'src/lib/aight.min.js'
-    , 'src/lib/d3.v3.min.js'
+    , 'src/lib/r2d3.js'
     , 'src/lib/aight.d3.min.js'
     , 'src/lib/mustache.js'
     , 'dist/geodash.js'

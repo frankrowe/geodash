@@ -113,24 +113,34 @@ GeoDash.Chart = ezoop.BaseClass({
     if(this.options.legend) {
       this.container.append('div')
         .attr('class', 'legend')
-        .style("width", this.options.legendWidth + 'px')
+        .attr("width", this.options.legendWidth + 'px')
         .style("background", function(){
           var c = d3.select(self.el).style("background-color")
           return c
         })
     }
 
-    if(!GeoDash.Browser.ielt9) {
-      if(this.className === 'LineChart') {
-        this.svg = this.container.select('.bars')
-          .append('svg')
-      }
-      if(this.className === 'PieChart') {
-        this.svg = this.container.select('.bars')
-          .append('svg')
-          .append("g")
-           .attr("transform", "translate(" + self.xrange / 2 + "," + this.height / 2 + ")")
-      }
+    if(this.className === 'LineChart') {
+      this.svg = this.container.select('.bars')
+        .append('svg')
+        .attr("height", function(){
+          return self.yrange + "px"
+        })
+        .attr("width", function(){
+          return self.xrange + 'px'
+        })
+    }
+    if(this.className === 'PieChart') {
+      this.svg = this.container.select('.bars')
+        .append('svg')
+        .attr("height", function(){
+          return self.yrange + "px"
+        })
+        .attr("width", function(){
+          return self.xrange + 'px'
+        })
+        .append("g")
+         .attr("transform", "translate(" + self.xrange / 2 + "," + self.yrange / 2 + ")")
     }
 
     this.container.append('div')
@@ -172,7 +182,7 @@ GeoDash.Chart = ezoop.BaseClass({
   , updateYAxis: function() {
     var self = this
     if (this.options.drawY) {
-      var ticks = this.y.ticks()
+      var ticks = this.y.ticks(self.options.yTicksCount)
       var tickElements = this.yAxisElement
         .selectAll(".tick")
         .data(ticks)
@@ -327,16 +337,15 @@ GeoDash.Chart = ezoop.BaseClass({
 
       legenditem.append("div")
         .attr("class", "swatch")
-        .style('float', 'left')
         .style("width", block.width + 'px')
         .style("height", block.height + 'px')
-        .style("margin", '0 0 0 ' + padding + 'px')
+        //.style("margin", '0 0 0 ' + padding + 'px')
         .style("background", this.color)
 
       legenditem.append("div")
           .attr("class", "value")
           .style("width", this.options.legendWidth - block.width - padding*2 + 'px')
-          .style("padding-left", padding + 'px')
+          // .style("padding-left", padding + 'px')
           .text(function(d) { return d })
 
       legenditems.exit().remove()

@@ -22,6 +22,7 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
     , legend: false
     , axisLabelPadding: 20
     , yaxisLabelPadding: 25
+    , yTicksCount: 10
     , gdClass: 'chart-html vertical'
     , outerPadding: 0.5
     , hoverTemplate: "{{x}}: {{y}}"

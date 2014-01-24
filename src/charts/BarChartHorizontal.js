@@ -16,7 +16,7 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
     , invert: false
     , barHeight: 0
     , padding: 2
-    , numberTicks: 10
+    , xTicksCount: 10
     , yWidth: 0
     , round: true
     , format: false
@@ -391,7 +391,7 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
 
     if(this.options.drawX){
       var chartHeight = this.container.select('.bars').style('height')
-      var ticks = this.x.ticks(self.options.numberTicks)
+      var ticks = this.x.ticks(self.options.xTicksCount)
       var tickElements = this.xAxisElement
         .selectAll(".tick")
         .data(ticks)

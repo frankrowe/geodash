@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="./dist/geodash.min.css" />
   <link rel="stylesheet" type="text/css" href="examples.css">
   <!--[if lt IE 9]>
-    <script type="text/javascript" src="./dist/geodash.ie8.js"></script>
+    <script src="./dist/geodash.ie8.min.js" charset="utf-8"></script>
   <![endif]-->
   <!--[if (gte IE 9)|!(IE)]><!-->
     <script src="./dist/geodash.js"></script>
@@ -85,7 +85,7 @@
       , barColors: colors
       , title: 'Horizontal Bar Chart'
       , money: true
-      , numberTicks: 5
+      , xTicksCount: 6
       , yWidth: 60
       , hoverTemplate: '{{y}}: ${{x}}'
     })

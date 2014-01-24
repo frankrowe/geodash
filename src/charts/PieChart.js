@@ -37,7 +37,7 @@ GeoDash.PieChart = ezoop.ExtendedClass(GeoDash.Chart, {
       .range(colors);
   }
   , update: function(data){
-    if(GeoDash.Browser.ielt9) return
+    //if(GeoDash.Browser.ielt9) return
     var self = this
 
     var diameter = Math.min(this.xrange, this.yrange)
@@ -64,19 +64,22 @@ GeoDash.PieChart = ezoop.ExtendedClass(GeoDash.Chart, {
       }
     })
 
-    var g = this.svg.selectAll("path")
+    var g = this.svg.selectAll(".arc")
       .data(this.pie(data))
+      
 
-    g.style("fill", function(d) { return self.color(d.data[self.options.label]) })
+    g.select('path')
+      .style("fill", function(d) { return self.color(d.data[self.options.label]) })
       .attr("d", this.arc)
 
     g.enter()
-      .append("path")
+      .append("g")
       .attr("class", "arc")
+      .append("path")
       .attr("d", this.arc)
-      .style("fill", function(d) { return self.color(d.data[self.options.label]) })
-      .style("fill-opacity", this.options.opacity)
-      .style("stroke-width", this.options.arcstroke)
+      .attr("fill", function(d) { return self.color(d.data[self.options.label]) })
+      .attr("fill-opacity", this.options.opacity)
+      .attr("stroke-width", this.options.arcstroke)
       .on('mouseover', function (d, i) {
         if(!GeoDash.Browser.touch) {
           self.mouseOver(d, i, this)
