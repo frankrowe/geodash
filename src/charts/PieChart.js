@@ -37,6 +37,7 @@ GeoDash.PieChart = ezoop.ExtendedClass(GeoDash.Chart, {
       .range(colors);
   }
   , update: function(data){
+    if(GeoDash.Browser.ielt9) return
     var self = this
 
     var diameter = Math.min(this.xrange, this.yrange)

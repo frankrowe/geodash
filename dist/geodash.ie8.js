@@ -848,15 +848,17 @@ GeoDash.Chart = ezoop.BaseClass({
         })
     }
 
-    if(this.className === 'LineChart') {
-      this.svg = this.container.select('.bars')
-        .append('svg')
-    }
-    if(this.className === 'PieChart') {
-      this.svg = this.container.select('.bars')
-        .append('svg')
-        .append("g")
-         .attr("transform", "translate(" + self.xrange / 2 + "," + this.height / 2 + ")")
+    if(!GeoDash.Browser.ielt9) {
+      if(this.className === 'LineChart') {
+        this.svg = this.container.select('.bars')
+          .append('svg')
+      }
+      if(this.className === 'PieChart') {
+        this.svg = this.container.select('.bars')
+          .append('svg')
+          .append("g")
+           .attr("transform", "translate(" + self.xrange / 2 + "," + this.height / 2 + ")")
+      }
     }
 
     this.container.append('div')
@@ -2181,7 +2183,7 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
   , initialize: function (el, options) {
   }
   , update: function(data) {
-
+    if(GeoDash.Browser.ielt9) return
     var self = this
       , y = this.options.y
       , x = this.options.x
@@ -2466,6 +2468,7 @@ GeoDash.PieChart = ezoop.ExtendedClass(GeoDash.Chart, {
       .range(colors);
   }
   , update: function(data){
+    if(GeoDash.Browser.ielt9) return
     var self = this
 
     var diameter = Math.min(this.xrange, this.yrange)

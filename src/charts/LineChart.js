@@ -41,7 +41,7 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
   , initialize: function (el, options) {
   }
   , update: function(data) {
-
+    if(GeoDash.Browser.ielt9) return
     var self = this
       , y = this.options.y
       , x = this.options.x
