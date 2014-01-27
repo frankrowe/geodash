@@ -32,6 +32,7 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
     , hoverTemplate: "{{x}}: {{y}}"
     , formatter: d3.format(",")
     , outerPadding: 0
+    , linePadding: 10
     , margin: {
       top: 10
       , right: 10
@@ -42,14 +43,13 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
   , initialize: function (el, options) {
   }
   , update: function(data) {
-    //if(GeoDash.Browser.ielt9) return
     var self = this
       , y = this.options.y
       , x = this.options.x
 
     this.data = data
 
-    var colordomain
+    var colordomain = []
     for(var i = 0; i < data.length; i++){
       if(typeof y == 'object') {
         this.stackNumber = y.length
@@ -143,18 +143,19 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
 
     if(this.options.time){
       this.xLine = d3.time.scale()
-        .range([0, this.xrange]);
+        .range([0, this.xrange])
     } else {
       this.xLine = d3.scale.linear()
-        .range([0, this.xrange]);
+        .range([0, this.xrange])
     }
     this.xLine.domain(d3.extent(this.data, function(d) { return d[self.options.x] }))
     var xTicks = []
     if(self.options.xInterval == 'auto') {
-      xTicks = this.xLine.ticks(data.length);
+      xTicks = this.xLine.ticks(data.length)
     } else {
-      xTicks = this.xLine.ticks(self.options.xInterval);
+      xTicks = this.xLine.ticks(self.options.xInterval)
     }
+    this.xLine.ticks(data.length)
     this.x.domain(xTicks)
     this.y.domain([
       d3.min(this.linedata, function(c) { return d3.min(c.values, function(v) { return v.y; }) }),
@@ -168,20 +169,23 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
     var max = ydomain[1] + ypadding
     this.y.domain([min, max])
 
-    this.updateChart()
+    
     this.updateXAxis()
+    this.xLine.range([this.x.rangeBand()/2, this.xrange - this.x.rangeBand()/2])
     this.updateYAxis()
+    this.updateChart()
     this.updateLegend()
 
   }
   , updateChart: function() {
     var self = this
 
+    this.color = d3.scale.ordinal()
+      .range(this.options.colors)
+
     this.line = d3.svg.line()
       .interpolate(this.options.interpolate)
-      .x(function(d) { 
-        return self.x(d.x) + self.x.rangeBand()/2 
-      })
+      .x(function(d) { return self.xLine(d.x) })
       .y(function(d) { return self.y(d.y) })
 
     var delay = function(d, i) { return i * 10 }
@@ -193,12 +197,7 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
       .data(this.linedata)
 
     lines.transition()
-      //.duration(500).delay(delay)
       .attr("stroke", function(d) { return self.color(d.name) })
-      // .attr("stroke-dasharray", function(d){
-      //   if(d.dashed) return "5, 5"
-      //   else return "none"
-      // })
       .attr("d", function(d) { return self.line(d.values); })
 
     lines.enter()
@@ -226,13 +225,13 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
     for(var i = 0; i < this.linedata.length; i++) {
       var one_line = this.linedata[i].values;
       var dots = this.svg.select(".line_group" + i).selectAll('.dot')
-          .data(one_line);
+          .data(one_line)
 
       dots.transition().duration(500).delay(delay)
         .attr("data", function(d){ return d.y; })
         .attr("fill", function(d) { return self.color(self.linedata[i].name); })
-        .attr("cx", function(d) { return self.x(d.x) + self.x.rangeBand()/2 })
-        .attr("cy", function(d) { return self.y(d.y); });
+        .attr("cx", function(d) { return self.xLine(d.x)})
+        .attr("cy", function(d) { return self.y(d.y); })
 
       dots.enter().append("circle")
         .attr("class", "dot")
@@ -242,10 +241,10 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
         .attr("data", function(d){ return d.y; })
         .on('mouseover', function(d, i) {self.mouseOver(d, i, this); })
         .on('mouseout', function(d, i) {self.mouseOut(d, i, this); })
-        .attr("cx", function(d) { return self.x(d.x) + self.x.rangeBand()/2 })
-        .attr("cy", function(d) { return self.y(d.y); });
+        .attr("cx", function(d) { return self.xLine(d.x) })
+        .attr("cy", function(d) { return self.y(d.y); })
 
-      dots.exit().remove();
+      dots.exit().remove()
     }
   }
   , mouseOver: function(d, i, el){
