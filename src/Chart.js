@@ -328,8 +328,11 @@ GeoDash.Chart = ezoop.BaseClass({
       var legenditems = legend.selectAll(".legend-item")
           .data(d)
 
-      var t = legenditems.select('.value')
+      legenditems.select('.value')
         .text(function(d) { return d })
+
+      legenditems.select('.swatch')
+        .style("background", this.color)
 
       var legenditem = legenditems.enter()
           .append('div')
@@ -339,13 +342,11 @@ GeoDash.Chart = ezoop.BaseClass({
         .attr("class", "swatch")
         .style("width", block.width + 'px')
         .style("height", block.height + 'px')
-        //.style("margin", '0 0 0 ' + padding + 'px')
         .style("background", this.color)
 
       legenditem.append("div")
           .attr("class", "value")
           .style("width", this.options.legendWidth - block.width - padding*2 + 'px')
-          // .style("padding-left", padding + 'px')
           .text(function(d) { return d })
 
       legenditems.exit().remove()
@@ -364,6 +365,9 @@ GeoDash.Chart = ezoop.BaseClass({
     }
   }
   , update: function () {
+  }
+  , refresh: function() {
+    this.updateChart()
   }
   , makeTitle: function () {
     if (this.options.title) {
@@ -397,4 +401,7 @@ GeoDash.Chart = ezoop.BaseClass({
   , setXAxisLabel: function(label) {
     this.container.select(".y.axis .xAxisLabel .gd-label").text(label)
   }
+  , setColor: function(colors) {
+    this.options.colors = colors
+  } 
 })
