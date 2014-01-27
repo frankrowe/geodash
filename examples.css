@@ -19,13 +19,50 @@ a {
   float: right;
 }
 .description {
+  float: left;
   color: #b1b1b1;
   font-size: 14px;
   margin: 20px 0 20px 0;
+  width: 200px;
 }
 .description p {
   padding: 0 0 5px 0;
   margin: 0;
+}
+.colors {
+  width: 300px;
+  margin: 20px 0 20px 0;
+  float: right;
+}
+.colors .swatch {
+  height: 30px;
+  width: 30px;
+  margin-right: 5px;
+  float: right;
+  border-radius: 2px;
+  background: #444;
+  opacity: 0.5;
+}
+.swatch.active {
+  opacity: 1;
+}
+.swatch#red {
+  background: #a50f15;
+}
+.swatch#green {
+  background: #238b45;
+}
+.swatch#blue {
+  background: #2171b5;
+}
+.swatch#orange {
+  background: #d94801;
+}
+.swatch#purple {
+  background: #6a51a3;
+}
+.swatch#gray {
+  background: #525252;
 }
 .charts {
   width: auto;

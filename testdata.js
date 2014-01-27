@@ -68,6 +68,19 @@ window.onload = function() {
   document.getElementById('randomize3').onclick = function() {
     linechart2.update(randomizeLine())
   }
+
+  $('.swatch').on('mouseover', function(){
+    var color = $(this).attr('id')
+    $('.swatch').removeClass('active')
+    $(this).addClass('active')
+    Dashboard.charts.forEach(function(chart){
+      chart.setColor(Dashboard.colors[color])
+      chart.refresh()
+    })
+  })
+  $('.swatch').on('mouseout', function(){
+    //$(this).removeClass('active')
+  })
 }
 
 var verticaldata = [

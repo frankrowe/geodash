@@ -15,6 +15,7 @@
   <!--[if (gte IE 9)|!(IE)]><!-->
     <script src="./dist/geodash.js"></script>
   <!--<![endif]-->
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
   <script src="testdata.js"></script>
 </head>
 <body>
@@ -26,6 +27,14 @@
     <p>A charting library.</p>
     <p>Documentation on <a href="https://github.com/esrgc/geodash">Github</a>.</p>
     <p>By <a href="https://twitter.com/fsrowe">@fsrowe</a>.</p>
+  </div>
+  <div class="colors">
+    <div class="swatch" id="gray"></div>
+    <div class="swatch" id="orange"></div>
+    <div class="swatch" id="purple"></div>
+    <div class="swatch" id="blue"></div>
+    <div class="swatch" id="green"></div>
+    <div class="swatch active" id="red"></div>
   </div>
   <div class="charts">
     <div class="row">
@@ -56,7 +65,18 @@
 </div>
   <script type="text/javascript">
 
-    var colors = ['#a50f15', '#cb181d','#ef3b2c']
+
+    var Dashboard = {}
+    Dashboard.colors = {
+      'gray': ["#969696","#737373","#525252"].reverse()
+      , 'red': ["#ef3b2c","#cb181d","#a50f15"].reverse()
+      , 'green': ["#74c476","#41ab5d","#238b45"].reverse()
+      , 'blue': ["#6baed6","#4292c6","#2171b5"].reverse()
+      , 'orange': ["#fd8d3c","#f16913","#d94801"].reverse()
+      , 'purple': ["#9e9ac8","#807dba","#6a51a3"].reverse()
+    }
+    Dashboard.activeColor = Dashboard.colors.red
+    Dashboard.charts = []
 
     /*
     +------------------------------------------+
@@ -67,10 +87,10 @@
     var barchartvertical = new GeoDash.BarChartVertical('.barchartvertical', {
       x: 'id'
       , y: ['2011', '2012', '2013']
-      , barColors: colors
+      , colors: Dashboard.activeColor
       , title: 'Vertical Bar Chart'
     })
-
+    Dashboard.charts.push(barchartvertical)
     barchartvertical.update(verticaldata)
 
     /*
@@ -82,7 +102,7 @@
     var barcharthorizontal = new GeoDash.BarChartHorizontal('.barcharthorizontal', {
       x: ['2011', '2012', '2013']
       , y: 'geo'
-      , barColors: colors
+      , colors: Dashboard.activeColor
       , title: 'Horizontal Bar Chart'
       , money: true
       , xTicksCount: 6
@@ -90,6 +110,7 @@
       , hoverTemplate: '{{y}}: ${{x}}'
     })
 
+    Dashboard.charts.push(barcharthorizontal)
     barcharthorizontal.update(horizontaldata)
 
     /*
@@ -101,12 +122,13 @@
     var piechart = new GeoDash.PieChart('.piechart', {
       label: 'id'
       , value: 'value'
-      , colors: colors
+      , colors: Dashboard.activeColor
       , opacity: 0.8
       , legend: true
+      , legendWidth: 50
       , title: 'Pie Chart'
     })
-
+    Dashboard.charts.push(piechart)
     piechart.update(piedata)
 
     /*
@@ -118,10 +140,9 @@
     var linechart = new GeoDash.LineChart('.linechart', {
       x: 'date'
       , y: ['numCats', 'goalCats']
-      , colors: colors
+      , colors: Dashboard.activeColor
       , title: 'Line Chart'
       , interpolate: 'monotone'
-      , xInterval: 5
       , xFormat: d3.time.format('%Y')
       , dashed: [{
         line: 0,
@@ -131,7 +152,7 @@
         }
       }]
     })
-
+    Dashboard.charts.push(linechart)
     linechart.update(linedata)
 
     /*
@@ -143,12 +164,12 @@
     var barchartvertical2 = new GeoDash.BarChartVertical('.barchart2', {
       x: 'id'
       , y: 'value'
-      , barColors: colors
+      , colors: Dashboard.activeColor
       , title: 'Update Bar Chart'
       , yLabel: 'Y Axis Label'
       , xLabel: 'X Axis Label'
     })
-
+    Dashboard.charts.push(barchartvertical2)
     barchartvertical2.update(randomize())
 
     /*
@@ -160,14 +181,14 @@
     var barcharthorizontal2 = new GeoDash.BarChartHorizontal('.barcharthorizontal2', {
       x: 'value'
       , y: 'id'
-      , barColors: colors
+      , colors: Dashboard.activeColor
       , title: 'Horizontal Bar Chart'
       , numberTicks: 5
       , yLabel: 'Y Axis Label'
       , xLabel: 'X Axis Label'
       , yWidth: 40
     })
-
+    Dashboard.charts.push(barcharthorizontal2)
     barcharthorizontal2.update(randomize())
 
     /*
@@ -179,7 +200,7 @@
     var linechart2 = new GeoDash.LineChart('.linechart2', {
       x: 'date'
       , y: ['numCats', 'goalCats']
-      , colors: colors
+      , colors: Dashboard.activeColor
       , title: 'Line Chart'
       , interpolate: 'monotone'
       , xInterval: 5
@@ -193,7 +214,7 @@
         }
       }]
     })
-
+    Dashboard.charts.push(linechart2)
     linechart2.update(linedata)
 
   </script>
