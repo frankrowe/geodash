@@ -16054,8 +16054,11 @@ GeoDash.Chart = ezoop.BaseClass({
       var legenditems = legend.selectAll(".legend-item")
           .data(d)
 
-      var t = legenditems.select('.value')
+      legenditems.select('.value')
         .text(function(d) { return d })
+
+      legenditems.select('.swatch')
+        .style("background", this.color)
 
       var legenditem = legenditems.enter()
           .append('div')
@@ -16065,13 +16068,11 @@ GeoDash.Chart = ezoop.BaseClass({
         .attr("class", "swatch")
         .style("width", block.width + 'px')
         .style("height", block.height + 'px')
-        //.style("margin", '0 0 0 ' + padding + 'px')
         .style("background", this.color)
 
       legenditem.append("div")
           .attr("class", "value")
           .style("width", this.options.legendWidth - block.width - padding*2 + 'px')
-          // .style("padding-left", padding + 'px')
           .text(function(d) { return d })
 
       legenditems.exit().remove()
@@ -16090,6 +16091,9 @@ GeoDash.Chart = ezoop.BaseClass({
     }
   }
   , update: function () {
+  }
+  , refresh: function() {
+    this.updateChart()
   }
   , makeTitle: function () {
     if (this.options.title) {
@@ -16123,6 +16127,9 @@ GeoDash.Chart = ezoop.BaseClass({
   , setXAxisLabel: function(label) {
     this.container.select(".y.axis .xAxisLabel .gd-label").text(label)
   }
+  , setColor: function(colors) {
+    this.options.colors = colors
+  } 
 })
 //BarChart extends Chart
 GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
@@ -16130,7 +16137,7 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
   defaults: {
     x: 'x'
     , y: 'y'
-    , barColors: ['#f00']
+    , colors: ['#f00']
     , opacity: 0.7
     , drawX: true
     , drawY: true
@@ -16261,7 +16268,7 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
     this._data = tmpdata
 
     this.color = d3.scale.ordinal()
-      .range(this.options.barColors)
+      .range(this.options.colors)
       .domain(colordomain)
 
     var extent = d3.extent(this._data, function(d) { return d.total })
@@ -16381,7 +16388,7 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
         }
       })
       .style("background-color", function(d, i) {
-        return self.options.barColors[i%self.stackNumber]
+        return self.options.colors[i%self.stackNumber]
       }, 'important')
 
     var barsenter = bars.enter().append("div")
@@ -16482,7 +16489,7 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
       })
       .style("-webkit-print-color-adjust", "exact")
       .style("background-color", function(d, i) {
-        return self.options.barColors[i%self.stackNumber]
+        return self.options.colors[i%self.stackNumber]
       }, 'important')
 
     bars.exit().remove()
@@ -16778,7 +16785,7 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
     }
   }
   , setColor: function(colors) {
-    this.options.barColors = colors
+    this.options.colors = colors
   }
 })
 
@@ -16788,7 +16795,7 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
   , defaults: {
     x: 'x'
     , y: 'y'
-    , barColors: ['#f00']
+    , colors: ['#f00']
     , opacity: 0.7
     , drawX: true
     , drawY: true
@@ -16826,6 +16833,7 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
       , x = this.options.x
 
     this.data = data
+
     function makeValue(d, x, y) {
       if(d[y] != null){
         if(typeof d[y] === 'string') {
@@ -16867,7 +16875,7 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
     this._data = tmpdata
 
     this.color = d3.scale.ordinal()
-      .range(this.options.barColors)
+      .range(this.options.colors)
       .domain(colordomain)
 
     this.x.domain(this._data.map(function (d) { return d.x }))
@@ -16928,7 +16936,7 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
         else return self.options.opacity
       })
       .style("background-color", function(d, i) { 
-        return self.options.barColors[i%self.stackNumber]
+        return self.options.colors[i%self.stackNumber]
       })
       .style("border-top-right-radius", function(d, i){
         var notend = (i + 1) % self.stackNumber
@@ -16979,7 +16987,7 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
         }
       })
       .style("background-color", function(d, i) {
-        return self.options.barColors[i%self.stackNumber]
+        return self.options.colors[i%self.stackNumber]
       }, 'important')
 
     bars.enter().append("div")
@@ -17018,7 +17026,7 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
         else return self.options.opacity
       })
       .style("background-color", function(d, i) {
-        return self.options.barColors[i%self.stackNumber]
+        return self.options.colors[i%self.stackNumber]
       }, 'important')
       .style("border-top-right-radius", function(d, i){
         var notend = (i + 1) % self.stackNumber
@@ -17089,7 +17097,6 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
       })
 
     bars.exit().remove()
-      
   }
   , mouseOver: function(d, i, el) {
     var self = this
@@ -17143,9 +17150,6 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
       self.mouseOver(d, self.activeBar, activeEl)
     }
   }
-  , setColor: function(colors) {
-    this.options.barColors = colors
-  }
 })
 
 
@@ -17182,6 +17186,7 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
     , hoverTemplate: "{{x}}: {{y}}"
     , formatter: d3.format(",")
     , outerPadding: 0
+    , linePadding: 10
     , margin: {
       top: 10
       , right: 10
@@ -17192,14 +17197,13 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
   , initialize: function (el, options) {
   }
   , update: function(data) {
-    //if(GeoDash.Browser.ielt9) return
     var self = this
       , y = this.options.y
       , x = this.options.x
 
     this.data = data
 
-    var colordomain
+    var colordomain = []
     for(var i = 0; i < data.length; i++){
       if(typeof y == 'object') {
         this.stackNumber = y.length
@@ -17293,18 +17297,19 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
 
     if(this.options.time){
       this.xLine = d3.time.scale()
-        .range([0, this.xrange]);
+        .range([0, this.xrange])
     } else {
       this.xLine = d3.scale.linear()
-        .range([0, this.xrange]);
+        .range([0, this.xrange])
     }
     this.xLine.domain(d3.extent(this.data, function(d) { return d[self.options.x] }))
     var xTicks = []
     if(self.options.xInterval == 'auto') {
-      xTicks = this.xLine.ticks(data.length);
+      xTicks = this.xLine.ticks(data.length)
     } else {
-      xTicks = this.xLine.ticks(self.options.xInterval);
+      xTicks = this.xLine.ticks(self.options.xInterval)
     }
+    this.xLine.ticks(data.length)
     this.x.domain(xTicks)
     this.y.domain([
       d3.min(this.linedata, function(c) { return d3.min(c.values, function(v) { return v.y; }) }),
@@ -17318,20 +17323,23 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
     var max = ydomain[1] + ypadding
     this.y.domain([min, max])
 
-    this.updateChart()
+    
     this.updateXAxis()
+    this.xLine.range([this.x.rangeBand()/2, this.xrange - this.x.rangeBand()/2])
     this.updateYAxis()
+    this.updateChart()
     this.updateLegend()
 
   }
   , updateChart: function() {
     var self = this
 
+    this.color = d3.scale.ordinal()
+      .range(this.options.colors)
+
     this.line = d3.svg.line()
       .interpolate(this.options.interpolate)
-      .x(function(d) { 
-        return self.x(d.x) + self.x.rangeBand()/2 
-      })
+      .x(function(d) { return self.xLine(d.x) })
       .y(function(d) { return self.y(d.y) })
 
     var delay = function(d, i) { return i * 10 }
@@ -17343,12 +17351,7 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
       .data(this.linedata)
 
     lines.transition()
-      //.duration(500).delay(delay)
       .attr("stroke", function(d) { return self.color(d.name) })
-      // .attr("stroke-dasharray", function(d){
-      //   if(d.dashed) return "5, 5"
-      //   else return "none"
-      // })
       .attr("d", function(d) { return self.line(d.values); })
 
     lines.enter()
@@ -17376,13 +17379,13 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
     for(var i = 0; i < this.linedata.length; i++) {
       var one_line = this.linedata[i].values;
       var dots = this.svg.select(".line_group" + i).selectAll('.dot')
-          .data(one_line);
+          .data(one_line)
 
       dots.transition().duration(500).delay(delay)
         .attr("data", function(d){ return d.y; })
         .attr("fill", function(d) { return self.color(self.linedata[i].name); })
-        .attr("cx", function(d) { return self.x(d.x) + self.x.rangeBand()/2 })
-        .attr("cy", function(d) { return self.y(d.y); });
+        .attr("cx", function(d) { return self.xLine(d.x)})
+        .attr("cy", function(d) { return self.y(d.y); })
 
       dots.enter().append("circle")
         .attr("class", "dot")
@@ -17392,10 +17395,10 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
         .attr("data", function(d){ return d.y; })
         .on('mouseover', function(d, i) {self.mouseOver(d, i, this); })
         .on('mouseout', function(d, i) {self.mouseOut(d, i, this); })
-        .attr("cx", function(d) { return self.x(d.x) + self.x.rangeBand()/2 })
-        .attr("cy", function(d) { return self.y(d.y); });
+        .attr("cx", function(d) { return self.xLine(d.x) })
+        .attr("cy", function(d) { return self.y(d.y); })
 
-      dots.exit().remove();
+      dots.exit().remove()
     }
   }
   , mouseOver: function(d, i, el){
@@ -17493,8 +17496,7 @@ GeoDash.PieChart = ezoop.ExtendedClass(GeoDash.Chart, {
       .sort(null)
       .value(function(d) { return d[self.options.value] })
 
-    this.color = d3.scale.ordinal()
-       .range(this.options.colors)
+
 
     this.total = 0
     data.forEach(function(d, i) {
@@ -17505,10 +17507,17 @@ GeoDash.PieChart = ezoop.ExtendedClass(GeoDash.Chart, {
         self.total += +d[self.options.value]
       }
     })
+    this.data = data
+    this.updateChart()
+  }
+  , updateChart: function() {
+    var self = this
+    
+    this.color = d3.scale.ordinal()
+       .range(this.options.colors)
 
     var g = this.svg.selectAll(".arc")
-      .data(this.pie(data))
-      
+      .data(this.pie(this.data))
 
     g.select('path')
       .style("fill", function(d) { return self.color(d.data[self.options.label]) })

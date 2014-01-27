@@ -4,7 +4,7 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
   defaults: {
     x: 'x'
     , y: 'y'
-    , barColors: ['#f00']
+    , colors: ['#f00']
     , opacity: 0.7
     , drawX: true
     , drawY: true
@@ -135,7 +135,7 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
     this._data = tmpdata
 
     this.color = d3.scale.ordinal()
-      .range(this.options.barColors)
+      .range(this.options.colors)
       .domain(colordomain)
 
     var extent = d3.extent(this._data, function(d) { return d.total })
@@ -255,7 +255,7 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
         }
       })
       .style("background-color", function(d, i) {
-        return self.options.barColors[i%self.stackNumber]
+        return self.options.colors[i%self.stackNumber]
       }, 'important')
 
     var barsenter = bars.enter().append("div")
@@ -356,7 +356,7 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
       })
       .style("-webkit-print-color-adjust", "exact")
       .style("background-color", function(d, i) {
-        return self.options.barColors[i%self.stackNumber]
+        return self.options.colors[i%self.stackNumber]
       }, 'important')
 
     bars.exit().remove()
@@ -652,6 +652,6 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
     }
   }
   , setColor: function(colors) {
-    this.options.barColors = colors
+    this.options.colors = colors
   }
 })
