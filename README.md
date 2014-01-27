@@ -16,7 +16,7 @@ This is an alpha build under heavy development. Expect API breaks in new version
 var barchartvertical = new GeoDash.BarChartVertical('.barchartvertical', {
   x: 'id'
   , y: ['2011', '2012', '2013']
-  , barColors: ['#ef3b2c','#cb181d','#a50f15']
+  , colors: ['#ef3b2c','#cb181d','#a50f15']
   , title: 'Vertical Bar Chart'
 })
 
@@ -43,7 +43,7 @@ barchartvertical.update(verticaldata)
 var barcharthorizontal = new GeoDash.BarChartHorizontal('.barcharthorizontal', {
   x: ['2011', '2012', '2013']
   , y: 'geo'
-  , barColors: colors
+  , colors: colors
   , title: 'Horizontal Bar Chart'
   , money: true
   , numberTicks: 5
