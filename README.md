@@ -8,6 +8,8 @@ http://apps.esrgc.org/dashboards/geodash/
 
 This is an alpha build under heavy development. Expect API breaks in new versions.
 
+Pull requests happily accepted. Please remain consistent with code style.
+
 ![Image](test/geodashcharts3.png?raw=true)
 
 
