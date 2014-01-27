@@ -37,7 +37,7 @@ a {
 .colors .swatch {
   height: 30px;
   width: 30px;
-  margin-right: 5px;
+  margin-left: 5px;
   float: right;
   border-radius: 2px;
   background: #444;
