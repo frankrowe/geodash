@@ -2339,7 +2339,9 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
 
     this.line = d3.svg.line()
       .interpolate(this.options.interpolate)
-      .x(function(d) { return self.xLine(d.x) })
+      .x(function(d) { 
+        return self.xLine(d.x) 
+      })
       .y(function(d) { return self.y(d.y) })
 
     var delay = function(d, i) { return i * 10 }
@@ -2353,6 +2355,9 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
     lines.transition()
       .attr("stroke", function(d) { return self.color(d.name) })
       .attr("d", function(d) { return self.line(d.values); })
+      .attr("stroke-dasharray", function(d){
+        if(d.dashed) return "4 3";
+      })
 
     lines.enter()
       .append("g")
@@ -2367,7 +2372,6 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
       .attr("stroke-width", self.options.strokeWidth)
       .attr("stroke-dasharray", function(d){
         if(d.dashed) return "4 3";
-        //else return "none";
       })
       .attr("stroke-opacity", self.options.opacity);
 
@@ -2390,7 +2394,8 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
       dots.enter().append("circle")
         .attr("class", "dot")
         .attr("r", this.options.dotRadius)
-        .attr("fill", function(d) { return self.color(self.linedata[i].name); })
+        .attr("fill", function(d) { 
+          return self.color(self.linedata[i].name); })
         .attr("fill-opacity", self.options.opacity)
         .attr("data", function(d){ return d.y; })
         .on('mouseover', function(d, i) {self.mouseOver(d, i, this); })
