@@ -20,6 +20,7 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
     , legendWidth: 80
     , legendPosition: 'middle'
     , legend: false
+    , barLabels: false
     , axisLabelPadding: 20
     , yaxisLabelPadding: 25
     , yTicksCount: 10
@@ -198,6 +199,13 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
       .style("background-color", function(d, i) {
         return self.options.colors[i%self.stackNumber]
       }, 'important')
+      .select('.bar-label')
+        .style("width", self.x.rangeBand() + 'px')
+        .text(function(d){
+          if(self.options.barLabels) {
+            return self.options.formatter(d.y)
+          }
+        })
 
     bars.enter().append("div")
       .attr("class", "bar")
@@ -304,6 +312,14 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
           self.mouseOver(d, i, this)
         }
       })
+      .append('div')
+        .attr('class', 'bar-label')
+        .style("width", self.x.rangeBand() + 'px')
+        .text(function(d){
+          if(self.options.barLabels) {
+            return self.options.formatter(d.y)
+          }
+        })
 
     bars.exit().remove()
   }
