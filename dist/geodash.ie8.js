@@ -17188,7 +17188,8 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
     , drawY: true
     , xLabel: false
     , yLabel: false
-    , xInterval: 'auto'
+    , xInterval: false
+    , xTimeInterval: false
     , dashed: false
     , time: true
     , legendWidth: 80
@@ -17202,7 +17203,7 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
     , hoverTemplate: "{{x}}: {{y}}"
     , formatter: d3.format(",")
     , outerPadding: 0
-    , linePadding: 10
+    , linePadding: 20
     , margin: {
       top: 10
       , right: 10
@@ -17320,13 +17321,25 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
     }
     this.xLine.domain(d3.extent(this.data, function(d) { return d[self.options.x] }))
     var xTicks = []
-    if(self.options.xInterval == 'auto') {
-      xTicks = this.xLine.ticks(data.length)
-    } else {
+    if(this.options.xInterval) {
       xTicks = this.xLine.ticks(self.options.xInterval)
+    } else {
+      xTicks = this.xLine.ticks(data.length)
     }
-    this.xLine.ticks(data.length)
+    if(self.options.xTimeInterval) {
+      xTicks = this.xLine.ticks(
+        self.options.xTimeInterval.timePeriod
+        , self.options.xTimeInterval.interval
+      )
+    }
     this.x.domain(xTicks)
+
+    if(!this.options.xInterval && !this.options.xTimeInterval) {
+      this.xLine.range([this.x.rangeBand()/2, this.xrange - this.x.rangeBand()/2])
+    } else {
+      this.xLine.range([this.options.linePadding, this.xrange - this.options.linePadding])
+    }
+
     this.y.domain([
       d3.min(this.linedata, function(c) { return d3.min(c.values, function(v) { return v.y; }) }),
       d3.max(this.linedata, function(c) { return d3.max(c.values, function(v) { return v.y; }) })
@@ -17339,9 +17352,7 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
     var max = ydomain[1] + ypadding
     this.y.domain([min, max])
 
-    
     this.updateXAxis()
-    this.xLine.range([this.x.rangeBand()/2, this.xrange - this.x.rangeBand()/2])
     this.updateYAxis()
     this.updateChart()
     this.updateLegend()
@@ -17420,6 +17431,67 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
         .attr("cy", function(d) { return self.y(d.y); })
 
       dots.exit().remove()
+    }
+  }
+  , updateXAxis: function() {
+    var self = this
+    if (this.options.drawX) {
+      if(this.options.xInterval || this.options.xTimeInterval) {
+        this.x.rangeRoundBands([this.options.linePadding, this.xrange - this.options.linePadding], 0.05, this.options.outerPadding)
+      } 
+      var labels = this.x.domain()
+      var tickElements = this.xAxisElement
+        .selectAll(".tick")
+        .data(labels)
+
+      var ticks = tickElements.transition()
+        .style("left", function (d) { return self.x(d) + 'px' })
+        .style("width", self.x.rangeBand() + 'px')
+
+      ticks.select('.line')
+      ticks.select('.gd-label')
+        .text(function(d){
+          if(self.options.xFormat) {
+            return self.options.xFormat(d)
+          } else {
+            return d
+          }
+        })
+        .style("margin", function(d, i){
+          var w = parseInt(d3.select(this).style('width'))
+          var m = (w / 2) * -1
+          return '0 0 0 ' + m + 'px'
+        })
+
+      var newTicks = tickElements.enter().append('div')
+        .attr("class", "tick")
+        .style("left", function (d) { return self.xLine(d) + 'px' })
+        //.style("width", self.x.rangeBand() + 'px')
+        .style("bottom", function (d) {
+          var b = self.height - self.yrange - self.options.axisLabelPadding
+          return b + 'px'
+        })
+        .style("height", self.options.axisLabelPadding + 'px')
+
+      tickElements.exit().remove()
+
+      newTicks.append('div')
+        .attr("class", "line")
+
+      newTicks.append('div')
+        .attr("class", "gd-label")
+        .text(function(d){
+          if(self.options.xFormat) {
+            return self.options.xFormat(d)
+          } else {
+            return d
+          }
+        })
+        .style("margin", function(d, i){
+          var w = parseInt(d3.select(this).style('width'))
+          var m = (w / 2) * -1
+          return '0 0 0 ' + m + 'px'
+        })
     }
   }
   , mouseOver: function(d, i, el){

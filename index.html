@@ -144,6 +144,10 @@
       , title: 'Line Chart'
       , interpolate: 'monotone'
       , xFormat: d3.time.format('%Y')
+      // , xTimeInterval:{
+      //   interval: 1,
+      //   timePeriod: d3.time.year
+      // }
       , dashed: [{
         line: 0,
         span: {
@@ -204,9 +208,12 @@
       , colors: Dashboard.activeColor
       , title: 'Line Chart'
       , interpolate: 'monotone'
-      , xInterval: 5
       , yLabel: 'Number of Cats'
-      , xFormat: d3.time.format('%Y')
+      , xFormat: d3.time.format('%m/%y')
+      , xTimeInterval: {
+        timePeriod: d3.time.month,
+        interval: 6
+      }
       , dashed: [{
         line: 1,
         span: {
