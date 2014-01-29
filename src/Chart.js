@@ -155,8 +155,8 @@ GeoDash.Chart = ezoop.BaseClass({
       xrange -= this.options.legendWidth
     }
     if(this.options.drawY) {
-      xrange -= this.options.yaxisLabelPadding
-      marginleft += this.options.yaxisLabelPadding
+      xrange -= this.options.yAxisWidth
+      marginleft += this.options.yAxisWidth
     }
     if(this.options.yLabel) {
       xrange -= this.options.axisLabelPadding
@@ -215,8 +215,6 @@ GeoDash.Chart = ezoop.BaseClass({
           }
         })
         .style("width", function(){
-          
-          // return self.xrange + self.marginleft + 'px'
           if(self.options.yLabel) {
             return self.width - self.options.axisLabelPadding + "px"
           } else {
@@ -249,7 +247,7 @@ GeoDash.Chart = ezoop.BaseClass({
           var m = (parseInt(h)/2*-1)
           return m + 'px' + ' 0 0 0'
         })
-        .style("width", self.options.yaxisLabelPadding + 'px')
+        .style("width", self.options.yAxisWidth + 'px')
         .style("background-color", function(){
           var c = self.container.style("background-color")
           //IE8 can't get bg color?

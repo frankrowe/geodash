@@ -6,28 +6,40 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
     , y: 'y'
     , colors: ['#f00']
     , opacity: 0.7
+    // draw x axis
     , drawX: true
+    // draw y axis
     , drawY: true
     , xLabel: false
     , yLabel: false
     , percent: false
     , title: false
+    // border-radius value to round bars
     , roundRadius: 3
+    // highlight a certain bar by index
     , highlight: false
-    , verticalX: false
-    , invert: false
-    , roundRadius: 3
+    // width of legend container
     , legendWidth: 80
+    // position of legend. top, middle, bottom
     , legendPosition: 'middle'
+    // draw legend
     , legend: false
+    // add label to end of bar
     , barLabels: false
+    // width of y axis label, height of x axis label
     , axisLabelPadding: 20
-    , yaxisLabelPadding: 25
+    // width of y axis scale
+    , yAxisWidth: 20
+    // approximate number of ticks on y axis
     , yTicksCount: 10
+    // class to assign chart container
     , gdClass: 'chart-html vertical'
+    // padding before and after bars. used in d3.scale.ticks
     , outerPadding: 0.5
+    // template that appears on mouse over
     , hoverTemplate: "{{x}}: {{y}}"
-    , formatter: d3.format(",")
+    // used to format y values in labels
+    , yFormat: d3.format(",")
     , margin: {
       top: 10
       , right: 10
@@ -203,7 +215,7 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
         .style("width", self.x.rangeBand() + 'px')
         .text(function(d){
           if(self.options.barLabels) {
-            return self.options.formatter(d.y)
+            return self.options.yFormat(d.y)
           }
         })
 
@@ -317,7 +329,7 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
         .style("width", self.x.rangeBand() + 'px')
         .text(function(d){
           if(self.options.barLabels) {
-            return self.options.formatter(d.y)
+            return self.options.yFormat(d.y)
           }
         })
 
@@ -335,7 +347,7 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
       x += ' ' + self.options.y[i % self.stackNumber]
     }
     if(y !== null) {
-      y = self.options.formatter(y)
+      y = self.options.yFormat(y)
       var view = {
         y: y
         , x: x
