@@ -6,8 +6,7 @@
   filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
 }
 .geodash-title {
-  height: 30px;
-  line-height: 30px;
+  height: 20px;
   background: none;
   color: #b1b1b1;
   font-size: 12px;
@@ -29,10 +28,11 @@
   position: absolute;
 }
 .chart-html .bar-label {
-  color: #b1b1b1;
+  color: #a4a4a4;
   font-size: 11px;
-  overflow: hidden;
-  padding-top: 2px;
+  position: absolute;
+  overflow: visible;
+  line-height: 12px;
 }
 .chart-html .axis {
   width: 100%;
