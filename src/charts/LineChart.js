@@ -32,6 +32,7 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
     , xFormat: d3.time.format("%Y-%m-%d")
     , hoverTemplate: "{{x}}: {{y}}"
     , formatter: d3.format(",")
+    , yFormat: d3.format(".2s")
     , outerPadding: 0
     , linePadding: 20
     , margin: {
@@ -268,17 +269,21 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
     if (this.options.drawX) {
       if(this.options.xInterval || this.options.xTimeInterval) {
         this.x.rangeRoundBands([this.options.linePadding, this.xrange - this.options.linePadding], 0.05, this.options.outerPadding)
-      } 
+      }  else {
+        //this.x.rangeRoundBands([this.options.linePadding, this.xrange - this.options.linePadding], 0.05, this.options.outerPadding)
+      }
       var labels = this.x.domain()
       var tickElements = this.xAxisElement
         .selectAll(".tick")
         .data(labels)
 
       var ticks = tickElements.transition()
-        .style("left", function (d) { return self.x(d) + 'px' })
-        .style("width", self.x.rangeBand() + 'px')
+        .style("left", function (d) { return self.xLine(d) + 'px' })
+        .style("bottom", function (d) {
+          var b = self.height - self.yrange - self.options.axisLabelPadding
+          return b + 'px'
+        })
 
-      ticks.select('.line')
       ticks.select('.gd-label')
         .text(function(d){
           if(self.options.xFormat) {
@@ -296,7 +301,6 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
       var newTicks = tickElements.enter().append('div')
         .attr("class", "tick")
         .style("left", function (d) { return self.xLine(d) + 'px' })
-        //.style("width", self.x.rangeBand() + 'px')
         .style("bottom", function (d) {
           var b = self.height - self.yrange - self.options.axisLabelPadding
           return b + 'px'
