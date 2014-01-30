@@ -15738,8 +15738,7 @@ GeoDash.Chart = ezoop.BaseClass({
     this.options = {}
     this.activeBar = -1
     this.setOptions(options)
-    this.makeTitle()
-    this.setUpChart()
+    //this.makeTitle()
     this.drawChart()
   }
   , setOptions: function (options) {
@@ -15751,9 +15750,6 @@ GeoDash.Chart = ezoop.BaseClass({
       }
     }
     this.options = options
-  }
-  , setUpChart: function(){
-    d3.select(this.el).style('position', 'relative')
   }
   , drawChart: function () {
     var self = this
@@ -15769,6 +15765,8 @@ GeoDash.Chart = ezoop.BaseClass({
     this.formatComma = d3.format(",")
     this.formatPercentAxisLabel = d3.format("p")
     this.formatMoney = d3.format("$")
+
+    d3.select(this.el).html(null)
 
     this.container = d3.select(this.el).append("div")
       .attr("class", function() {
@@ -15787,6 +15785,12 @@ GeoDash.Chart = ezoop.BaseClass({
           self.options.margin.left + "px"
         return m
       })
+
+    if (this.options.title) {
+      this.container.append('div')
+        .attr('class', 'geodash-title')
+        .html(this.options.title)
+    }
 
     this.xAxisElement = this.container.append("div")
       .attr("class", "x axis")
@@ -15895,15 +15899,19 @@ GeoDash.Chart = ezoop.BaseClass({
   }
   , setYAxis: function() {
     var yrange = this.height
+    var topPadding = 0
     if(this.options.xLabel) {
       yrange -= this.options.axisLabelPadding
     }
     if(this.options.drawX){
       yrange -= this.options.axisLabelPadding
     }
+    if(this.options.barLabels){
+      topPadding = 15
+    }
     this.yrange = yrange
     this.y = d3.scale.linear()
-      .range([yrange, 0])
+      .range([yrange, topPadding])
   }
   , updateYAxis: function() {
     var self = this
@@ -15920,7 +15928,12 @@ GeoDash.Chart = ezoop.BaseClass({
 
       ticks.select('.gd-label')
         .text(function(d){
-          var label = self.formatLarge(d)
+          var label
+          if(self.options.yFormat) {
+            label = self.options.yFormat(d)
+          } else {
+            label = d
+          }
           if (self.options.money) {
             label = '$' + label
           }
@@ -15941,8 +15954,6 @@ GeoDash.Chart = ezoop.BaseClass({
           }
         })
         .style("width", function(){
-          
-          // return self.xrange + self.marginleft + 'px'
           if(self.options.yLabel) {
             return self.width - self.options.axisLabelPadding + "px"
           } else {
@@ -15961,7 +15972,12 @@ GeoDash.Chart = ezoop.BaseClass({
         .append('div')
         .attr("class", "gd-label")
         .text(function(d){
-          var label = self.formatLarge(d)
+          var label
+          if(self.options.yFormat) {
+            label = self.options.yFormat(d)
+          } else {
+            label = d
+          }
           if (self.options.money) {
             label = '$' + label
           }
@@ -16033,6 +16049,7 @@ GeoDash.Chart = ezoop.BaseClass({
 
       newTicks.append('div')
         .attr("class", "gd-label")
+        .style("line-height", self.options.axisLabelPadding + 'px')
         .text(function(d){
           if(self.options.xFormat) {
             return self.options.xFormat(d)
@@ -16118,7 +16135,7 @@ GeoDash.Chart = ezoop.BaseClass({
     this.height = parseInt(d3.select(this.el).style('height'))
     this.height = this.height - this.options.margin.top - this.options.margin.bottom
     if (this.options.title) {
-      this.height = this.height - 30
+      this.height = this.height - 20
     }
   }
   , setYAxisLabel: function(label) {
@@ -16819,6 +16836,7 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
     , outerPadding: 0.5
     , hoverTemplate: "{{x}}: {{y}}"
     , formatter: d3.format(",")
+    , yFormat: d3.format(".2s")
     , margin: {
       top: 10
       , right: 10
@@ -16992,6 +17010,7 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
       }, 'important')
       .select('.bar-label')
         .style("width", self.x.rangeBand() + 'px')
+        .style("top", "-12px")
         .text(function(d){
           if(self.options.barLabels) {
             return self.options.formatter(d.y)
@@ -17029,8 +17048,8 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
         }
         return height + 'px'
       })
-      .style("opacity", function(d){
-        if(d[x] == self.options.highlight) return 1
+      .style("opacity", function(d, i){
+        if(d[x] === self.options.highlight ) return 1
         else return self.options.opacity
       })
       .style("background-color", function(d, i) {
@@ -17106,13 +17125,17 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
       .append('div')
         .attr('class', 'bar-label')
         .style("width", self.x.rangeBand() + 'px')
+        .style("top", "-12px")
         .text(function(d){
           if(self.options.barLabels) {
             return self.options.formatter(d.y)
           }
         })
-
     bars.exit().remove()
+  }
+  , setActiveBar: function(idx) {
+    this.activeBar = idx;
+
   }
   , mouseOver: function(d, i, el) {
     var self = this
@@ -17202,6 +17225,7 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
     , xFormat: d3.time.format("%Y-%m-%d")
     , hoverTemplate: "{{x}}: {{y}}"
     , formatter: d3.format(",")
+    , yFormat: d3.format(".2s")
     , outerPadding: 0
     , linePadding: 20
     , margin: {
@@ -17438,17 +17462,21 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
     if (this.options.drawX) {
       if(this.options.xInterval || this.options.xTimeInterval) {
         this.x.rangeRoundBands([this.options.linePadding, this.xrange - this.options.linePadding], 0.05, this.options.outerPadding)
-      } 
+      }  else {
+        //this.x.rangeRoundBands([this.options.linePadding, this.xrange - this.options.linePadding], 0.05, this.options.outerPadding)
+      }
       var labels = this.x.domain()
       var tickElements = this.xAxisElement
         .selectAll(".tick")
         .data(labels)
 
       var ticks = tickElements.transition()
-        .style("left", function (d) { return self.x(d) + 'px' })
-        .style("width", self.x.rangeBand() + 'px')
+        .style("left", function (d) { return self.xLine(d) + 'px' })
+        .style("bottom", function (d) {
+          var b = self.height - self.yrange - self.options.axisLabelPadding
+          return b + 'px'
+        })
 
-      ticks.select('.line')
       ticks.select('.gd-label')
         .text(function(d){
           if(self.options.xFormat) {
@@ -17466,7 +17494,6 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
       var newTicks = tickElements.enter().append('div')
         .attr("class", "tick")
         .style("left", function (d) { return self.xLine(d) + 'px' })
-        //.style("width", self.x.rangeBand() + 'px')
         .style("bottom", function (d) {
           var b = self.height - self.yrange - self.options.axisLabelPadding
           return b + 'px'
