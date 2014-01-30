@@ -26,7 +26,7 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
     , legendPosition: 'middle'
     , legend: false
     , axisLabelPadding: 20
-    , yaxisLabelPadding: 25
+    , yAxisWidth: 25
     , yTicksCount: 10
     , gdClass: 'chart-html linechart vertical'
     , xFormat: d3.time.format("%Y-%m-%d")
