@@ -203,8 +203,8 @@ GeoDash.Chart = ezoop.BaseClass({
       ticks.select('.gd-label')
         .text(function(d){
           var label
-          if(self.options.yFormat) {
-            label = self.options.yFormat(d)
+          if(self.options.yTickFormat) {
+            label = self.options.yTickFormat(d)
           } else {
             label = d
           }
@@ -247,8 +247,8 @@ GeoDash.Chart = ezoop.BaseClass({
         .attr("class", "gd-label")
         .text(function(d){
           var label
-          if(self.options.yFormat) {
-            label = self.options.yFormat(d)
+          if(self.options.yTickFormat) {
+            label = self.options.yTickFormat(d)
           } else {
             label = d
           }
@@ -295,8 +295,8 @@ GeoDash.Chart = ezoop.BaseClass({
         })
       ticks.select('.gd-label')
         .text(function(d){
-          if(self.options.xFormat) {
-            return self.options.xFormat(d)
+          if(self.options.xTickFormat) {
+            return self.options.xTickFormat(d)
           } else {
             return d
           }
@@ -325,8 +325,8 @@ GeoDash.Chart = ezoop.BaseClass({
         .attr("class", "gd-label")
         .style("line-height", self.options.axisLabelPadding + 'px')
         .text(function(d){
-          if(self.options.xFormat) {
-            return self.options.xFormat(d)
+          if(self.options.xTickFormat) {
+            return self.options.xTickFormat(d)
           } else {
             return d
           }

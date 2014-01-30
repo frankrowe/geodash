@@ -17,7 +17,7 @@ GeoDash.PieChart = ezoop.ExtendedClass(GeoDash.Chart, {
     , hover: true
     , arclabels: false
     , gdClass: 'chart-html piechart-svg'
-    , formatter: d3.format(',.0f')
+    , valueFormat: d3.format(',.0f')
     , formatPercent: d3.format('.2f')
     , hoverTemplate: "{{label}}: {{value}} ({{percent}}%)"
     , labelColor: "#ccc"
@@ -135,7 +135,7 @@ GeoDash.PieChart = ezoop.ExtendedClass(GeoDash.Chart, {
     d3.select(el).style('fill-opacity', 1)
     if(self.options.hover) {
       var label = d.data[self.options.label]
-      var value = self.options.formatter(d.value)
+      var value = self.options.valueFormat(d.value)
       var percent = self.options.formatPercent((d.value/self.total)*100)
       var view = {
         label: label

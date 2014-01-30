@@ -27,6 +27,8 @@
     <p>A charting library.</p>
     <p>Documentation on <a href="https://github.com/esrgc/geodash">Github</a>.</p>
     <p>By <a href="https://twitter.com/fsrowe">@fsrowe</a>.</p>
+    <p><iframe src="http://ghbtns.com/github-btn.html?user=esrgc&repo=geodash&type=watch&count=true"
+  allowtransparency="true" frameborder="0" scrolling="0" width="110" height="20"></iframe></p>
   </div>
   <div class="colors">
     <div class="swatch" id="gray"></div>
@@ -143,7 +145,7 @@
       , colors: Dashboard.activeColor
       , title: 'Line Chart'
       , interpolate: 'monotone'
-      , xFormat: d3.time.format('%Y')
+      , xTickFormat: d3.time.format('%Y')
       , yTicksCount: 5
       // , xTimeInterval:{
       //   interval: 1,
@@ -210,7 +212,7 @@
       , title: 'Line Chart'
       , interpolate: 'monotone'
       , yLabel: 'Number of Cats'
-      , xFormat: d3.time.format('%m/%y')
+      , xTickFormat: d3.time.format('%m/%y')
       , xTimeInterval: {
         timePeriod: d3.time.month,
         interval: 6

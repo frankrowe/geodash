@@ -29,10 +29,10 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
     , yAxisWidth: 25
     , yTicksCount: 10
     , gdClass: 'chart-html linechart vertical'
-    , xFormat: d3.time.format("%Y-%m-%d")
     , hoverTemplate: "{{x}}: {{y}}"
-    , formatter: d3.format(",")
-    , yFormat: d3.format(".2s")
+    , xTickFormat: d3.time.format("%Y-%m-%d")
+    , yTickFormat: d3.format(".2s")
+    , valueFormat: d3.format(",")
     , outerPadding: 0
     , linePadding: 20
     , margin: {
@@ -286,8 +286,8 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
 
       ticks.select('.gd-label')
         .text(function(d){
-          if(self.options.xFormat) {
-            return self.options.xFormat(d)
+          if(self.options.xTickFormat) {
+            return self.options.xTickFormat(d)
           } else {
             return d
           }
@@ -315,8 +315,8 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
       newTicks.append('div')
         .attr("class", "gd-label")
         .text(function(d){
-          if(self.options.xFormat) {
-            return self.options.xFormat(d)
+          if(self.options.xTickFormat) {
+            return self.options.xTickFormat(d)
           } else {
             return d
           }
@@ -334,12 +334,12 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
       , x = d.x
       , output = ''
 
-    if(self.options.xFormat) {
-      x = self.options.xFormat(x)
+    if(self.options.xTickFormat) {
+      x = self.options.xTickFormat(x)
     }
 
     if(y !== null) {
-      y = self.options.formatter(y)
+      y = self.options.valueFormat(y)
       var view = {
         y: y
         , x: x

@@ -38,10 +38,12 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
     , outerPadding: 0.5
     // template that appears on mouse over
     , hoverTemplate: "{{x}}: {{y}}"
-    // used to format y values in labels
-    , formatter: d3.format(",")
+    //format x axis tick marks
+    , xTickFormat: false
     //format y axis tick marks
-    , yFormat: d3.format(".2s")
+    , yTickFormat: d3.format(".2s")
+    // used to format y values in labels
+    , valueFormat: d3.format(",")
     , margin: {
       top: 10
       , right: 10
@@ -218,7 +220,7 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
         .style("top", "-12px")
         .text(function(d){
           if(self.options.barLabels) {
-            return self.options.yFormat(d.y)
+            return self.options.valueFormat(d.y)
           }
         })
 
@@ -333,7 +335,7 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
         .style("top", "-12px")
         .text(function(d){
           if(self.options.barLabels) {
-            return self.options.yFormat(d.y)
+            return self.options.valueFormat(d.y)
           }
         })
     bars.exit().remove()
@@ -354,7 +356,7 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
       x += ' ' + self.options.y[i % self.stackNumber]
     }
     if(y !== null) {
-      y = self.options.yFormat(y)
+      y = self.options.valueFormat(y)
       var view = {
         y: y
         , x: x

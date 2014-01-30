@@ -929,8 +929,8 @@ GeoDash.Chart = ezoop.BaseClass({
       ticks.select('.gd-label')
         .text(function(d){
           var label
-          if(self.options.yFormat) {
-            label = self.options.yFormat(d)
+          if(self.options.yTickFormat) {
+            label = self.options.yTickFormat(d)
           } else {
             label = d
           }
@@ -973,8 +973,8 @@ GeoDash.Chart = ezoop.BaseClass({
         .attr("class", "gd-label")
         .text(function(d){
           var label
-          if(self.options.yFormat) {
-            label = self.options.yFormat(d)
+          if(self.options.yTickFormat) {
+            label = self.options.yTickFormat(d)
           } else {
             label = d
           }
@@ -1021,8 +1021,8 @@ GeoDash.Chart = ezoop.BaseClass({
         })
       ticks.select('.gd-label')
         .text(function(d){
-          if(self.options.xFormat) {
-            return self.options.xFormat(d)
+          if(self.options.xTickFormat) {
+            return self.options.xTickFormat(d)
           } else {
             return d
           }
@@ -1051,8 +1051,8 @@ GeoDash.Chart = ezoop.BaseClass({
         .attr("class", "gd-label")
         .style("line-height", self.options.axisLabelPadding + 'px')
         .text(function(d){
-          if(self.options.xFormat) {
-            return self.options.xFormat(d)
+          if(self.options.xTickFormat) {
+            return self.options.xTickFormat(d)
           } else {
             return d
           }
@@ -1179,8 +1179,9 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
     , outerPadding: 0.5
     , gdClass: 'chart-html horizontal'
     , hoverTemplate: "{{y}}: {{x}}"
-    , formatter: d3.format(",")
-    , xFormat: false
+    , xTickFormat: d3.format(".2s")
+    , yTickFormat: false
+    , valueFormat: d3.format(",")
     , margin: {
       top: 10
       , right: 10
@@ -1209,7 +1210,6 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
     this.marginleft = marginleft
     this.x = d3.scale.linear()
       .range([0, xrange- this.options.rightBarPadding]).nice()
-
   }
   , setYAxis: function() {
     var yrange = this.height
@@ -1561,18 +1561,19 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
 
       ticks.select('.gd-label')
         .text(function(d){
-          if(self.options.xFormat) {
-            return self.options.xFormat(d)
+          var label
+          if(self.options.xTickFormat) {
+            label = self.options.xTickFormat(d)
           } else {
-            var label = self.formatLarge(d)
-            if (self.options.money) {
-              label = '$' + label
-            }
-            if (self.options.percent) {
-              label = label + '%'
-            }
-            return label
+            label = d
           }
+          if (self.options.money) {
+            label = '$' + label
+          }
+          if (self.options.percent) {
+            label = label + '%'
+          }
+          return label
         })
 
       var newTicks = tickElements.enter().append('div')
@@ -1605,18 +1606,19 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
         .append('div')
         .attr("class", "gd-label")
         .text(function(d){
-          if(self.options.xFormat) {
-            return self.options.xFormat(d)
+          var label
+          if(self.options.xTickFormat) {
+            label = self.options.xTickFormat(d)
           } else {
-            var label = self.formatLarge(d)
-            if (self.options.money) {
-              label = '$' + label
-            }
-            if (self.options.percent) {
-              label = label + '%'
-            }
-            return label
+            label = d
           }
+          if (self.options.money) {
+            label = '$' + label
+          }
+          if (self.options.percent) {
+            label = label + '%'
+          }
+          return label
         })
         .style("bottom", "0px")
         .style("background", function(){
@@ -1763,7 +1765,7 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
       y += ' ' + self.options.x[i % self.stackNumber]
     }
     if(x !== null) {
-      x = self.options.formatter(x)
+      x = self.options.valueFormat(x)
       var view = {
         y: y
         , x: x
@@ -1846,10 +1848,12 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
     , outerPadding: 0.5
     // template that appears on mouse over
     , hoverTemplate: "{{x}}: {{y}}"
-    // used to format y values in labels
-    , formatter: d3.format(",")
+    //format x axis tick marks
+    , xTickFormat: false
     //format y axis tick marks
-    , yFormat: d3.format(".2s")
+    , yTickFormat: d3.format(".2s")
+    // used to format y values in labels
+    , valueFormat: d3.format(",")
     , margin: {
       top: 10
       , right: 10
@@ -2026,7 +2030,7 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
         .style("top", "-12px")
         .text(function(d){
           if(self.options.barLabels) {
-            return self.options.yFormat(d.y)
+            return self.options.valueFormat(d.y)
           }
         })
 
@@ -2141,7 +2145,7 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
         .style("top", "-12px")
         .text(function(d){
           if(self.options.barLabels) {
-            return self.options.yFormat(d.y)
+            return self.options.valueFormat(d.y)
           }
         })
     bars.exit().remove()
@@ -2162,7 +2166,7 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
       x += ' ' + self.options.y[i % self.stackNumber]
     }
     if(y !== null) {
-      y = self.options.yFormat(y)
+      y = self.options.valueFormat(y)
       var view = {
         y: y
         , x: x
@@ -2235,10 +2239,10 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
     , yAxisWidth: 25
     , yTicksCount: 10
     , gdClass: 'chart-html linechart vertical'
-    , xFormat: d3.time.format("%Y-%m-%d")
     , hoverTemplate: "{{x}}: {{y}}"
-    , formatter: d3.format(",")
-    , yFormat: d3.format(".2s")
+    , xTickFormat: d3.time.format("%Y-%m-%d")
+    , yTickFormat: d3.format(".2s")
+    , valueFormat: d3.format(",")
     , outerPadding: 0
     , linePadding: 20
     , margin: {
@@ -2492,8 +2496,8 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
 
       ticks.select('.gd-label')
         .text(function(d){
-          if(self.options.xFormat) {
-            return self.options.xFormat(d)
+          if(self.options.xTickFormat) {
+            return self.options.xTickFormat(d)
           } else {
             return d
           }
@@ -2521,8 +2525,8 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
       newTicks.append('div')
         .attr("class", "gd-label")
         .text(function(d){
-          if(self.options.xFormat) {
-            return self.options.xFormat(d)
+          if(self.options.xTickFormat) {
+            return self.options.xTickFormat(d)
           } else {
             return d
           }
@@ -2540,12 +2544,12 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
       , x = d.x
       , output = ''
 
-    if(self.options.xFormat) {
-      x = self.options.xFormat(x)
+    if(self.options.xTickFormat) {
+      x = self.options.xTickFormat(x)
     }
 
     if(y !== null) {
-      y = self.options.formatter(y)
+      y = self.options.valueFormat(y)
       var view = {
         y: y
         , x: x
@@ -2595,7 +2599,7 @@ GeoDash.PieChart = ezoop.ExtendedClass(GeoDash.Chart, {
     , hover: true
     , arclabels: false
     , gdClass: 'chart-html piechart-svg'
-    , formatter: d3.format(',.0f')
+    , valueFormat: d3.format(',.0f')
     , formatPercent: d3.format('.2f')
     , hoverTemplate: "{{label}}: {{value}} ({{percent}}%)"
     , labelColor: "#ccc"
@@ -2713,7 +2717,7 @@ GeoDash.PieChart = ezoop.ExtendedClass(GeoDash.Chart, {
     d3.select(el).style('fill-opacity', 1)
     if(self.options.hover) {
       var label = d.data[self.options.label]
-      var value = self.options.formatter(d.value)
+      var value = self.options.valueFormat(d.value)
       var percent = self.options.formatPercent((d.value/self.total)*100)
       var view = {
         label: label
