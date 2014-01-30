@@ -28,6 +28,7 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
     , outerPadding: 0.5
     , hoverTemplate: "{{x}}: {{y}}"
     , formatter: d3.format(",")
+    , yFormat: d3.format(".2s")
     , margin: {
       top: 10
       , right: 10
@@ -201,6 +202,7 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
       }, 'important')
       .select('.bar-label')
         .style("width", self.x.rangeBand() + 'px')
+        .style("top", "-12px")
         .text(function(d){
           if(self.options.barLabels) {
             return self.options.formatter(d.y)
@@ -238,8 +240,8 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
         }
         return height + 'px'
       })
-      .style("opacity", function(d){
-        if(d[x] == self.options.highlight) return 1
+      .style("opacity", function(d, i){
+        if(d[x] === self.options.highlight ) return 1
         else return self.options.opacity
       })
       .style("background-color", function(d, i) {
@@ -315,13 +317,17 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
       .append('div')
         .attr('class', 'bar-label')
         .style("width", self.x.rangeBand() + 'px')
+        .style("top", "-12px")
         .text(function(d){
           if(self.options.barLabels) {
             return self.options.formatter(d.y)
           }
         })
-
     bars.exit().remove()
+  }
+  , setActiveBar: function(idx) {
+    this.activeBar = idx;
+
   }
   , mouseOver: function(d, i, el) {
     var self = this

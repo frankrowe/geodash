@@ -12,8 +12,7 @@ GeoDash.Chart = ezoop.BaseClass({
     this.options = {}
     this.activeBar = -1
     this.setOptions(options)
-    this.makeTitle()
-    this.setUpChart()
+    //this.makeTitle()
     this.drawChart()
   }
   , setOptions: function (options) {
@@ -25,9 +24,6 @@ GeoDash.Chart = ezoop.BaseClass({
       }
     }
     this.options = options
-  }
-  , setUpChart: function(){
-    d3.select(this.el).style('position', 'relative')
   }
   , drawChart: function () {
     var self = this
@@ -43,6 +39,8 @@ GeoDash.Chart = ezoop.BaseClass({
     this.formatComma = d3.format(",")
     this.formatPercentAxisLabel = d3.format("p")
     this.formatMoney = d3.format("$")
+
+    d3.select(this.el).html(null)
 
     this.container = d3.select(this.el).append("div")
       .attr("class", function() {
@@ -61,6 +59,12 @@ GeoDash.Chart = ezoop.BaseClass({
           self.options.margin.left + "px"
         return m
       })
+
+    if (this.options.title) {
+      this.container.append('div')
+        .attr('class', 'geodash-title')
+        .html(this.options.title)
+    }
 
     this.xAxisElement = this.container.append("div")
       .attr("class", "x axis")
@@ -169,15 +173,19 @@ GeoDash.Chart = ezoop.BaseClass({
   }
   , setYAxis: function() {
     var yrange = this.height
+    var topPadding = 0
     if(this.options.xLabel) {
       yrange -= this.options.axisLabelPadding
     }
     if(this.options.drawX){
       yrange -= this.options.axisLabelPadding
     }
+    if(this.options.barLabels){
+      topPadding = 15
+    }
     this.yrange = yrange
     this.y = d3.scale.linear()
-      .range([yrange, 0])
+      .range([yrange, topPadding])
   }
   , updateYAxis: function() {
     var self = this
@@ -194,7 +202,12 @@ GeoDash.Chart = ezoop.BaseClass({
 
       ticks.select('.gd-label')
         .text(function(d){
-          var label = self.formatLarge(d)
+          var label
+          if(self.options.yFormat) {
+            label = self.options.yFormat(d)
+          } else {
+            label = d
+          }
           if (self.options.money) {
             label = '$' + label
           }
@@ -215,8 +228,6 @@ GeoDash.Chart = ezoop.BaseClass({
           }
         })
         .style("width", function(){
-          
-          // return self.xrange + self.marginleft + 'px'
           if(self.options.yLabel) {
             return self.width - self.options.axisLabelPadding + "px"
           } else {
@@ -235,7 +246,12 @@ GeoDash.Chart = ezoop.BaseClass({
         .append('div')
         .attr("class", "gd-label")
         .text(function(d){
-          var label = self.formatLarge(d)
+          var label
+          if(self.options.yFormat) {
+            label = self.options.yFormat(d)
+          } else {
+            label = d
+          }
           if (self.options.money) {
             label = '$' + label
           }
@@ -307,6 +323,7 @@ GeoDash.Chart = ezoop.BaseClass({
 
       newTicks.append('div')
         .attr("class", "gd-label")
+        .style("line-height", self.options.axisLabelPadding + 'px')
         .text(function(d){
           if(self.options.xFormat) {
             return self.options.xFormat(d)
@@ -392,7 +409,7 @@ GeoDash.Chart = ezoop.BaseClass({
     this.height = parseInt(d3.select(this.el).style('height'))
     this.height = this.height - this.options.margin.top - this.options.margin.bottom
     if (this.options.title) {
-      this.height = this.height - 30
+      this.height = this.height - 20
     }
   }
   , setYAxisLabel: function(label) {
