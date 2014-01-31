@@ -91,6 +91,7 @@
       , y: ['2011', '2012', '2013']
       , colors: Dashboard.activeColor
       , title: 'Vertical Bar Chart'
+      , yTickFormat: d3.format("s")
     })
     Dashboard.charts.push(barchartvertical)
     barchartvertical.update(verticaldata)

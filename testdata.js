@@ -12,7 +12,7 @@ function randomize() {
   var newdata = []
   for (var i = 0; i <= datalength; i++) {
     var obj = {}
-    obj.value = Math.floor((Math.random()*100)+1)
+    obj.value = Math.floor((Math.random()*100000)+1)
     obj.id = makeid()
     newdata.push(obj)
   }
