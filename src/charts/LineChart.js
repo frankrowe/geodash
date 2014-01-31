@@ -33,6 +33,7 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
     , xTickFormat: d3.time.format("%Y-%m-%d")
     , yTickFormat: d3.format(".2s")
     , valueFormat: d3.format(",")
+    , labelFormat: d3.time.format("%Y-%m-%d")
     , outerPadding: 0
     , linePadding: 20
     , margin: {
@@ -334,8 +335,8 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
       , x = d.x
       , output = ''
 
-    if(self.options.xTickFormat) {
-      x = self.options.xTickFormat(x)
+    if(self.options.labelFormat) {
+      x = self.options.labelFormat(x)
     }
 
     if(y !== null) {
