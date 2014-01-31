@@ -110,7 +110,7 @@ GeoDash.PieChart = ezoop.ExtendedClass(GeoDash.Chart, {
 
     if(this.options.arclabels) {
       var t = self.svg.selectAll(".arc-text")
-            .data(this.pie(data))
+            .data(this.pie(this.data))
 
       t.select("text")
         .attr("transform", function(d) { return "translate(" + self.arc.centroid(d) + ")"; })
