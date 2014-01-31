@@ -191,6 +191,7 @@ GeoDash.Chart = ezoop.BaseClass({
     var self = this
     if (this.options.drawY) {
       var ticks = this.y.ticks(self.options.yTicksCount)
+
       var tickElements = this.yAxisElement
         .selectAll(".tick")
         .data(ticks)
@@ -200,6 +201,7 @@ GeoDash.Chart = ezoop.BaseClass({
           return self.y(d)  + 'px'
         })
 
+      var used = []
       ticks.select('.gd-label')
         .text(function(d){
           var label
@@ -214,7 +216,10 @@ GeoDash.Chart = ezoop.BaseClass({
           if (self.options.percent) {
             label = label + '%'
           }
-          return label
+          if(used[used.length-1] !== label || used.length == 0){
+            used.push(label)
+            return label
+          } else return ''
         })
 
       var newTicks = tickElements.enter().append('div')
@@ -258,7 +263,10 @@ GeoDash.Chart = ezoop.BaseClass({
           if (self.options.percent) {
             label = label + '%'
           }
-          return label
+          if(used[used.length-1] !== label || used.length == 0){
+            used.push(label)
+            return label
+          } else return ''
         })
         .style("margin", function(d){
           var h = d3.select(this).style('height')
