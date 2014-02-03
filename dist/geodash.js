@@ -730,15 +730,12 @@ Chart base class
 
 GeoDash.Chart = ezoop.BaseClass({
   className: 'Chart'
-  , defaults: {
-    
-  }
+  , defaults: {}
   , initialize: function (el, options) {
     this.el = el
     this.options = {}
     this.activeBar = -1
     this.setOptions(options)
-    //this.makeTitle()
     this.drawChart()
   }
   , setOptions: function (options) {
@@ -1119,14 +1116,6 @@ GeoDash.Chart = ezoop.BaseClass({
   }
   , refresh: function() {
     this.updateChart()
-  }
-  , makeTitle: function () {
-    if (this.options.title) {
-      var html = '<div class="geodash-title">'
-        + this.options.title
-        + '</div>'
-      d3.select(this.el).html(html)
-    }
   }
   , getData: function() {
     return this.data
@@ -1531,13 +1520,7 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
         }
       })
       .on('click', function (d, i) {
-        if(self.activeBar === i) {
-          self.activeBar = -1
-          self.mouseOut(d, i, this)
-        } else {
-          self.activeBar = i
-          self.mouseOver(d, i, this)
-        }
+        self.setActiveBar(i)
       })
   }
   , updateXAxis: function() {
@@ -1759,6 +1742,17 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
           })
 
       tickElements.exit().remove()
+    }
+  }
+  , setActiveBar: function(i) {
+    var d = this._data[i];
+    var el = d3.select(this.el).selectAll('.bar')[0][i]
+    if(this.activeBar === i) {
+      this.activeBar = -1
+      this.mouseOut(d, i, el)
+    } else {
+      this.activeBar = i
+      this.mouseOver(d, i, el)
     }
   }
   , mouseOver: function(d, i, el) {
@@ -2139,13 +2133,7 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
         }
       })
       .on('click', function (d, i) {
-        if(self.activeBar === i) {
-          self.activeBar = -1
-          self.mouseOut(d, i, this)
-        } else {
-          self.activeBar = i
-          self.mouseOver(d, i, this)
-        }
+        self.setActiveBar(i)
       })
       .append('div')
         .attr('class', 'bar-label')
@@ -2158,9 +2146,16 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
         })
     bars.exit().remove()
   }
-  , setActiveBar: function(idx) {
-    this.activeBar = idx;
-
+  , setActiveBar: function(i) {
+    var d = this._data[i];
+    var el = d3.select(this.el).selectAll('.bar')[0][i]
+    if(this.activeBar === i) {
+      this.activeBar = -1
+      this.mouseOut(d, i, el)
+    } else {
+      this.activeBar = i
+      this.mouseOver(d, i, el)
+    }
   }
   , mouseOver: function(d, i, el) {
     var self = this
@@ -2254,6 +2249,7 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
     , labelFormat: d3.time.format("%Y-%m-%d")
     , outerPadding: 0
     , linePadding: 20
+    , showArea: false
     , margin: {
       top: 10
       , right: 10
@@ -2421,6 +2417,16 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
       })
       .y(function(d) { return self.y(d.y) })
 
+    this.area = d3.svg.area()
+      .x(function(d) { 
+        return self.xLine(d.x) 
+      })
+      .y0(this.yrange)
+      .y1(function(d) { 
+        return self.y(d.y) 
+      })
+      .interpolate(this.options.interpolate)
+
     var delay = function(d, i) { return i * 10 }
 
     var line_groups = this.svg.selectAll(".line_group")
@@ -2431,30 +2437,29 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
 
     lines.transition()
       .attr("stroke", function(d) { return self.color(d.name) })
-      .attr("d", function(d) { return self.line(d.values); })
+      .attr("d", function(d) { return self.line(d.values) })
       .attr("stroke-dasharray", function(d){
-        if(d.dashed) return "4 3";
+        if(d.dashed) return "4 3"
       })
 
     lines.enter()
       .append("g")
       .attr('class', function(d, i){
-        return 'line_group line_group' + i;
+        return 'line_group line_group' + i
       })
       .append('path')
       .attr("class", "chart-line")
-      .attr("d", function(d) { return self.line(d.values); })
+      .attr("d", function(d) { return self.line(d.values) })
       .attr("fill", "none")
-      .attr("stroke", function(d) { return self.color(d.name); })
+      .attr("stroke", function(d) { return self.color(d.name) })
       .attr("stroke-width", self.options.strokeWidth)
       .attr("stroke-dasharray", function(d){
-        if(d.dashed) return "4 3";
+        if(d.dashed) return "4 3"
       })
-      .attr("stroke-opacity", self.options.opacity);
+      .attr("stroke-opacity", self.options.opacity)
 
-    var exitdots = lines.exit().selectAll('.dot');
-    lines.exit().remove();
-    line_groups.exit().remove();
+    lines.exit().remove()
+    line_groups.exit().remove()
 
     //dots
     for(var i = 0; i < this.linedata.length; i++) {
@@ -2481,6 +2486,23 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
         .attr("cy", function(d) { return self.y(d.y); })
 
       dots.exit().remove()
+    }
+
+    if(this.options.showArea) {
+      var areas = this.svg.selectAll(".area")
+        .data(this.linedata)
+
+      areas.enter().append("path")
+        .attr("class", "area")
+        .attr('opacity', 0.1)
+        .attr('fill', function(d) { return self.color(d.name) })
+        .attr("d", function(d) { return self.area(d.values) })
+
+      areas.transition()
+        .attr('fill', function(d) { return self.color(d.name) })
+        .attr("d", function(d) { return self.area(d.values) })
+
+      areas.exit().remove()
     }
   }
   , updateXAxis: function() {
