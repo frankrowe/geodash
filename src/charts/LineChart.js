@@ -36,6 +36,7 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
     , labelFormat: d3.time.format("%Y-%m-%d")
     , outerPadding: 0
     , linePadding: 20
+    , showArea: false
     , margin: {
       top: 10
       , right: 10
@@ -203,6 +204,16 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
       })
       .y(function(d) { return self.y(d.y) })
 
+    this.area = d3.svg.area()
+      .x(function(d) { 
+        return self.xLine(d.x) 
+      })
+      .y0(this.yrange)
+      .y1(function(d) { 
+        return self.y(d.y) 
+      })
+      .interpolate(this.options.interpolate)
+
     var delay = function(d, i) { return i * 10 }
 
     var line_groups = this.svg.selectAll(".line_group")
@@ -213,30 +224,29 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
 
     lines.transition()
       .attr("stroke", function(d) { return self.color(d.name) })
-      .attr("d", function(d) { return self.line(d.values); })
+      .attr("d", function(d) { return self.line(d.values) })
       .attr("stroke-dasharray", function(d){
-        if(d.dashed) return "4 3";
+        if(d.dashed) return "4 3"
       })
 
     lines.enter()
       .append("g")
       .attr('class', function(d, i){
-        return 'line_group line_group' + i;
+        return 'line_group line_group' + i
       })
       .append('path')
       .attr("class", "chart-line")
-      .attr("d", function(d) { return self.line(d.values); })
+      .attr("d", function(d) { return self.line(d.values) })
       .attr("fill", "none")
-      .attr("stroke", function(d) { return self.color(d.name); })
+      .attr("stroke", function(d) { return self.color(d.name) })
       .attr("stroke-width", self.options.strokeWidth)
       .attr("stroke-dasharray", function(d){
-        if(d.dashed) return "4 3";
+        if(d.dashed) return "4 3"
       })
-      .attr("stroke-opacity", self.options.opacity);
+      .attr("stroke-opacity", self.options.opacity)
 
-    var exitdots = lines.exit().selectAll('.dot');
-    lines.exit().remove();
-    line_groups.exit().remove();
+    lines.exit().remove()
+    line_groups.exit().remove()
 
     //dots
     for(var i = 0; i < this.linedata.length; i++) {
@@ -263,6 +273,23 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
         .attr("cy", function(d) { return self.y(d.y); })
 
       dots.exit().remove()
+    }
+
+    if(this.options.showArea) {
+      var areas = this.svg.selectAll(".area")
+        .data(this.linedata)
+
+      areas.enter().append("path")
+        .attr("class", "area")
+        .attr('opacity', 0.1)
+        .attr('fill', function(d) { return self.color(d.name) })
+        .attr("d", function(d) { return self.area(d.values) })
+
+      areas.transition()
+        .attr('fill', function(d) { return self.color(d.name) })
+        .attr("d", function(d) { return self.area(d.values) })
+
+      areas.exit().remove()
     }
   }
   , updateXAxis: function() {
