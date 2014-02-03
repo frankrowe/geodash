@@ -321,13 +321,7 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
         }
       })
       .on('click', function (d, i) {
-        if(self.activeBar === i) {
-          self.activeBar = -1
-          self.mouseOut(d, i, this)
-        } else {
-          self.activeBar = i
-          self.mouseOver(d, i, this)
-        }
+        self.setActiveBar(i)
       })
       .append('div')
         .attr('class', 'bar-label')
@@ -340,9 +334,16 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
         })
     bars.exit().remove()
   }
-  , setActiveBar: function(idx) {
-    this.activeBar = idx;
-
+  , setActiveBar: function(i) {
+    var d = this._data[i];
+    var el = d3.select(this.el).selectAll('.bar')[0][i]
+    if(this.activeBar === i) {
+      this.activeBar = -1
+      this.mouseOut(d, i, el)
+    } else {
+      this.activeBar = i
+      this.mouseOver(d, i, el)
+    }
   }
   , mouseOver: function(d, i, el) {
     var self = this

@@ -4,15 +4,12 @@ Chart base class
 
 GeoDash.Chart = ezoop.BaseClass({
   className: 'Chart'
-  , defaults: {
-    
-  }
+  , defaults: {}
   , initialize: function (el, options) {
     this.el = el
     this.options = {}
     this.activeBar = -1
     this.setOptions(options)
-    //this.makeTitle()
     this.drawChart()
   }
   , setOptions: function (options) {
@@ -393,14 +390,6 @@ GeoDash.Chart = ezoop.BaseClass({
   }
   , refresh: function() {
     this.updateChart()
-  }
-  , makeTitle: function () {
-    if (this.options.title) {
-      var html = '<div class="geodash-title">'
-        + this.options.title
-        + '</div>'
-      d3.select(this.el).html(html)
-    }
   }
   , getData: function() {
     return this.data

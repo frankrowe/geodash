@@ -373,13 +373,7 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
         }
       })
       .on('click', function (d, i) {
-        if(self.activeBar === i) {
-          self.activeBar = -1
-          self.mouseOut(d, i, this)
-        } else {
-          self.activeBar = i
-          self.mouseOver(d, i, this)
-        }
+        self.setActiveBar(i)
       })
   }
   , updateXAxis: function() {
@@ -601,6 +595,17 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
           })
 
       tickElements.exit().remove()
+    }
+  }
+  , setActiveBar: function(i) {
+    var d = this._data[i];
+    var el = d3.select(this.el).selectAll('.bar')[0][i]
+    if(this.activeBar === i) {
+      this.activeBar = -1
+      this.mouseOut(d, i, el)
+    } else {
+      this.activeBar = i
+      this.mouseOver(d, i, el)
     }
   }
   , mouseOver: function(d, i, el) {
