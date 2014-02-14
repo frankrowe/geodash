@@ -250,6 +250,7 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
 
     //dots
     for(var i = 0; i < this.linedata.length; i++) {
+      var label = this.linedata[i].name
       var one_line = this.linedata[i].values;
       var dots = this.svg.select(".line_group" + i).selectAll('.dot')
           .data(one_line)
@@ -267,6 +268,7 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
           return self.color(self.linedata[i].name); })
         .attr("fill-opacity", self.options.opacity)
         .attr("data", function(d){ return d.y; })
+        .attr("label", function(d){ return label })
         .on('mouseover', function(d, i) {self.mouseOver(d, i, this); })
         .on('mouseout', function(d, i) {self.mouseOut(d, i, this); })
         .attr("cx", function(d) { return self.xLine(d.x) })
@@ -365,7 +367,9 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
     if(self.options.labelFormat) {
       x = self.options.labelFormat(x)
     }
-
+    if(typeof self.options.y == 'object') {
+      x = d3.select(el).attr('label') + ' ' + x
+    }
     if(y !== null) {
       y = self.options.valueFormat(y)
       var view = {
