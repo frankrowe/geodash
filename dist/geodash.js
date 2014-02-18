@@ -840,7 +840,7 @@ GeoDash.Chart = ezoop.BaseClass({
     if(this.options.legend) {
       this.container.append('div')
         .attr('class', 'legend')
-        .attr("width", this.options.legendWidth + 'px')
+        .style("width", this.options.legendWidth + 'px')
         .style("background", function(){
           var c = d3.select(self.el).style("background-color")
           return c
