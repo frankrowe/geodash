@@ -16326,8 +16326,9 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
       .style("top", function(d, i) {
         var top = 0
         if(self.options.barHeight !== 0){
-          top = self.options.barHeight * i
-            + self.options.padding * i
+          var yPos = self.y.range().indexOf(self.y(d.y))
+          top = self.options.barHeight * yPos
+            + self.options.padding * yPos
             + self.options.topPadding
         } else {
           top = self.y(d.y)
@@ -16425,7 +16426,6 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
       .style("top", function(d, i) {
         var top = 0
         if(self.options.barHeight !== 0){
-          var barnum = i % self.stackNumber
           var yPos = self.y.range().indexOf(self.y(d.y))
           top = self.options.barHeight * yPos
             + self.options.padding * yPos
