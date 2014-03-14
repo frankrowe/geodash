@@ -7304,7 +7304,9 @@ d3 = function() {
       break;
     }
     if (basePrefix === "#") basePrefix = "";
-    if (type == "r" && !precision) type = "g";
+    if (type == "r" && !precision) {
+      type = "g";
+    }
     type = d3_format_types.get(type) || d3_format_typeDefault;
     var zcomma = zfill && comma;
     return function(value) {

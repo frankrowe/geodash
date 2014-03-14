@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="./dist/geodash.min.css" />
   <link rel="stylesheet" type="text/css" href="examples.css">
   <!--[if lt IE 9]>
-    <script src="./dist/geodash.ie8.min.js" charset="utf-8"></script>
+    <script src="./dist/geodash.ie8.js" charset="utf-8"></script>
   <![endif]-->
   <!--[if (gte IE 9)|!(IE)]><!-->
     <script src="./dist/geodash.js"></script>
@@ -91,7 +91,7 @@
       , y: ['2011', '2012', '2013']
       , colors: Dashboard.activeColor
       , title: 'Vertical Bar Chart'
-      , yTickFormat: d3.format("s")
+      , yTickFormat: d3.format(".2s")
     })
     Dashboard.charts.push(barchartvertical)
     barchartvertical.update(verticaldata)

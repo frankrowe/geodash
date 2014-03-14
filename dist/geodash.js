@@ -1234,9 +1234,11 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
         if(this.options.xLabel) {
           height += this.options.axisLabelPadding
         }
+      this.height = height
       this.container.select('.bars')
         .style('height', height + 'px')
-      this.setHeight()
+      this.container.select('.axis')
+        .style('height', height + 'px')
       this.setYAxis()
     }
 
@@ -1527,13 +1529,11 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
   }
   , updateXAxis: function() {
     var self = this
-      // , y = this.options.y
-      // , x = this.options.x
       , y = 'y'
       , x = 'x'
 
     if(this.options.drawX){
-      var chartHeight = this.container.select('.bars').style('height')
+      var axisHeight = this.container.select('.x.axis').style('height')
       var ticks = this.x.ticks(self.options.xTicksCount)
       var tickElements = this.xAxisElement
         .selectAll(".tick")
@@ -1581,11 +1581,13 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
           }
         })
         .style("height", function(){
+          var h = 0
           if(self.options.xLabel) {
-            return self.height - self.options.axisLabelPadding + "px"
+            h = self.height - self.options.axisLabelPadding + "px"
           } else {
-            return self.height + "px"
+            h =  self.height + "px"
           }
+          return h
         })
 
       tickElements.exit().remove()
@@ -2641,6 +2643,8 @@ GeoDash.PieChart = ezoop.ExtendedClass(GeoDash.Chart, {
     , labelColor: "#ccc"
     , legendWidth: 80
     , arcstroke: 2
+    , abbreviate: false
+    , total: false
     , margin: {
       top: 10
       , right: 10
@@ -2670,16 +2674,19 @@ GeoDash.PieChart = ezoop.ExtendedClass(GeoDash.Chart, {
       .value(function(d) { return d[self.options.value] })
 
 
-
-    this.total = 0
-    data.forEach(function(d, i) {
-      d[self.options.value] = +d[self.options.value]
-      if(+d[self.options.value] < 0) {
-        data.splice(i, 1)
-      } else {
-        self.total += +d[self.options.value]
-      }
-    })
+    if(!this.options.total) {
+      this.total = 0
+      data.forEach(function(d, i) {
+        d[self.options.value] = +d[self.options.value]
+        if(+d[self.options.value] < 0) {
+          data.splice(i, 1)
+        } else {
+          self.total += +d[self.options.value]
+        }
+      })
+    } else {
+      this.total = this.options.total
+    }
     this.data = data
     this.updateChart()
   }
@@ -2732,7 +2739,15 @@ GeoDash.PieChart = ezoop.ExtendedClass(GeoDash.Chart, {
 
       t.select("text")
         .attr("transform", function(d) { return "translate(" + self.arc.centroid(d) + ")"; })
-        .text(function(d) { return d.data[self.options.label] + ' (' + d.value + ')' })
+        .text(function(d) {
+          var label = d.data[self.options.label]
+          if(self.options.abbreviate) {
+            if(label.length > self.options.abbreviate) {
+              label = label.substring(0, self.options.abbreviate) + '..'
+            }
+          }
+          return label + ' (' + d.value + ')' 
+        })
 
       t.enter().append("g")
         .attr("class", "arc-text")
@@ -2741,7 +2756,15 @@ GeoDash.PieChart = ezoop.ExtendedClass(GeoDash.Chart, {
         .attr("dy", ".35em")
         .style("text-anchor", "middle")
         .style("fill", self.options.labelColor)
-        .text(function(d) { return d.data[self.options.label] + ' (' + d.value + ')' })
+        .text(function(d) {
+          var label = d.data[self.options.label]
+          if(self.options.abbreviate) {
+            if(label.length > self.options.abbreviate) {
+              label = label.substring(0, self.options.abbreviate) + '..'
+            }
+          }
+          return label + ' (' + d.value + ')' 
+        })
 
       t.exit().remove()
     }
