@@ -23,6 +23,8 @@ GeoDash.PieChart = ezoop.ExtendedClass(GeoDash.Chart, {
     , labelColor: "#ccc"
     , legendWidth: 80
     , arcstroke: 2
+    , abbreviate: false
+    , total: false
     , margin: {
       top: 10
       , right: 10
@@ -52,16 +54,19 @@ GeoDash.PieChart = ezoop.ExtendedClass(GeoDash.Chart, {
       .value(function(d) { return d[self.options.value] })
 
 
-
-    this.total = 0
-    data.forEach(function(d, i) {
-      d[self.options.value] = +d[self.options.value]
-      if(+d[self.options.value] < 0) {
-        data.splice(i, 1)
-      } else {
-        self.total += +d[self.options.value]
-      }
-    })
+    if(!this.options.total) {
+      this.total = 0
+      data.forEach(function(d, i) {
+        d[self.options.value] = +d[self.options.value]
+        if(+d[self.options.value] < 0) {
+          data.splice(i, 1)
+        } else {
+          self.total += +d[self.options.value]
+        }
+      })
+    } else {
+      this.total = this.options.total
+    }
     this.data = data
     this.updateChart()
   }
@@ -114,7 +119,13 @@ GeoDash.PieChart = ezoop.ExtendedClass(GeoDash.Chart, {
 
       t.select("text")
         .attr("transform", function(d) { return "translate(" + self.arc.centroid(d) + ")"; })
-        .text(function(d) { return d.data[self.options.label] + ' (' + d.value + ')' })
+        .text(function(d) {
+          var label = d.data[self.options.label]
+          if(self.options.abbreviate) {
+            label = label.substring(0, self.options.abbreviate) + '..'
+          }
+          return label + ' (' + d.value + ')' 
+        })
 
       t.enter().append("g")
         .attr("class", "arc-text")
@@ -123,7 +134,15 @@ GeoDash.PieChart = ezoop.ExtendedClass(GeoDash.Chart, {
         .attr("dy", ".35em")
         .style("text-anchor", "middle")
         .style("fill", self.options.labelColor)
-        .text(function(d) { return d.data[self.options.label] + ' (' + d.value + ')' })
+        .text(function(d) {
+          var label = d.data[self.options.label]
+          if(self.options.abbreviate) {
+            if(label.length > self.options.abbreviate) {
+              label = label.substring(0, self.options.abbreviate) + '..'
+            }
+          }
+          return label + ' (' + d.value + ')' 
+        })
 
       t.exit().remove()
     }
