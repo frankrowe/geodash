@@ -122,7 +122,9 @@ GeoDash.PieChart = ezoop.ExtendedClass(GeoDash.Chart, {
         .text(function(d) {
           var label = d.data[self.options.label]
           if(self.options.abbreviate) {
-            label = label.substring(0, self.options.abbreviate) + '..'
+            if(label.length > self.options.abbreviate) {
+              label = label.substring(0, self.options.abbreviate) + '..'
+            }
           }
           return label + ' (' + d.value + ')' 
         })
