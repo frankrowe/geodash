@@ -87,9 +87,11 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
         if(this.options.xLabel) {
           height += this.options.axisLabelPadding
         }
+      this.height = height
       this.container.select('.bars')
         .style('height', height + 'px')
-      this.setHeight()
+      this.container.select('.axis')
+        .style('height', height + 'px')
       this.setYAxis()
     }
 
@@ -380,13 +382,11 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
   }
   , updateXAxis: function() {
     var self = this
-      // , y = this.options.y
-      // , x = this.options.x
       , y = 'y'
       , x = 'x'
 
     if(this.options.drawX){
-      var chartHeight = this.container.select('.bars').style('height')
+      var axisHeight = this.container.select('.x.axis').style('height')
       var ticks = this.x.ticks(self.options.xTicksCount)
       var tickElements = this.xAxisElement
         .selectAll(".tick")
@@ -434,11 +434,13 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
           }
         })
         .style("height", function(){
+          var h = 0
           if(self.options.xLabel) {
-            return self.height - self.options.axisLabelPadding + "px"
+            h = self.height - self.options.axisLabelPadding + "px"
           } else {
-            return self.height + "px"
+            h =  self.height + "px"
           }
+          return h
         })
 
       tickElements.exit().remove()
