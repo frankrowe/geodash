@@ -2642,7 +2642,8 @@ GeoDash.PieChart = ezoop.ExtendedClass(GeoDash.Chart, {
     , hoverTemplate: "{{label}}: {{value}} ({{percent}}%)"
     , labelColor: "#ccc"
     , legendWidth: 80
-    , arcstroke: 2
+    , arcstrokewidth: 2
+    , arcstrokecolor: '#fff'
     , abbreviate: false
     , total: false
     , margin: {
@@ -2710,7 +2711,8 @@ GeoDash.PieChart = ezoop.ExtendedClass(GeoDash.Chart, {
       .attr("d", this.arc)
       .attr("fill", function(d) { return self.color(d.data[self.options.label]) })
       .attr("fill-opacity", this.options.opacity)
-      .attr("stroke-width", this.options.arcstroke)
+      .attr("stroke-width", this.options.arcstrokewidth)
+      .attr("stroke", this.options.arcstrokecolor)
       .on('mouseover', function (d, i) {
         if(!GeoDash.Browser.touch) {
           self.mouseOver(d, i, this)
