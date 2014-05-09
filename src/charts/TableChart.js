@@ -3,7 +3,8 @@ GeoDash.TableChart = ezoop.ExtendedClass(GeoDash.Chart, {
   className: 'TableChart',
   defaults: {
     highlight: [],
-    format: false
+    format: false,
+    valueFormat: d3.format(",")
   },
   initialize: function (el, options) {
 
@@ -64,18 +65,18 @@ GeoDash.TableChart = ezoop.ExtendedClass(GeoDash.Chart, {
       });
 
     cells.transition()
-      .text(function(d) { 
+      .text(function(d) {
         return self.format(d);
       });
 
     cells.enter()
       .append("td")
-      .text(function(d) { 
+      .text(function(d) {
         return self.format(d);
       });
 
     cells.exit().remove();
-    
+
     return this;
   },
   format: function(d){
@@ -88,11 +89,8 @@ GeoDash.TableChart = ezoop.ExtendedClass(GeoDash.Chart, {
     if(isNaN(parseFloat(d.value))){
       display = d.value; //value is string
     } else {
-      if(self.options.format){
-        var formatter =  d3.format(",." + self.options.format.precision + "f");
-        display = formatter(d.value);
-      } else {
-        display = self.formatComma(d.value);
+      if(self.options.valueFormat){
+        display = self.options.valueFormat(d.value);
       }
       if (self.options.money) {
         display = '$' + display;
