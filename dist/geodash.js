@@ -1179,6 +1179,7 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
     , xTickFormat: d3.format(".2s")
     , yTickFormat: false
     , valueFormat: d3.format(",")
+    , reverse: false
     , margin: {
       top: 10
       , right: 10
@@ -1260,7 +1261,7 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
       , x = this.options.x
       , colordomain = []
 
-    data.reverse()
+    if(self.options.reverse) data.reverse()
     for(var i = 0; i < data.length; i++){
       var d = data[i]
         , total = 0
@@ -1305,7 +1306,7 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
     var self = this
       , y = this.options.y
       , x = this.options.x
-    
+
     var bars = this.container.select(".bars")
         .selectAll(".bar")
         .data(this._data)
@@ -2802,7 +2803,8 @@ GeoDash.TableChart = ezoop.ExtendedClass(GeoDash.Chart, {
   className: 'TableChart',
   defaults: {
     highlight: [],
-    format: false
+    format: false,
+    valueFormat: d3.format(",")
   },
   initialize: function (el, options) {
 
@@ -2863,18 +2865,18 @@ GeoDash.TableChart = ezoop.ExtendedClass(GeoDash.Chart, {
       });
 
     cells.transition()
-      .text(function(d) { 
+      .text(function(d) {
         return self.format(d);
       });
 
     cells.enter()
       .append("td")
-      .text(function(d) { 
+      .text(function(d) {
         return self.format(d);
       });
 
     cells.exit().remove();
-    
+
     return this;
   },
   format: function(d){
@@ -2887,11 +2889,8 @@ GeoDash.TableChart = ezoop.ExtendedClass(GeoDash.Chart, {
     if(isNaN(parseFloat(d.value))){
       display = d.value; //value is string
     } else {
-      if(self.options.format){
-        var formatter =  d3.format(",." + self.options.format.precision + "f");
-        display = formatter(d.value);
-      } else {
-        display = self.formatComma(d.value);
+      if(self.options.valueFormat){
+        display = self.options.valueFormat(d.value);
       }
       if (self.options.money) {
         display = '$' + display;
