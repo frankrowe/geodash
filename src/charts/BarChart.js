@@ -15,6 +15,5 @@ GeoDash.BarChart = GeoDash.Chart.extend({
     , barLabels: false
     // padding before and after bars. used in d3.scale.ticks
     , outerPadding: 0.5
-    , lowerLimit: 0
   }
 })
