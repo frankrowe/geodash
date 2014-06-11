@@ -16,7 +16,7 @@ gulp.task('less', function () {
 })
 
 gulp.task('minify', function(){
-  gulp.src(['src/lib/ezoop.js', 'src/Chart.js', 'src/charts/*.js'])
+  gulp.src(['src/core/*.js', 'src/charts/Chart.js', 'src/charts/BarChart.js', 'src/charts/*.js'])
     .pipe(concat('geodash.js'))
     .pipe(gulp.dest('dist/'))
     .pipe(rename('geodash.min.js'))
@@ -72,7 +72,7 @@ gulp.task('default', function() {
   gulp.run('minify')
   gulp.run('less')
 
-  gulp.watch(['src/GeoDash.js', 'src/Chart.js', 'src/charts/*.js'], function(event) {
+  gulp.watch(['src/**/*.js'], function(event) {
     gulp.run('minify')
   })
 

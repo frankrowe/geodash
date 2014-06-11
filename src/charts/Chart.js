@@ -2,25 +2,23 @@
 Chart base class
 */
 
-GeoDash.Chart = ezoop.BaseClass({
-  className: 'Chart'
-  , defaults: {}
+GeoDash.Chart = GeoDash.Class.extend({
+  options: {
+    margin: {
+      top: 10
+      , right: 10
+      , bottom: 10
+      , left: 10
+    }
+    , x: 'x'
+    , y: 'y'
+    , width: 'auto'
+    , height: 'auto'
+  }
   , initialize: function (el, options) {
     this.el = el
-    this.options = {}
-    this.activeBar = -1
-    this.setOptions(options)
+    options = GeoDash.setOptions(this, options)
     this.drawChart()
-  }
-  , setOptions: function (options) {
-    for (var key in this.defaults) {
-      if (this.defaults.hasOwnProperty(key)) {
-        if (options[key] === undefined) {
-          options[key] = this.defaults[key]
-        }
-      }
-    }
-    this.options = options
   }
   , drawChart: function () {
     var self = this
@@ -121,32 +119,12 @@ GeoDash.Chart = ezoop.BaseClass({
         })
     }
 
-    if(this.className === 'LineChart') {
-      this.svg = this.container.select('.bars')
-        .append('svg')
-        .attr("height", function(){
-          return self.yrange + "px"
-        })
-        .attr("width", function(){
-          return self.xrange + 'px'
-        })
-    }
-    if(this.className === 'PieChart') {
-      this.svg = this.container.select('.bars')
-        .append('svg')
-        .attr("height", function(){
-          return self.yrange + "px"
-        })
-        .attr("width", function(){
-          return self.xrange + 'px'
-        })
-        .append("g")
-         .attr("transform", "translate(" + self.xrange / 2 + "," + self.yrange / 2 + ")")
-    }
-
+    this.makeSVG()
+    
     this.container.append('div')
       .attr('class', 'hoverbox')
   }
+  , makeSVG: function() {}
   , updateChart: function() {
   }
   , setXAxis: function() {

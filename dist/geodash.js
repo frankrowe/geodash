@@ -651,102 +651,324 @@ var u,i=[],o=e(Math.abs(r)),a=-1;if(n*=o,t*=o,r*=o,0>r)for(;(u=n+r*++a)>t;)i.pus
   mustache.Writer = Writer;
 
 }));
-var _ezoop = window.ezoop,
-    ezoop = function () {};
+/*
+ * GeoDash.Class powers the OOP facilities of the library.
+ * Thanks to John Resig and Dean Edwards for inspiration!
+ */
 
-ezoop.version = '0.1'
+GeoDash.Class = function () {};
 
-ezoop.noConflict = function () {
-  window.ezoop = _ezoop;
-  return this;
+GeoDash.Class.extend = function (props) {
+
+  // extended class with the new prototype
+  var NewClass = function () {
+
+    // call the constructor
+    if (this.initialize) {
+      this.initialize.apply(this, arguments);
+    }
+
+    // call all constructor hooks
+    if (this._initHooks.length) {
+      this.callInitHooks();
+    }
+  };
+
+  // jshint camelcase: false
+  var parentProto = NewClass.__super__ = this.prototype;
+
+  var proto = GeoDash.Util.create(parentProto);
+  proto.constructor = NewClass;
+
+  NewClass.prototype = proto;
+
+  //inherit parent's statics
+  for (var i in this) {
+    if (this.hasOwnProperty(i) && i !== 'prototype') {
+      NewClass[i] = this[i];
+    }
+  }
+
+  // mix static properties into the class
+  if (props.statics) {
+    GeoDash.extend(NewClass, props.statics);
+    delete props.statics;
+  }
+
+  // mix includes into the prototype
+  if (props.includes) {
+    GeoDash.Util.extend.apply(null, [proto].concat(props.includes));
+    delete props.includes;
+  }
+
+  // merge options
+  if (proto.options) {
+    props.options = GeoDash.Util.extend(GeoDash.Util.create(proto.options), props.options);
+  }
+
+  // mix given properties into the prototype
+  GeoDash.extend(proto, props);
+
+  proto._initHooks = [];
+
+  // add method for calling all hooks
+  proto.callInitHooks = function () {
+
+    if (this._initHooksCalled) { return; }
+
+    if (parentProto.callInitHooks) {
+      parentProto.callInitHooks.call(this);
+    }
+
+    this._initHooksCalled = true;
+
+    for (var i = 0, len = proto._initHooks.length; i < len; i++) {
+      proto._initHooks[i].call(this);
+    }
+  };
+
+  return NewClass;
 };
 
-window.ezoop = ezoop;
 
-ezoop.ExtendedClass = function(parentClass, properties) {
-  return ezoop.Class(parentClass, properties);
-}
+// method for adding properties to prototype
+GeoDash.Class.include = function (props) {
+  GeoDash.extend(this.prototype, props);
+};
 
-ezoop.BaseClass = function(properties) {
-  return ezoop.Class(null, properties);
-}
+// merge new default options to the Class
+GeoDash.Class.mergeOptions = function (options) {
+  GeoDash.extend(this.prototype.options, options);
+};
 
-ezoop.Class = function (parentClass, childClass) {
-  var _class_ = null;
-  var self = ezoop.Class;
-  if (parentClass == null || typeof parentClass == 'undefined') {
-    _class_ = function () {
-      if (typeof this.initialize != 'undefined') {
-        this.initialize.apply(this, arguments);
+// add a constructor hook
+GeoDash.Class.addInitHook = function (fn) { // (Function) || (String, args...)
+  var args = Array.prototype.slice.call(arguments, 1);
+
+  var init = typeof fn === 'function' ? fn : function () {
+    this[fn].apply(this, args);
+  };
+
+  this.prototype._initHooks = this.prototype._initHooks || [];
+  this.prototype._initHooks.push(init);
+};
+/*
+ * GeoDash.Util contains various utility functions used throughout Leaflet code.
+ */
+
+GeoDash.Util = {
+  // extend an object with properties of one or more other objects
+  extend: function (dest) {
+    var sources = Array.prototype.slice.call(arguments, 1),
+        i, j, len, src;
+
+    for (j = 0, len = sources.length; j < len; j++) {
+      src = sources[j];
+      for (i in src) {
+        dest[i] = src[i];
       }
     }
-    _class_.prototype = childClass;
-  }
-  else {
-    _class_ = function () {
-      if (typeof parentClass.prototype != 'undefined') {
-        var parentInit = parentClass.prototype.initialize;
-        if (typeof parentInit == 'function') {
-          parentInit.apply(this, arguments);
-        }
-      }
-      var init = typeof this.initialize == "function" ? this.initialize : 'undefined';
-        if (typeof init == 'function') {
-          init.apply(this, arguments);
-        }
-    }
-    self.inheritPrototype(_class_, parentClass); //inherit prototype
-    self.augmentPrototype(_class_.prototype, childClass); //augment prototype
-  }
-  return _class_;
-}
+    return dest;
+  },
 
-ezoop.Class.inheritPrototype = function (child, parent) {
-  var f = function () { };
-  f.prototype = parent.prototype;
-  child.prototype = new f();
-  child.prototype.constructor = child;
-  child.parent = parent.prototype;
-}
+  // create an object from a given prototype
+  create: Object.create || (function () {
+    function F() {}
+    return function (proto) {
+      F.prototype = proto;
+      return new F();
+    };
+  })(),
 
-ezoop.Class.augmentPrototype = function (child, parent) {
-  child = child || {};
-  if (parent) {
-    for (var property in parent) {
-      var value = parent[property];
-      if (value !== undefined) {
-        child[property] = value;
+  // bind a function to be called with a given context
+  bind: function (fn, obj) {
+    var slice = Array.prototype.slice;
+
+    if (fn.bind) {
+      return fn.bind.apply(fn, slice.call(arguments, 1));
+    }
+
+    var args = slice.call(arguments, 2);
+
+    return function () {
+      return fn.apply(obj, args.length ? args.concat(slice.call(arguments)) : arguments);
+    };
+  },
+
+  // return unique ID of an object
+  stamp: function (obj) {
+    // jshint camelcase: false
+    obj._leaflet_id = obj._leaflet_id || ++GeoDash.Util.lastId;
+    return obj._leaflet_id;
+  },
+
+  lastId: 0,
+
+  // return a function that won't be called more often than the given interval
+  throttle: function (fn, time, context) {
+    var lock, args, wrapperFn, later;
+
+    later = function () {
+      // reset lock and call if queued
+      lock = false;
+      if (args) {
+        wrapperFn.apply(context, args);
+        args = false;
       }
+    };
+
+    wrapperFn = function () {
+      if (lock) {
+        // called too soon, queue to call later
+        args = arguments;
+
+      } else {
+        // call and lock until later
+        fn.apply(context, arguments);
+        setTimeout(later, time);
+        lock = true;
+      }
+    };
+
+    return wrapperFn;
+  },
+
+  // wrap the given number to lie within a certain range (used for wrapping longitude)
+  wrapNum: function (x, range, includeMax) {
+    var max = range[1],
+        min = range[0],
+        d = max - min;
+    return x === max && includeMax ? x : ((x - min) % d + d) % d + min;
+  },
+
+  // do nothing (used as a noop throughout the code)
+  falseFn: function () { return false; },
+
+  // round a given number to a given precision
+  formatNum: function (num, digits) {
+    var pow = Math.pow(10, digits || 5);
+    return Math.round(num * pow) / pow;
+  },
+
+  // trim whitespace from both sides of a string
+  trim: function (str) {
+    return str.trim ? str.trim() : str.replace(/^\s+|\s+$/g, '');
+  },
+
+  // split a string into words
+  splitWords: function (str) {
+    return GeoDash.Util.trim(str).split(/\s+/);
+  },
+
+  // set options to an object, inheriting parent's options as well
+  setOptions: function (obj, options) {
+    if (!obj.hasOwnProperty('options')) {
+      obj.options = obj.options ? GeoDash.Util.create(obj.options) : {};
     }
-    var sourceIsEvt = typeof window.Event == "function" && parent instanceof window.Event;
-    if (!sourceIsEvt && parent.hasOwnProperty && parent.hasOwnProperty("toString")) {
-      child.toString = parent.toString;
+    for (var i in options) {
+      obj.options[i] = options[i];
     }
+    return obj.options;
+  },
+
+  // make an URL with GET parameters out of a set of properties/values
+  getParamString: function (obj, existingUrl, uppercase) {
+    var params = [];
+    for (var i in obj) {
+      params.push(encodeURIComponent(uppercase ? i.toUpperCase() : i) + '=' + encodeURIComponent(obj[i]));
+    }
+    return ((!existingUrl || existingUrl.indexOf('?') === -1) ? '?' : '&') + params.join('&');
+  },
+
+  // super-simple templating facility, used for TileLayer URLs
+  template: function (str, data) {
+    return str.replace(GeoDash.Util.templateRe, function (str, key) {
+      var value = data[key];
+
+      if (value === undefined) {
+        throw new Error('No value provided for variable ' + str);
+
+      } else if (typeof value === 'function') {
+        value = value(data);
+      }
+      return value;
+    });
+  },
+
+  templateRe: /\{ *([\w_]+) *\}/g,
+
+  isArray: Array.isArray || function (obj) {
+    return (Object.prototype.toString.call(obj) === '[object Array]');
+  },
+
+  // minimal image URI, set to an image when disposing to flush memory
+  emptyImageUrl: 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs='
+};
+
+(function () {
+  // inspired by http://paulirish.com/2011/requestanimationframe-for-smart-animating/
+
+  function getPrefixed(name) {
+    return window['webkit' + name] || window['moz' + name] || window['ms' + name];
   }
-}
+
+  var lastTime = 0;
+
+  // fallback for IE 7-8
+  function timeoutDefer(fn) {
+    var time = +new Date(),
+        timeToCall = Math.max(0, 16 - (time - lastTime));
+
+    lastTime = time + timeToCall;
+    return window.setTimeout(fn, timeToCall);
+  }
+
+  var requestFn = window.requestAnimationFrame || getPrefixed('RequestAnimationFrame') || timeoutDefer,
+      cancelFn = window.cancelAnimationFrame || getPrefixed('CancelAnimationFrame') ||
+                 getPrefixed('CancelRequestAnimationFrame') || function (id) { window.clearTimeout(id); };
+
+
+  GeoDash.Util.requestAnimFrame = function (fn, context, immediate) {
+    if (immediate && requestFn === timeoutDefer) {
+      fn.call(context);
+    } else {
+      return requestFn.call(window, GeoDash.bind(fn, context));
+    }
+  };
+
+  GeoDash.Util.cancelAnimFrame = function (id) {
+    if (id) {
+      cancelFn.call(window, id);
+    }
+  };
+})();
+
+// shortcuts for most used utility functions
+GeoDash.extend = GeoDash.Util.extend;
+GeoDash.bind = GeoDash.Util.bind;
+GeoDash.stamp = GeoDash.Util.stamp;
+GeoDash.setOptions = GeoDash.Util.setOptions;
 /*
 Chart base class
 */
 
-GeoDash.Chart = ezoop.BaseClass({
-  className: 'Chart'
-  , defaults: {}
+GeoDash.Chart = GeoDash.Class.extend({
+  options: {
+    margin: {
+      top: 10
+      , right: 10
+      , bottom: 10
+      , left: 10
+    }
+    , x: 'x'
+    , y: 'y'
+    , width: 'auto'
+    , height: 'auto'
+  }
   , initialize: function (el, options) {
     this.el = el
-    this.options = {}
-    this.activeBar = -1
-    this.setOptions(options)
+    options = GeoDash.setOptions(this, options)
     this.drawChart()
-  }
-  , setOptions: function (options) {
-    for (var key in this.defaults) {
-      if (this.defaults.hasOwnProperty(key)) {
-        if (options[key] === undefined) {
-          options[key] = this.defaults[key]
-        }
-      }
-    }
-    this.options = options
   }
   , drawChart: function () {
     var self = this
@@ -847,32 +1069,12 @@ GeoDash.Chart = ezoop.BaseClass({
         })
     }
 
-    if(this.className === 'LineChart') {
-      this.svg = this.container.select('.bars')
-        .append('svg')
-        .attr("height", function(){
-          return self.yrange + "px"
-        })
-        .attr("width", function(){
-          return self.xrange + 'px'
-        })
-    }
-    if(this.className === 'PieChart') {
-      this.svg = this.container.select('.bars')
-        .append('svg')
-        .attr("height", function(){
-          return self.yrange + "px"
-        })
-        .attr("width", function(){
-          return self.xrange + 'px'
-        })
-        .append("g")
-         .attr("transform", "translate(" + self.xrange / 2 + "," + self.yrange / 2 + ")")
-    }
-
+    this.makeSVG()
+    
     this.container.append('div')
       .attr('class', 'hoverbox')
   }
+  , makeSVG: function() {}
   , updateChart: function() {
   }
   , setXAxis: function() {
@@ -1146,12 +1348,16 @@ GeoDash.Chart = ezoop.BaseClass({
   } 
 })
 //BarChart extends Chart
-GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
-  className: 'BarChartHorizontal',
-  defaults: {
-    x: 'x'
-    , y: 'y'
-    , colors: ['#f00']
+GeoDash.BarChart = GeoDash.Chart.extend({
+  options: {
+    activeBar: -1
+  }
+})
+
+//BarChart extends Chart
+GeoDash.BarChartHorizontal = GeoDash.BarChart.extend({
+  options: {
+    colors: ['#f00']
     , opacity: 0.7
     , drawX: true
     , drawY: true
@@ -1180,15 +1386,6 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
     , yTickFormat: false
     , valueFormat: d3.format(",")
     , reverse: false
-    , margin: {
-      top: 10
-      , right: 10
-      , bottom: 10
-      , left: 10
-    }
-  }
-  , initialize: function (el, options) {
-
   }
   , setXAxis: function() {
     var xrange = this.width
@@ -1752,11 +1949,11 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
   , setActiveBar: function(i) {
     var d = this._data[i];
     var el = d3.select(this.el).selectAll('.bar')[0][i]
-    if(this.activeBar === i) {
-      this.activeBar = -1
+    if(this.options.activeBar === i) {
+      this.options.activeBar = -1
       this.mouseOut(d, i, el)
     } else {
-      this.activeBar = i
+      this.options.activeBar = i
       this.mouseOver(d, i, el)
     }
   }
@@ -1783,7 +1980,7 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
     }
     self.container.selectAll('.bar')
       .style('opacity', function(d, i) {
-        if(i !== self.activeBar) return self.options.opacity
+        if(i !== self.options.activeBar) return self.options.opacity
         else return 1
       })
     d3.select(el).style('opacity', 1)
@@ -1805,9 +2002,9 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
     self.container.select('.hoverbox')
     .transition()
     .style('display', 'none')
-    if(self.activeBar >= 0){
-      var activeEl = self.container.selectAll('.bar')[0][self.activeBar]
-      self.mouseOver(d, self.activeBar, activeEl)
+    if(self.options.activeBar >= 0){
+      var activeEl = self.container.selectAll('.bar')[0][self.options.activeBar]
+      self.mouseOver(d, self.options.activeBar, activeEl)
     }
   }
   , setColor: function(colors) {
@@ -1816,12 +2013,9 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
 })
 
 //BarChart extends Chart
-GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
-  className: 'BarChartVertical'
-  , defaults: {
-    x: 'x'
-    , y: 'y'
-    , colors: ['#f00']
+GeoDash.BarChartVertical = GeoDash.BarChart.extend({
+  options: {
+    colors: ['#f00']
     , opacity: 0.7
     // draw x axis
     , drawX: true
@@ -1861,14 +2055,6 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
     , yTickFormat: d3.format(".2s")
     // used to format y values in labels
     , valueFormat: d3.format(",")
-    , margin: {
-      top: 10
-      , right: 10
-      , bottom: 10
-      , left: 10
-    }
-  }
-  , initialize: function (el, options) {
   }
   , update: function (data) {
     var self = this
@@ -2153,11 +2339,11 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
   , setActiveBar: function(i) {
     var d = this._data[i];
     var el = d3.select(this.el).selectAll('.bar')[0][i]
-    if(this.activeBar === i) {
-      this.activeBar = -1
+    if(this.options.activeBar === i) {
+      this.options.activeBar = -1
       this.mouseOut(d, i, el)
     } else {
-      this.activeBar = i
+      this.options.activeBar = i
       this.mouseOver(d, i, el)
     }
   }
@@ -2185,7 +2371,7 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
 
     self.container.selectAll('.bar')
       .style('opacity', function(d, i) {
-        if(i !== self.activeBar) return self.options.opacity
+        if(i !== self.options.activeBar) return self.options.opacity
         else return 1
       })
     
@@ -2208,9 +2394,9 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
     self.container.select('.hoverbox')
     .transition()
     .style('display', 'none')
-    if(self.activeBar >= 0){
-      var activeEl = self.container.selectAll('.bar')[0][self.activeBar]
-      self.mouseOver(d, self.activeBar, activeEl)
+    if(self.options.activeBar >= 0){
+      var activeEl = self.container.selectAll('.bar')[0][self.options.activeBar]
+      self.mouseOver(d, self.options.activeBar, activeEl)
     }
   }
 })
@@ -2218,14 +2404,9 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
 
 //LineChart extends Chart
 
-GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
-  className: 'LineChart',
-  defaults: {
-    x: 'x'
-    , y: 'y'
-    , width: 'auto'
-    , height: 'auto'
-    , colors: ['#d80000', '#006200']
+GeoDash.LineChart = GeoDash.Chart.extend({
+  options: {
+    colors: ['#d80000', '#006200']
     , interpolate: 'monotone'
     , dotRadius: 3
     , title: false
@@ -2254,14 +2435,17 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
     , outerPadding: 0
     , linePadding: 20
     , showArea: false
-    , margin: {
-      top: 10
-      , right: 10
-      , bottom: 10
-      , left: 10
-    }
   }
-  , initialize: function (el, options) {
+  , makeSVG: function() {
+    var self = this
+    this.svg = this.container.select('.bars')
+      .append('svg')
+      .attr("height", function(){
+        return self.yrange + "px"
+      })
+      .attr("width", function(){
+        return self.xrange + 'px'
+      })
   }
   , update: function(data) {
     var self = this
@@ -2621,9 +2805,8 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
 
 //PieChart extends Chart
 
-GeoDash.PieChart = ezoop.ExtendedClass(GeoDash.Chart, {
-  className: 'PieChart'
-  , defaults: {
+GeoDash.PieChart = GeoDash.Chart.extend({
+  options: {
     label: 'label'
     , value: 'value'
     , colors: ["#f00", "#0f0", "#00f"]
@@ -2647,14 +2830,19 @@ GeoDash.PieChart = ezoop.ExtendedClass(GeoDash.Chart, {
     , arcstrokecolor: '#fff'
     , abbreviate: false
     , total: false
-    , margin: {
-      top: 10
-      , right: 10
-      , bottom: 10
-      , left: 10
-    }
   }
-  , initialize: function (el, options) {
+  , makeSVG: function() {
+    var self = this
+    this.svg = this.container.select('.bars')
+      .append('svg')
+      .attr("height", function(){
+        return self.yrange + "px"
+      })
+      .attr("width", function(){
+        return self.xrange + 'px'
+      })
+      .append("g")
+       .attr("transform", "translate(" + self.xrange / 2 + "," + self.yrange / 2 + ")")
   }
   , setColors: function(colors){
     this.color = d3.scale.ordinal()
@@ -2799,9 +2987,8 @@ GeoDash.PieChart = ezoop.ExtendedClass(GeoDash.Chart, {
   }
 });
 //BarChart extends Chart
-GeoDash.TableChart = ezoop.ExtendedClass(GeoDash.Chart, {
-  className: 'TableChart',
-  defaults: {
+GeoDash.TableChart = GeoDash.Chart.extend({
+  options: {
     highlight: [],
     format: false,
     valueFormat: d3.format(",")

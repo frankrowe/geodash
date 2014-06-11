@@ -1,10 +1,7 @@
 //BarChart extends Chart
-GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
-  className: 'BarChartHorizontal',
-  defaults: {
-    x: 'x'
-    , y: 'y'
-    , colors: ['#f00']
+GeoDash.BarChartHorizontal = GeoDash.BarChart.extend({
+  options: {
+    colors: ['#f00']
     , opacity: 0.7
     , drawX: true
     , drawY: true
@@ -33,15 +30,6 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
     , yTickFormat: false
     , valueFormat: d3.format(",")
     , reverse: false
-    , margin: {
-      top: 10
-      , right: 10
-      , bottom: 10
-      , left: 10
-    }
-  }
-  , initialize: function (el, options) {
-
   }
   , setXAxis: function() {
     var xrange = this.width
@@ -605,11 +593,11 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
   , setActiveBar: function(i) {
     var d = this._data[i];
     var el = d3.select(this.el).selectAll('.bar')[0][i]
-    if(this.activeBar === i) {
-      this.activeBar = -1
+    if(this.options.activeBar === i) {
+      this.options.activeBar = -1
       this.mouseOut(d, i, el)
     } else {
-      this.activeBar = i
+      this.options.activeBar = i
       this.mouseOver(d, i, el)
     }
   }
@@ -636,7 +624,7 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
     }
     self.container.selectAll('.bar')
       .style('opacity', function(d, i) {
-        if(i !== self.activeBar) return self.options.opacity
+        if(i !== self.options.activeBar) return self.options.opacity
         else return 1
       })
     d3.select(el).style('opacity', 1)
@@ -658,9 +646,9 @@ GeoDash.BarChartHorizontal = ezoop.ExtendedClass(GeoDash.Chart, {
     self.container.select('.hoverbox')
     .transition()
     .style('display', 'none')
-    if(self.activeBar >= 0){
-      var activeEl = self.container.selectAll('.bar')[0][self.activeBar]
-      self.mouseOver(d, self.activeBar, activeEl)
+    if(self.options.activeBar >= 0){
+      var activeEl = self.container.selectAll('.bar')[0][self.options.activeBar]
+      self.mouseOver(d, self.options.activeBar, activeEl)
     }
   }
   , setColor: function(colors) {

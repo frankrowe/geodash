@@ -1,8 +1,7 @@
 //PieChart extends Chart
 
-GeoDash.PieChart = ezoop.ExtendedClass(GeoDash.Chart, {
-  className: 'PieChart'
-  , defaults: {
+GeoDash.PieChart = GeoDash.Chart.extend({
+  options: {
     label: 'label'
     , value: 'value'
     , colors: ["#f00", "#0f0", "#00f"]
@@ -26,14 +25,19 @@ GeoDash.PieChart = ezoop.ExtendedClass(GeoDash.Chart, {
     , arcstrokecolor: '#fff'
     , abbreviate: false
     , total: false
-    , margin: {
-      top: 10
-      , right: 10
-      , bottom: 10
-      , left: 10
-    }
   }
-  , initialize: function (el, options) {
+  , makeSVG: function() {
+    var self = this
+    this.svg = this.container.select('.bars')
+      .append('svg')
+      .attr("height", function(){
+        return self.yrange + "px"
+      })
+      .attr("width", function(){
+        return self.xrange + 'px'
+      })
+      .append("g")
+       .attr("transform", "translate(" + self.xrange / 2 + "," + self.yrange / 2 + ")")
   }
   , setColors: function(colors){
     this.color = d3.scale.ordinal()

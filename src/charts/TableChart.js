@@ -1,7 +1,6 @@
 //BarChart extends Chart
-GeoDash.TableChart = ezoop.ExtendedClass(GeoDash.Chart, {
-  className: 'TableChart',
-  defaults: {
+GeoDash.TableChart = GeoDash.Chart.extend({
+  options: {
     highlight: [],
     format: false,
     valueFormat: d3.format(",")

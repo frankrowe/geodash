@@ -1,14 +1,9 @@
 
 //LineChart extends Chart
 
-GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
-  className: 'LineChart',
-  defaults: {
-    x: 'x'
-    , y: 'y'
-    , width: 'auto'
-    , height: 'auto'
-    , colors: ['#d80000', '#006200']
+GeoDash.LineChart = GeoDash.Chart.extend({
+  options: {
+    colors: ['#d80000', '#006200']
     , interpolate: 'monotone'
     , dotRadius: 3
     , title: false
@@ -37,14 +32,17 @@ GeoDash.LineChart = ezoop.ExtendedClass(GeoDash.Chart, {
     , outerPadding: 0
     , linePadding: 20
     , showArea: false
-    , margin: {
-      top: 10
-      , right: 10
-      , bottom: 10
-      , left: 10
-    }
   }
-  , initialize: function (el, options) {
+  , makeSVG: function() {
+    var self = this
+    this.svg = this.container.select('.bars')
+      .append('svg')
+      .attr("height", function(){
+        return self.yrange + "px"
+      })
+      .attr("width", function(){
+        return self.xrange + 'px'
+      })
   }
   , update: function(data) {
     var self = this

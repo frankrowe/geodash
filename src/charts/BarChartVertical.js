@@ -1,10 +1,7 @@
 //BarChart extends Chart
-GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
-  className: 'BarChartVertical'
-  , defaults: {
-    x: 'x'
-    , y: 'y'
-    , colors: ['#f00']
+GeoDash.BarChartVertical = GeoDash.BarChart.extend({
+  options: {
+    colors: ['#f00']
     , opacity: 0.7
     // draw x axis
     , drawX: true
@@ -44,14 +41,6 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
     , yTickFormat: d3.format(".2s")
     // used to format y values in labels
     , valueFormat: d3.format(",")
-    , margin: {
-      top: 10
-      , right: 10
-      , bottom: 10
-      , left: 10
-    }
-  }
-  , initialize: function (el, options) {
   }
   , update: function (data) {
     var self = this
@@ -336,11 +325,11 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
   , setActiveBar: function(i) {
     var d = this._data[i];
     var el = d3.select(this.el).selectAll('.bar')[0][i]
-    if(this.activeBar === i) {
-      this.activeBar = -1
+    if(this.options.activeBar === i) {
+      this.options.activeBar = -1
       this.mouseOut(d, i, el)
     } else {
-      this.activeBar = i
+      this.options.activeBar = i
       this.mouseOver(d, i, el)
     }
   }
@@ -368,7 +357,7 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
 
     self.container.selectAll('.bar')
       .style('opacity', function(d, i) {
-        if(i !== self.activeBar) return self.options.opacity
+        if(i !== self.options.activeBar) return self.options.opacity
         else return 1
       })
     
@@ -391,9 +380,9 @@ GeoDash.BarChartVertical = ezoop.ExtendedClass(GeoDash.Chart, {
     self.container.select('.hoverbox')
     .transition()
     .style('display', 'none')
-    if(self.activeBar >= 0){
-      var activeEl = self.container.selectAll('.bar')[0][self.activeBar]
-      self.mouseOver(d, self.activeBar, activeEl)
+    if(self.options.activeBar >= 0){
+      var activeEl = self.container.selectAll('.bar')[0][self.options.activeBar]
+      self.mouseOver(d, self.options.activeBar, activeEl)
     }
   }
 })
