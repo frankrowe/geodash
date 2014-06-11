@@ -16398,7 +16398,6 @@ GeoDash.BarChart = GeoDash.Chart.extend({
     , barLabels: false
     // padding before and after bars. used in d3.scale.ticks
     , outerPadding: 0.5
-    , lowerLimit: 0
   }
 })
 
@@ -16543,10 +16542,23 @@ GeoDash.BarChartHorizontal = GeoDash.BarChart.extend({
         var stackPosition = i % self.stackNumber
         while(stackPosition > 0){
           var x = self._data[i - stackPosition].x
-          left +=self.x(x)
+          var prev_width = self.x(x)
+          if(prev_width % 1 > 0.65) {
+            prev_width = (prev_width > 0) ? parseInt(prev_width) + 1  : parseInt(prev_width) - 1
+          } else {
+            prev_width = parseInt(prev_width)
+          }
+          left += prev_width
           stackPosition--
         }
         left += 1
+
+        if(left % 1 > 0.65) {
+          left = (left > 0) ? parseInt(left) + 1  : parseInt(left) - 1
+        } else {
+          left = parseInt(left)
+        }
+
         return left + 'px'
       })
       .style("top", function(d, i) {
@@ -16563,6 +16575,11 @@ GeoDash.BarChartHorizontal = GeoDash.BarChart.extend({
       })
       .style("width", function(d) {
         var w = Math.abs(self.x(d.x) - self.x(0))
+        if(w % 1 > 0.65) {
+          w = (w > 0) ? parseInt(w) + 1  : parseInt(w) - 1
+        } else {
+          w = parseInt(w)
+        }
         return w + 'px'
       })
       .style("height", function(d){
@@ -16642,11 +16659,23 @@ GeoDash.BarChartHorizontal = GeoDash.BarChart.extend({
         var stackPosition = i % self.stackNumber
         while(stackPosition > 0){
           var x = self._data[i - stackPosition].x
-          left += parseInt(self.x(x))
+          var prev_width = self.x(x)
+          if(prev_width % 1 > 0.65) {
+            prev_width = (prev_width > 0) ? parseInt(prev_width) + 1  : parseInt(prev_width) - 1
+          } else {
+            prev_width = parseInt(prev_width)
+          }
+          left += prev_width
           stackPosition--
         }
         left += 1
-        left = parseInt(left)
+
+        if(left % 1 > 0.65) {
+          left = (left > 0) ? parseInt(left) + 1  : parseInt(left) - 1
+        } else {
+          left = parseInt(left)
+        }
+
         return left + 'px'
       })
       .style("top", function(d, i) {
@@ -16663,7 +16692,11 @@ GeoDash.BarChartHorizontal = GeoDash.BarChart.extend({
       })
       .style("width", function(d) {
         var w = Math.abs(self.x(d.x) - self.x(0))
-        w = parseInt(w)
+        if(w % 1 > 0.65) {
+          w = (w > 0) ? parseInt(w) + 1  : parseInt(w) - 1
+        } else {
+          w = parseInt(w)
+        }
         return w + 'px'
       })
       .style("height", function(d){
@@ -17134,10 +17167,22 @@ GeoDash.BarChartVertical = GeoDash.BarChart.extend({
         var stackPosition = i % self.stackNumber
         while(stackPosition > 0){
           var y = self._data[i - stackPosition].y
-          bottom += parseInt(self.yrange - self.y(y))
+          var prev_height = (self.yrange - self.y(y))
+          if(prev_height % 1 > 0.65) {
+            prev_height = (prev_height > 0) ? parseInt(prev_height) + 1  : parseInt(prev_height) - 1
+          } else {
+            prev_height = parseInt(prev_height)
+          }
+          bottom += prev_height
           stackPosition--
         }
-        bottom = parseInt(bottom)
+
+        if(bottom % 1 > 0.65) {
+          bottom = (bottom > 0) ? parseInt(bottom) + 1  : parseInt(bottom) - 1
+        } else {
+          bottom = parseInt(bottom)
+        }
+
         return bottom + 'px'
       })
       .style("height", function (d) {
@@ -17146,6 +17191,11 @@ GeoDash.BarChartVertical = GeoDash.BarChart.extend({
           height = self.y(0) - self.y(d[y])
         } else {
           height = self.y(d[y]) - self.y(0)
+        }
+        if(height % 1 > 0.65) {
+          height = (height > 0) ? parseInt(height) + 1  : parseInt(height) - 1
+        } else {
+          height = parseInt(height)
         }
         return height + 'px'
       })
@@ -17233,10 +17283,22 @@ GeoDash.BarChartVertical = GeoDash.BarChart.extend({
         var stackPosition = i % self.stackNumber
         while(stackPosition > 0){
           var y = self._data[i - stackPosition].y
-          bottom += parseInt(self.yrange - self.y(y))
+          var prev_height = (self.yrange - self.y(y))
+          if(prev_height % 1 > 0.65) {
+            prev_height = (prev_height > 0) ? parseInt(prev_height) + 1  : parseInt(prev_height) - 1
+          } else {
+            prev_height = parseInt(prev_height)
+          }
+          bottom += prev_height
           stackPosition--
         }
-        bottom = parseInt(bottom)
+
+        if(bottom % 1 > 0.65) {
+          bottom = (bottom > 0) ? parseInt(bottom) + 1  : parseInt(bottom) - 1
+        } else {
+          bottom = parseInt(bottom)
+        }
+
         return bottom + 'px'
 
       })
@@ -17246,6 +17308,11 @@ GeoDash.BarChartVertical = GeoDash.BarChart.extend({
           height = self.y(0) - self.y(d[y])
         } else {
           height = self.y(d[y]) - self.y(0)
+        }
+        if(height % 1 > 0.65) {
+          height = (height > 0) ? parseInt(height) + 1  : parseInt(height) - 1
+        } else {
+          height = parseInt(height)
         }
         return height + 'px'
       })

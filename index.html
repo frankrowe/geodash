@@ -171,7 +171,7 @@
 
     var barchartvertical2 = new GeoDash.BarChartVertical('.barchart2', {
       x: 'id'
-      , y: 'value'
+      , y: ['value']
       , colors: Dashboard.activeColor
       , title: 'Update Bar Chart'
       , yLabel: 'Y Axis Label'
@@ -196,7 +196,7 @@
     */
 
     var barcharthorizontal2 = new GeoDash.BarChartHorizontal('.barcharthorizontal2', {
-      x: 'value'
+      x: ['value', 'value2', 'value3']
       , y: 'id'
       , colors: Dashboard.activeColor
       , title: 'Horizontal Bar Chart'

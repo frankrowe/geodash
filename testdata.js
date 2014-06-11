@@ -13,6 +13,8 @@ function randomize() {
   for (var i = 0; i <= datalength; i++) {
     var obj = {}
     obj.value = Math.floor((Math.random()*100000)+1)
+    obj.value2 = Math.floor((Math.random()*100000)+1)
+    obj.value3 = Math.floor((Math.random()*100000)+1)
     obj.id = makeid()
     newdata.push(obj)
   }
