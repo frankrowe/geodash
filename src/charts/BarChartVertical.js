@@ -1,46 +1,7 @@
 //BarChart extends Chart
 GeoDash.BarChartVertical = GeoDash.BarChart.extend({
   options: {
-    colors: ['#f00']
-    , opacity: 0.7
-    // draw x axis
-    , drawX: true
-    // draw y axis
-    , drawY: true
-    , xLabel: false
-    , yLabel: false
-    , percent: false
-    , title: false
-    // border-radius value to round bars
-    , roundRadius: 3
-    // highlight a certain bar by index
-    , highlight: false
-    // width of legend container
-    , legendWidth: 80
-    // position of legend. top, middle, bottom
-    , legendPosition: 'middle'
-    // draw legend
-    , legend: false
-    // add label to end of bar
-    , barLabels: false
-    // width of y axis label, height of x axis label
-    , axisLabelPadding: 20
-    // width of y axis scale
-    , yAxisWidth: 20
-    // approximate number of ticks on y axis
-    , yTicksCount: 10
-    // class to assign chart container
-    , gdClass: 'chart-html vertical'
-    // padding before and after bars. used in d3.scale.ticks
-    , outerPadding: 0.5
-    // template that appears on mouse over
-    , hoverTemplate: "{{x}}: {{y}}"
-    //format x axis tick marks
-    , xTickFormat: false
-    //format y axis tick marks
-    , yTickFormat: d3.format(".2s")
-    // used to format y values in labels
-    , valueFormat: d3.format(",")
+    gdClass: 'chart-html vertical'
   }
   , update: function (data) {
     var self = this
@@ -146,8 +107,10 @@ GeoDash.BarChartVertical = GeoDash.BarChart.extend({
         return height + 'px'
       })
       .style("opacity", function(d, i){
-        if(i === self.options.highlight) return 1
-        else return self.options.opacity
+        for(var i = 0; i < self.options.highlight.length; i++){
+          if(self.options.highlight[i] == d.y) return 1
+        }
+        return self.options.opacity
       })
       .style("background-color", function(d, i) { 
         return self.options.colors[i%self.stackNumber]
@@ -360,15 +323,16 @@ GeoDash.BarChartVertical = GeoDash.BarChart.extend({
         if(i !== self.options.activeBar) return self.options.opacity
         else return 1
       })
-    
-    d3.select(el).style('opacity', 1)
+    if(self.options.hover) {
+      d3.select(el).style('opacity', 1)
 
-    self.container.select('.hoverbox')
-      .html(output)
+      self.container.select('.hoverbox')
+        .html(output)
 
-    self.container.select('.hoverbox')
-      .transition()
-      .style('display', 'block')
+      self.container.select('.hoverbox')
+        .transition()
+        .style('display', 'block')
+    }
   }
   , mouseOut: function(d, i, el) {
     var self = this

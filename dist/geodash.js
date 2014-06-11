@@ -954,7 +954,9 @@ Chart base class
 
 GeoDash.Chart = GeoDash.Class.extend({
   options: {
-    margin: {
+    // class to assign chart container
+    gdClass: 'chart-html'
+    , margin: {
       top: 10
       , right: 10
       , bottom: 10
@@ -964,6 +966,36 @@ GeoDash.Chart = GeoDash.Class.extend({
     , y: 'y'
     , width: 'auto'
     , height: 'auto'
+    , drawX: true
+    , drawY: true
+    , xLabel: false
+    , yLabel: false
+    , opacity: 1
+    // toggle mouseover popups
+    , hover: true
+    // draw legend
+    , legend: false
+    , legendWidth: 80
+    // position of legend. top, middle, bottom
+    , legendPosition: 'middle'
+    // width of y axis label, height of x axis label
+    , axisLabelPadding: 20
+    // width of y axis scale
+    , yAxisWidth: 25
+    // number of ticks on y axis (approx)
+    , yTicksCount: 10
+    // number of ticks on x axis (approx)
+    , xTicksCount: 10
+    // template that appears on mouse over
+    , hoverTemplate: "{{x}}: {{y}}"
+    // format x axis tick marks
+    , xTickFormat: false
+    // format y axis tick marks
+    , yTickFormat: d3.format(".2s")
+    // format values in labels
+    , valueFormat: d3.format(",")
+    // format labels in axis
+    , labelFormat: d3.time.format("%Y-%m-%d")
   }
   , initialize: function (el, options) {
     this.el = el
@@ -1070,7 +1102,7 @@ GeoDash.Chart = GeoDash.Class.extend({
     }
 
     this.makeSVG()
-    
+
     this.container.append('div')
       .attr('class', 'hoverbox')
   }
@@ -1351,40 +1383,34 @@ GeoDash.Chart = GeoDash.Class.extend({
 GeoDash.BarChart = GeoDash.Chart.extend({
   options: {
     activeBar: -1
+    , colors: ['#f00']
+    , percent: false
+    , title: false
+    , money: false
+    , opacity: 0.7
+    // border-radius value to round bars
+    , roundRadius: 3
+    // bars to highlight
+    , highlight: []
+    // add label to end of bar
+    , barLabels: false
+    // padding before and after bars. used in d3.scale.ticks
+    , outerPadding: 0.5
+    , lowerLimit: 0
   }
 })
 
 //BarChart extends Chart
 GeoDash.BarChartHorizontal = GeoDash.BarChart.extend({
   options: {
-    colors: ['#f00']
-    , opacity: 0.7
-    , drawX: true
-    , drawY: true
-    , percent: false
-    , money: false
-    , title: false
-    , roundRadius: 3
-    , highlight: []
-    , invert: false
+    gdClass: 'chart-html horizontal'
     , barHeight: 0
     , padding: 2
     , xTicksCount: 10
-    , yWidth: 0
-    , round: true
-    , format: false
     , topPadding: 10
-    , axisLabelPadding: 20
-    , legendWidth: 80
-    , legendPosition: 'middle'
-    , legend: false
     , rightBarPadding: 10
-    , outerPadding: 0.5
-    , gdClass: 'chart-html horizontal'
-    , hoverTemplate: "{{y}}: {{x}}"
     , xTickFormat: d3.format(".2s")
     , yTickFormat: false
-    , valueFormat: d3.format(",")
     , reverse: false
   }
   , setXAxis: function() {
@@ -1394,8 +1420,8 @@ GeoDash.BarChartHorizontal = GeoDash.BarChart.extend({
       xrange -= this.options.legendWidth
     }
     if(this.options.drawY){
-      xrange -= this.options.yWidth
-      marginleft += this.options.yWidth
+      xrange -= this.options.yAxisWidth
+      marginleft += this.options.yAxisWidth
     }
     if(this.options.yLabel) {
       xrange -= this.options.axisLabelPadding
@@ -1984,13 +2010,14 @@ GeoDash.BarChartHorizontal = GeoDash.BarChart.extend({
         else return 1
       })
     d3.select(el).style('opacity', 1)
+    if(self.options.hover) {
+      self.container.select('.hoverbox')
+        .html(output)
 
-    self.container.select('.hoverbox')
-      .html(output)
-
-    self.container.select('.hoverbox')
-      .transition()
-      .style('display', 'block')
+      self.container.select('.hoverbox')
+        .transition()
+        .style('display', 'block')
+    }
   }
   , mouseOut: function(d, i, el) {
     var self = this
@@ -2015,46 +2042,7 @@ GeoDash.BarChartHorizontal = GeoDash.BarChart.extend({
 //BarChart extends Chart
 GeoDash.BarChartVertical = GeoDash.BarChart.extend({
   options: {
-    colors: ['#f00']
-    , opacity: 0.7
-    // draw x axis
-    , drawX: true
-    // draw y axis
-    , drawY: true
-    , xLabel: false
-    , yLabel: false
-    , percent: false
-    , title: false
-    // border-radius value to round bars
-    , roundRadius: 3
-    // highlight a certain bar by index
-    , highlight: false
-    // width of legend container
-    , legendWidth: 80
-    // position of legend. top, middle, bottom
-    , legendPosition: 'middle'
-    // draw legend
-    , legend: false
-    // add label to end of bar
-    , barLabels: false
-    // width of y axis label, height of x axis label
-    , axisLabelPadding: 20
-    // width of y axis scale
-    , yAxisWidth: 20
-    // approximate number of ticks on y axis
-    , yTicksCount: 10
-    // class to assign chart container
-    , gdClass: 'chart-html vertical'
-    // padding before and after bars. used in d3.scale.ticks
-    , outerPadding: 0.5
-    // template that appears on mouse over
-    , hoverTemplate: "{{x}}: {{y}}"
-    //format x axis tick marks
-    , xTickFormat: false
-    //format y axis tick marks
-    , yTickFormat: d3.format(".2s")
-    // used to format y values in labels
-    , valueFormat: d3.format(",")
+    gdClass: 'chart-html vertical'
   }
   , update: function (data) {
     var self = this
@@ -2160,8 +2148,10 @@ GeoDash.BarChartVertical = GeoDash.BarChart.extend({
         return height + 'px'
       })
       .style("opacity", function(d, i){
-        if(i === self.options.highlight) return 1
-        else return self.options.opacity
+        for(var i = 0; i < self.options.highlight.length; i++){
+          if(self.options.highlight[i] == d.y) return 1
+        }
+        return self.options.opacity
       })
       .style("background-color", function(d, i) { 
         return self.options.colors[i%self.stackNumber]
@@ -2374,15 +2364,16 @@ GeoDash.BarChartVertical = GeoDash.BarChart.extend({
         if(i !== self.options.activeBar) return self.options.opacity
         else return 1
       })
-    
-    d3.select(el).style('opacity', 1)
+    if(self.options.hover) {
+      d3.select(el).style('opacity', 1)
 
-    self.container.select('.hoverbox')
-      .html(output)
+      self.container.select('.hoverbox')
+        .html(output)
 
-    self.container.select('.hoverbox')
-      .transition()
-      .style('display', 'block')
+      self.container.select('.hoverbox')
+        .transition()
+        .style('display', 'block')
+    }
   }
   , mouseOut: function(d, i, el) {
     var self = this
@@ -2406,32 +2397,17 @@ GeoDash.BarChartVertical = GeoDash.BarChart.extend({
 
 GeoDash.LineChart = GeoDash.Chart.extend({
   options: {
-    colors: ['#d80000', '#006200']
+    gdClass: 'chart-html linechart vertical'
+    , colors: ['#d80000', '#006200']
     , interpolate: 'monotone'
     , dotRadius: 3
-    , title: false
-    , opacity: 0.8
     , strokeWidth: 2
-    , drawX: true
-    , drawY: true
-    , xLabel: false
-    , yLabel: false
     , xInterval: false
     , xTimeInterval: false
     , dashed: false
     , time: true
-    , legendWidth: 80
-    , legendPosition: 'middle'
-    , legend: false
-    , axisLabelPadding: 20
-    , yAxisWidth: 25
-    , yTicksCount: 10
-    , gdClass: 'chart-html linechart vertical'
-    , hoverTemplate: "{{x}}: {{y}}"
     , xTickFormat: d3.time.format("%Y-%m-%d")
     , yTickFormat: d3.format(".2s")
-    , valueFormat: d3.format(",")
-    , labelFormat: d3.time.format("%Y-%m-%d")
     , outerPadding: 0
     , linePadding: 20
     , showArea: false
@@ -2785,12 +2761,14 @@ GeoDash.LineChart = GeoDash.Chart.extend({
     d3.select(el).transition().attr('r', this.options.dotRadius + 3)
     d3.select(el).style("fill-opacity", 0.9)
 
-    self.container.select('.hoverbox')
-      .html(output)
+  if(self.options.hover) {
+      self.container.select('.hoverbox')
+        .html(output)
 
-    self.container.select('.hoverbox')
-      .transition()
-      .style('display', 'block')
+      self.container.select('.hoverbox')
+        .transition()
+        .style('display', 'block')
+    }
   }
   , mouseOut: function(d, i, el){
     var self = this;
@@ -2807,25 +2785,17 @@ GeoDash.LineChart = GeoDash.Chart.extend({
 
 GeoDash.PieChart = GeoDash.Chart.extend({
   options: {
-    label: 'label'
+    gdClass: 'chart-html piechart-svg'
+    , label: 'label'
     , value: 'value'
     , colors: ["#f00", "#0f0", "#00f"]
     , innerRadius: 10
-    , opacity: 1
-    , drawX: false
-    , drawY: false
-    , title: false
     , padding: 10
-    , legend: false
-    , legendPosition: 'middle'
-    , hover: true
     , arclabels: false
-    , gdClass: 'chart-html piechart-svg'
     , valueFormat: d3.format(',.0f')
     , formatPercent: d3.format('.2f')
     , hoverTemplate: "{{label}}: {{value}} ({{percent}}%)"
     , labelColor: "#ccc"
-    , legendWidth: 80
     , arcstrokewidth: 2
     , arcstrokecolor: '#fff'
     , abbreviate: false

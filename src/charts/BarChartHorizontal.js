@@ -1,34 +1,14 @@
 //BarChart extends Chart
 GeoDash.BarChartHorizontal = GeoDash.BarChart.extend({
   options: {
-    colors: ['#f00']
-    , opacity: 0.7
-    , drawX: true
-    , drawY: true
-    , percent: false
-    , money: false
-    , title: false
-    , roundRadius: 3
-    , highlight: []
-    , invert: false
+    gdClass: 'chart-html horizontal'
     , barHeight: 0
     , padding: 2
     , xTicksCount: 10
-    , yWidth: 0
-    , round: true
-    , format: false
     , topPadding: 10
-    , axisLabelPadding: 20
-    , legendWidth: 80
-    , legendPosition: 'middle'
-    , legend: false
     , rightBarPadding: 10
-    , outerPadding: 0.5
-    , gdClass: 'chart-html horizontal'
-    , hoverTemplate: "{{y}}: {{x}}"
     , xTickFormat: d3.format(".2s")
     , yTickFormat: false
-    , valueFormat: d3.format(",")
     , reverse: false
   }
   , setXAxis: function() {
@@ -38,8 +18,8 @@ GeoDash.BarChartHorizontal = GeoDash.BarChart.extend({
       xrange -= this.options.legendWidth
     }
     if(this.options.drawY){
-      xrange -= this.options.yWidth
-      marginleft += this.options.yWidth
+      xrange -= this.options.yAxisWidth
+      marginleft += this.options.yAxisWidth
     }
     if(this.options.yLabel) {
       xrange -= this.options.axisLabelPadding
@@ -628,13 +608,14 @@ GeoDash.BarChartHorizontal = GeoDash.BarChart.extend({
         else return 1
       })
     d3.select(el).style('opacity', 1)
+    if(self.options.hover) {
+      self.container.select('.hoverbox')
+        .html(output)
 
-    self.container.select('.hoverbox')
-      .html(output)
-
-    self.container.select('.hoverbox')
-      .transition()
-      .style('display', 'block')
+      self.container.select('.hoverbox')
+        .transition()
+        .style('display', 'block')
+    }
   }
   , mouseOut: function(d, i, el) {
     var self = this

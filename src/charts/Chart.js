@@ -4,7 +4,9 @@ Chart base class
 
 GeoDash.Chart = GeoDash.Class.extend({
   options: {
-    margin: {
+    // class to assign chart container
+    gdClass: 'chart-html'
+    , margin: {
       top: 10
       , right: 10
       , bottom: 10
@@ -14,6 +16,36 @@ GeoDash.Chart = GeoDash.Class.extend({
     , y: 'y'
     , width: 'auto'
     , height: 'auto'
+    , drawX: true
+    , drawY: true
+    , xLabel: false
+    , yLabel: false
+    , opacity: 1
+    // toggle mouseover popups
+    , hover: true
+    // draw legend
+    , legend: false
+    , legendWidth: 80
+    // position of legend. top, middle, bottom
+    , legendPosition: 'middle'
+    // width of y axis label, height of x axis label
+    , axisLabelPadding: 20
+    // width of y axis scale
+    , yAxisWidth: 25
+    // number of ticks on y axis (approx)
+    , yTicksCount: 10
+    // number of ticks on x axis (approx)
+    , xTicksCount: 10
+    // template that appears on mouse over
+    , hoverTemplate: "{{x}}: {{y}}"
+    // format x axis tick marks
+    , xTickFormat: false
+    // format y axis tick marks
+    , yTickFormat: d3.format(".2s")
+    // format values in labels
+    , valueFormat: d3.format(",")
+    // format labels in axis
+    , labelFormat: d3.time.format("%Y-%m-%d")
   }
   , initialize: function (el, options) {
     this.el = el
@@ -120,7 +152,7 @@ GeoDash.Chart = GeoDash.Class.extend({
     }
 
     this.makeSVG()
-    
+
     this.container.append('div')
       .attr('class', 'hoverbox')
   }

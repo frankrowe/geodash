@@ -3,32 +3,17 @@
 
 GeoDash.LineChart = GeoDash.Chart.extend({
   options: {
-    colors: ['#d80000', '#006200']
+    gdClass: 'chart-html linechart vertical'
+    , colors: ['#d80000', '#006200']
     , interpolate: 'monotone'
     , dotRadius: 3
-    , title: false
-    , opacity: 0.8
     , strokeWidth: 2
-    , drawX: true
-    , drawY: true
-    , xLabel: false
-    , yLabel: false
     , xInterval: false
     , xTimeInterval: false
     , dashed: false
     , time: true
-    , legendWidth: 80
-    , legendPosition: 'middle'
-    , legend: false
-    , axisLabelPadding: 20
-    , yAxisWidth: 25
-    , yTicksCount: 10
-    , gdClass: 'chart-html linechart vertical'
-    , hoverTemplate: "{{x}}: {{y}}"
     , xTickFormat: d3.time.format("%Y-%m-%d")
     , yTickFormat: d3.format(".2s")
-    , valueFormat: d3.format(",")
-    , labelFormat: d3.time.format("%Y-%m-%d")
     , outerPadding: 0
     , linePadding: 20
     , showArea: false
@@ -382,12 +367,14 @@ GeoDash.LineChart = GeoDash.Chart.extend({
     d3.select(el).transition().attr('r', this.options.dotRadius + 3)
     d3.select(el).style("fill-opacity", 0.9)
 
-    self.container.select('.hoverbox')
-      .html(output)
+  if(self.options.hover) {
+      self.container.select('.hoverbox')
+        .html(output)
 
-    self.container.select('.hoverbox')
-      .transition()
-      .style('display', 'block')
+      self.container.select('.hoverbox')
+        .transition()
+        .style('display', 'block')
+    }
   }
   , mouseOut: function(d, i, el){
     var self = this;

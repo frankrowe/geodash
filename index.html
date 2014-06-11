@@ -109,7 +109,7 @@
       , title: 'Horizontal Bar Chart'
       , money: true
       , xTicksCount: 6
-      , yWidth: 60
+      , yAxisWidth: 60
       , hoverTemplate: '{{y}}: ${{x}}'
     })
 
@@ -177,6 +177,14 @@
       , yLabel: 'Y Axis Label'
       , xLabel: 'X Axis Label'
       , barLabels: true
+      , lowerLimit: 3
+      , valueFormat: function(n) {
+          if(n <= 3) {
+            return '<= 3'
+          } else {
+            return d3.format(",")(n)
+          }
+        }
     })
     Dashboard.charts.push(barchartvertical2)
     barchartvertical2.update(randomize())

@@ -2,25 +2,17 @@
 
 GeoDash.PieChart = GeoDash.Chart.extend({
   options: {
-    label: 'label'
+    gdClass: 'chart-html piechart-svg'
+    , label: 'label'
     , value: 'value'
     , colors: ["#f00", "#0f0", "#00f"]
     , innerRadius: 10
-    , opacity: 1
-    , drawX: false
-    , drawY: false
-    , title: false
     , padding: 10
-    , legend: false
-    , legendPosition: 'middle'
-    , hover: true
     , arclabels: false
-    , gdClass: 'chart-html piechart-svg'
     , valueFormat: d3.format(',.0f')
     , formatPercent: d3.format('.2f')
     , hoverTemplate: "{{label}}: {{value}} ({{percent}}%)"
     , labelColor: "#ccc"
-    , legendWidth: 80
     , arcstrokewidth: 2
     , arcstrokecolor: '#fff'
     , abbreviate: false
