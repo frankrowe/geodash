@@ -30,14 +30,6 @@ GeoDash.PieChart = GeoDash.Chart.extend({
       })
       .append("g")
        .attr("transform", "translate(" + self.xrange / 2 + "," + self.yrange / 2 + ")")
-  }
-  , setColors: function(colors){
-    this.color = d3.scale.ordinal()
-      .range(colors);
-  }
-  , update: function(data){
-    //if(GeoDash.Browser.ielt9) return
-    var self = this
 
     var diameter = Math.min(this.xrange, this.yrange)
     var radius = ( diameter / 2 ) - 4
@@ -50,6 +42,20 @@ GeoDash.PieChart = GeoDash.Chart.extend({
       .sort(null)
       .value(function(d) { return d[self.options.value] })
 
+    this.setColor(this.options.colors)
+  }
+  , setColor: function(colors){
+    this.options.colors = colors
+    this.color = d3.scale.ordinal()
+      .range(this.options.colors)
+  }
+  , update: function(data){
+    var self = this
+
+    var firstUpdate = false
+    if (typeof this.data === 'undefined') {
+      firstUpdate = true
+    }
 
     if(!this.options.total) {
       this.total = 0
@@ -64,59 +70,90 @@ GeoDash.PieChart = GeoDash.Chart.extend({
     } else {
       this.total = this.options.total
     }
-    this.data = data
-    this.updateChart()
-  }
-  , updateChart: function() {
-    var self = this
-    
-    this.color = d3.scale.ordinal()
-       .range(this.options.colors)
 
-    var g = this.svg.selectAll(".arc")
+    this.data = data
+    this.updateChart(firstUpdate)
+  }
+  , updateChart: function(firstUpdate) {
+    var self = this
+
+    var domain = []
+    for (var i = 0; i < this.data.length; i++) {
+      domain.push(this.data[i][this.options.label])
+    }
+    this.color.domain(domain)
+
+    this.enterAntiClockwise = {
+      startAngle: Math.PI * 2,
+      endAngle: Math.PI * 2
+    }
+
+    var path = this.svg.selectAll("path")
       .data(this.pie(this.data))
 
-    g.select('path')
-      .style("fill", function(d) { return self.color(d.data[self.options.label]) })
-      .attr("d", this.arc)
+    var enter = path.enter()
+        .append("path")
+        .attr("fill", function(d) { return self.color(d.data[self.options.label]) })
+        .attr("fill-opacity", this.options.opacity)
+        .attr("stroke-width", this.options.arcstrokewidth)
+        .attr("stroke", this.options.arcstrokecolor)
+        .on('mouseover', function (d, i) {
+          if(!GeoDash.Browser.touch) {
+            self.mouseOver(d, i, this)
+          }
+        })
+        .on('mouseout', function (d, i) {
+          if(!GeoDash.Browser.touch) {
+            self.mouseOut(d, i, this)
+          }
+        })
+        .on('click', function (d, i) {
+          if(self.activeBar === i) {
+            self.activeBar = -1
+            self.mouseOut(d, i, this)
+          } else {
+            self.activeBar = i
+            self.mouseOver(d, i, this)
+          }
+        })
 
-    g.enter()
-      .append("g")
-      .attr("class", "arc")
-      .append("path")
-      .attr("d", this.arc)
-      .attr("fill", function(d) { return self.color(d.data[self.options.label]) })
-      .attr("fill-opacity", this.options.opacity)
-      .attr("stroke-width", this.options.arcstrokewidth)
-      .attr("stroke", this.options.arcstrokecolor)
-      .on('mouseover', function (d, i) {
-        if(!GeoDash.Browser.touch) {
-          self.mouseOver(d, i, this)
-        }
-      })
-      .on('mouseout', function (d, i) {
-        if(!GeoDash.Browser.touch) {
-          self.mouseOut(d, i, this)
-        }
-      })
-      .on('click', function (d, i) {
-        if(self.activeBar === i) {
-          self.activeBar = -1
-          self.mouseOut(d, i, this)
-        } else {
-          self.activeBar = i
-          self.mouseOver(d, i, this)
-        }
-      })
+    if (firstUpdate) {
+      enter
+        .attr("d", this.arc)
+        .each(function(d) { this._current = d })
+    } else {
+      enter
+        .attr("d", this.arc(this.enterAntiClockwise))
+        .each(function (d) {
+          this._current = {
+            data: d.data,
+            value: d.value,
+            startAngle: self.enterAntiClockwise.startAngle,
+            endAngle: self.enterAntiClockwise.endAngle
+          }
+        })
+      path.exit()
+        .transition()
+        .duration(this.options.transitionDuration)
+        .attrTween("d", function (d, i) {
+          return self.arcTweenOut(this, d)
+        })
+        .remove()
 
-    g.exit().remove()
+      path
+        .transition()
+        .duration(this.options.transitionDuration)
+        .attr("fill", function(d) { return self.color(d.data[self.options.label]) })
+        .attrTween("d", function (d, i) {
+          return self.arcTween(this, d)
+        })
+    }
 
     if(this.options.arclabels) {
       var t = self.svg.selectAll(".arc-text")
             .data(this.pie(this.data))
 
       t.select("text")
-        .attr("transform", function(d) { return "translate(" + self.arc.centroid(d) + ")"; })
         .text(function(d) {
           var label = d.data[self.options.label]
           if(self.options.abbreviate) {
@@ -127,7 +164,15 @@ GeoDash.PieChart = GeoDash.Chart.extend({
           return label + ' (' + d.value + ')' 
         })
 
-      t.enter().append("g")
+      t
+        .transition()
+        .duration(this.options.transitionDuration)
+        .select("text")
+        .attr("transform", function(d) { return "translate(" + self.arc.centroid(d) + ")" })
+
+      t
+        .enter()
+        .append("g")
         .attr("class", "arc-text")
         .append("text")
         .attr("transform", function(d) { return "translate(" + self.arc.centroid(d) + ")" })
@@ -148,6 +193,22 @@ GeoDash.PieChart = GeoDash.Chart.extend({
     }
 
     this.updateLegend()
+  }
+  , arcTween: function(path, d) {
+    var self = this
+    var i = d3.interpolate(path._current, d)
+    path._current = i(0)
+    return function(t) {
+      return self.arc(i(t))
+    }
+  }
+  , arcTweenOut: function(path, d) {
+    var self = this
+    var i = d3.interpolate(path._current, {startAngle: Math.PI * 2, endAngle: Math.PI * 2, value: 0})
+    path._current = i(0)
+    return function (t) {
+      return self.arc(i(t))
+    }
   }
   , mouseOver: function(d, i, el) {
     var self = this
@@ -172,4 +233,4 @@ GeoDash.PieChart = GeoDash.Chart.extend({
     self.container.select('.hoverbox').style('display', 'none')
     d3.select(el).style('fill-opacity', self.options.opacity)
   }
-});
+})
