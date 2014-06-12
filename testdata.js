@@ -25,6 +25,16 @@ function randomize() {
   return newdata
 }
 
+function pierandomize(data) {
+  var newdata = []
+  for (var i = 0; i < data.length; i++) {
+    var obj = data[i]
+    obj.value = Math.floor((Math.random()*100)+1)
+    newdata.push(obj)
+  }
+  return newdata
+}
+
 function randomizeLine() {
   var newdata = linedata
   for (var i = 0; i < newdata.length; i++) {
@@ -47,6 +57,7 @@ function sort(data){
 window.onload = function() {
   document.getElementById('randomize4').onclick = function() {
     piechart.update(randomize())
+    //piechart.update(piedata3)
   }
 
   document.getElementById('randomize').onclick = function() {
@@ -93,7 +104,7 @@ var verticaldata = [
     '2013': '42235.7'
   },
   {
-    'id': 'Tuesday Lol',
+    'id': 'Tue',
     '2011': '165113.8',
     '2012': '42235.7',
     '2013': '42235.7'
@@ -143,6 +154,40 @@ var piedata = [
   {
     'id':'cool',
     'value':2
+  }
+]
+
+var piedata2 = [
+  {
+    'id':'lol',
+    'value':33
+  },
+  {
+    'id':'cats',
+    'value':11
+  },
+  {
+    'id':'cool',
+    'value':6
+  }
+]
+
+var piedata3 = [
+  {
+    'id':'lol',
+    'value':33
+  },
+  {
+    'id':'cats',
+    'value':11
+  },
+  {
+    'id':'cool',
+    'value':6
+  },
+  {
+    'id':'cool2',
+    'value':14
   }
 ]
 
