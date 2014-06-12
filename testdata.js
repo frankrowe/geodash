@@ -45,9 +45,11 @@ function randomizeLine() {
 
 function sort(data){
   data.sort(function(a, b) {
-    if (a.value > b.value)
+    var atotal = a.value + a.value2 + a.value3
+    var btotal = b.value + b.value2 + b.value3
+    if (atotal > btotal)
       return 1
-    if (a.value < b.value)
+    if (atotal < btotal)
       return -1
     return 0
   })
