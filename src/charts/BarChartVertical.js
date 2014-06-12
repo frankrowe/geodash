@@ -77,7 +77,9 @@ GeoDash.BarChartVertical = GeoDash.BarChart.extend({
       .selectAll(".bar")
       .data(this._data)
 
-    bars.transition()
+    bars
+      .transition()
+      .duration(this.options.transitionDuration)
       .attr("geodash-id", function (d) { return d[x] })
       .style("left", function (d) { return self.x(d[x]) + 'px' })
       .style("width", self.x.rangeBand() + 'px')
@@ -365,6 +367,7 @@ GeoDash.BarChartVertical = GeoDash.BarChart.extend({
 
       self.container.select('.hoverbox')
         .transition()
+        .duration(this.options.transitionDuration)
         .style('display', 'block')
     }
   }
@@ -376,8 +379,9 @@ GeoDash.BarChartVertical = GeoDash.BarChart.extend({
     }
     d3.select(el).style('opacity', opacity)
     self.container.select('.hoverbox')
-    .transition()
-    .style('display', 'none')
+      .transition()
+      .duration(this.options.transitionDuration)
+      .style('display', 'none')
     if(self.options.activeBar >= 0){
       var activeEl = self.container.selectAll('.bar')[0][self.options.activeBar]
       self.mouseOver(d, self.options.activeBar, activeEl)

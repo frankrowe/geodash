@@ -132,7 +132,9 @@ GeoDash.BarChartHorizontal = GeoDash.BarChart.extend({
         .selectAll(".bar")
         .data(this._data)
 
-    bars.transition()
+    bars
+      .transition()
+      .duration(this.options.transitionDuration)
       .attr("geodash-id", function (d) { return d.y })
       .style("left", function(d, i) {
         var left = self.x(Math.min(0, d.x))
@@ -395,7 +397,9 @@ GeoDash.BarChartHorizontal = GeoDash.BarChart.extend({
         .selectAll(".tick")
         .data(ticks)
 
-      var ticks = tickElements.transition()
+      var ticks = tickElements
+        .transition()
+        .duration(this.options.transitionDuration)
         .style("left", function(d) {
           var left = self.x(d)
           return left + 'px'
@@ -504,7 +508,9 @@ GeoDash.BarChartHorizontal = GeoDash.BarChart.extend({
         .selectAll(".tick")
         .data(labels)
 
-      var ticks = tickElements.transition()
+      var ticks = tickElements
+        .transition()
+        .duration(this.options.transitionDuration)
         .style("top", function(d, i) {
           var top = 0
           if(self.options.barHeight !== 0){
@@ -648,6 +654,7 @@ GeoDash.BarChartHorizontal = GeoDash.BarChart.extend({
 
       self.container.select('.hoverbox')
         .transition()
+        .duration(this.options.transitionDuration)
         .style('display', 'block')
     }
   }
@@ -660,6 +667,7 @@ GeoDash.BarChartHorizontal = GeoDash.BarChart.extend({
     d3.select(el).style('opacity', opacity)
     self.container.select('.hoverbox')
     .transition()
+    .duration(this.options.transitionDuration)
     .style('display', 'none')
     if(self.options.activeBar >= 0){
       var activeEl = self.container.selectAll('.bar')[0][self.options.activeBar]

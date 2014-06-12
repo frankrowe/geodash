@@ -46,6 +46,8 @@ GeoDash.Chart = GeoDash.Class.extend({
     , valueFormat: d3.format(",")
     // format labels in axis
     , labelFormat: d3.time.format("%Y-%m-%d")
+
+    , transitionDuration: 500
   }
   , initialize: function (el, options) {
     this.el = el
@@ -203,7 +205,9 @@ GeoDash.Chart = GeoDash.Class.extend({
         .selectAll(".tick")
         .data(ticks)
 
-      var ticks = tickElements.transition()
+      var ticks = tickElements
+        .transition()
+        .duration(this.options.transitionDuration)
         .style("top", function(d) {
           return self.y(d)  + 'px'
         })
@@ -299,7 +303,9 @@ GeoDash.Chart = GeoDash.Class.extend({
         .selectAll(".tick")
         .data(labels)
 
-      var ticks = tickElements.transition()
+      var ticks = tickElements
+        .transition()
+        .duration(this.options.transitionDuration)
         .style("left", function (d) { return self.x(d) + 'px' })
         .style("width", self.x.rangeBand() + 'px')
 
@@ -349,14 +355,14 @@ GeoDash.Chart = GeoDash.Class.extend({
     }
   }
   , updateLegend: function() {
+    var self = this
     if(this.options.legend) {
-
       var block = {width: 10, height: 10, padding: 5}
       var padding = 3
       var legend = this.container.select('.legend')
 
-      var d = this.color.domain().slice().reverse()
-      
+      var d = this.color.domain()//.slice().reverse()
+
       var legenditems = legend.selectAll(".legend-item")
           .data(d)
 
@@ -382,7 +388,6 @@ GeoDash.Chart = GeoDash.Class.extend({
           .text(function(d) { return d })
 
       legenditems.exit().remove()
-
 
       if(this.options.legendPosition == 'middle') {
         var lHeight = parseInt(legend.style('height'))

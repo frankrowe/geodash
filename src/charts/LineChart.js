@@ -172,7 +172,6 @@ GeoDash.LineChart = GeoDash.Chart.extend({
     this.updateYAxis()
     this.updateChart()
     this.updateLegend()
-
   }
   , updateChart: function() {
     var self = this
@@ -205,14 +204,17 @@ GeoDash.LineChart = GeoDash.Chart.extend({
     var lines = this.svg.selectAll(".chart-line")
       .data(this.linedata)
 
-    lines.transition()
+    lines
+      .transition()
+      .duration(this.options.transitionDuration)
       .attr("stroke", function(d) { return self.color(d.name) })
       .attr("d", function(d) { return self.line(d.values) })
       .attr("stroke-dasharray", function(d){
         if(d.dashed) return "4 3"
       })
 
-    lines.enter()
+    lines
+      .enter()
       .append("g")
       .attr('class', function(d, i){
         return 'line_group line_group' + i
@@ -238,7 +240,10 @@ GeoDash.LineChart = GeoDash.Chart.extend({
       var dots = this.svg.select(".line_group" + i).selectAll('.dot')
           .data(one_line)
 
-      dots.transition().duration(500).delay(delay)
+      dots
+        .transition()
+        .duration(this.options.transitionDuration)
+        .delay(delay)
         .attr("data", function(d){ return d.y; })
         .attr("fill", function(d) { return self.color(self.linedata[i].name); })
         .attr("cx", function(d) { return self.xLine(d.x)})
@@ -264,13 +269,17 @@ GeoDash.LineChart = GeoDash.Chart.extend({
       var areas = this.svg.selectAll(".area")
         .data(this.linedata)
 
-      areas.enter().append("path")
+      areas
+        .enter()
+        .append("path")
         .attr("class", "area")
         .attr('opacity', 0.1)
         .attr('fill', function(d) { return self.color(d.name) })
         .attr("d", function(d) { return self.area(d.values) })
 
-      areas.transition()
+      areas
+        .transition()
+        .duration(this.options.transitionDuration)
         .attr('fill', function(d) { return self.color(d.name) })
         .attr("d", function(d) { return self.area(d.values) })
 
@@ -290,7 +299,9 @@ GeoDash.LineChart = GeoDash.Chart.extend({
         .selectAll(".tick")
         .data(labels)
 
-      var ticks = tickElements.transition()
+      var ticks = tickElements
+        .transition()
+        .duration(this.options.transitionDuration)
         .style("left", function (d) { return self.xLine(d) + 'px' })
         .style("bottom", function (d) {
           var b = self.height - self.yrange - self.options.axisLabelPadding
@@ -364,15 +375,19 @@ GeoDash.LineChart = GeoDash.Chart.extend({
       output = 'NA'
     }
 
-    d3.select(el).transition().attr('r', this.options.dotRadius + 3)
+    d3.select(el)
+      .transition()
+      .duration(this.options.transitionDuration)
+      .attr('r', this.options.dotRadius + 3)
     d3.select(el).style("fill-opacity", 0.9)
 
-  if(self.options.hover) {
+    if(self.options.hover) {
       self.container.select('.hoverbox')
         .html(output)
 
       self.container.select('.hoverbox')
         .transition()
+        .duration(this.options.transitionDuration)
         .style('display', 'block')
     }
   }
@@ -380,9 +395,13 @@ GeoDash.LineChart = GeoDash.Chart.extend({
     var self = this;
     // d3.select(self.el).select('.hoverbox').transition().style('display', 'none');
     d3.select(el).style("fill-opacity", self.options.opacity)
-    d3.select(el).transition().attr('r', this.options.dotRadius);
+    d3.select(el)
+      .transition()
+      .duration(this.options.transitionDuration)
+      .attr('r', this.options.dotRadius);
     self.container.select('.hoverbox')
       .transition()
+      .duration(this.options.transitionDuration)
       .style('display', 'none')
   }
 });
