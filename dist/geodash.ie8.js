@@ -17896,6 +17896,8 @@ GeoDash.PieChart = GeoDash.Chart.extend({
     , colors: ["#f00", "#0f0", "#00f"]
     , innerRadius: 10
     , padding: 10
+    , yAxisWidth: 0
+    , axisLabelPadding: 0
     , arclabels: false
     , valueFormat: d3.format(',.0f')
     , formatPercent: d3.format('.2f')
@@ -18049,7 +18051,7 @@ GeoDash.PieChart = GeoDash.Chart.extend({
               label = label.substring(0, self.options.abbreviate) + '..'
             }
           }
-          return label + ' (' + d.value + ')' 
+          return label + ' (' + d.value + ')'
         })
 
       t
@@ -18074,7 +18076,7 @@ GeoDash.PieChart = GeoDash.Chart.extend({
               label = label.substring(0, self.options.abbreviate) + '..'
             }
           }
-          return label + ' (' + d.value + ')' 
+          return label + ' (' + d.value + ')'
         })
 
       t.exit().remove()
@@ -18122,6 +18124,7 @@ GeoDash.PieChart = GeoDash.Chart.extend({
     d3.select(el).style('fill-opacity', self.options.opacity)
   }
 })
+
 //BarChart extends Chart
 GeoDash.TableChart = GeoDash.Chart.extend({
   options: {
