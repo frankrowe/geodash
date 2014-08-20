@@ -2897,6 +2897,7 @@ GeoDash.PieChart = GeoDash.Chart.extend({
     , yAxisWidth: 0
     , axisLabelPadding: 0
     , arclabels: false
+    , arclabelsMin: 10
     , valueFormat: d3.format(',.0f')
     , formatPercent: d3.format('.2f')
     , hoverTemplate: "{{label}}: {{value}} ({{percent}}%)"
@@ -3043,7 +3044,7 @@ GeoDash.PieChart = GeoDash.Chart.extend({
       var makeLabel = function(d) {
         var p = (d.value/self.total)*100
         var label = ''
-        if (p >= 10) {
+        if (p >= self.options.arclabelsMin) {
           label = d.data[self.options.label]
           if(self.options.abbreviate) {
             if(label.length > self.options.abbreviate) {
