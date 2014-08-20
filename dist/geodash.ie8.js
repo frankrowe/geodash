@@ -17930,7 +17930,9 @@ GeoDash.PieChart = GeoDash.Chart.extend({
 
     this.pie = d3.layout.pie()
       .sort(null)
-      .value(function(d) { return d[self.options.value] })
+      .value(function(d) {
+        return d[self.options.value]
+      })
 
     this.setColor(this.options.colors)
   }
@@ -17947,21 +17949,20 @@ GeoDash.PieChart = GeoDash.Chart.extend({
       firstUpdate = true
     }
 
+    var new_data = []
     if(!this.options.total) {
       this.total = 0
       data.forEach(function(d, i) {
         d[self.options.value] = +d[self.options.value]
-        if(+d[self.options.value] < 0) {
-          data.splice(i, 1)
-        } else {
+        if(+d[self.options.value] > 0) {
           self.total += +d[self.options.value]
+          new_data.push(d)
         }
       })
     } else {
       this.total = this.options.total
     }
-
-    this.data = data
+    this.data = new_data
     this.updateChart(firstUpdate)
   }
   , updateChart: function(firstUpdate) {
