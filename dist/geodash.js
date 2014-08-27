@@ -2721,7 +2721,6 @@ GeoDash.LineChart = GeoDash.Chart.extend({
       dots
         .transition()
         .duration(this.options.transitionDuration)
-        .delay(delay)
         .attr("data", function(d){ return d.y; })
         .attr("fill", function(d) { return self.color(self.linedata[i].name); })
         .attr("cx", function(d) { return self.xLine(d.x)})
@@ -2854,8 +2853,6 @@ GeoDash.LineChart = GeoDash.Chart.extend({
     }
 
     d3.select(el)
-      .transition()
-      .duration(this.options.transitionDuration)
       .attr('r', this.options.dotRadius + 3)
     d3.select(el).style("fill-opacity", 0.9)
 
@@ -2864,8 +2861,6 @@ GeoDash.LineChart = GeoDash.Chart.extend({
         .html(output)
 
       self.container.select('.hoverbox')
-        .transition()
-        .duration(this.options.transitionDuration)
         .style('display', 'block')
     }
   }
@@ -2874,12 +2869,8 @@ GeoDash.LineChart = GeoDash.Chart.extend({
     // d3.select(self.el).select('.hoverbox').transition().style('display', 'none');
     d3.select(el).style("fill-opacity", self.options.opacity)
     d3.select(el)
-      .transition()
-      .duration(this.options.transitionDuration)
       .attr('r', this.options.dotRadius);
     self.container.select('.hoverbox')
-      .transition()
-      .duration(this.options.transitionDuration)
       .style('display', 'none')
   }
 });
