@@ -99,7 +99,14 @@ GeoDash.PieChart = GeoDash.Chart.extend({
         .append("path")
         .attr("fill", function(d) { return self.color(d.data[self.options.label]) })
         .attr("fill-opacity", this.options.opacity)
-        .attr("stroke-width", this.options.arcstrokewidth)
+        .attr("stroke-width", function(d) {
+          var p = (d.value/self.total)*100
+          if (p >= .1) {
+            return self.options.arcstrokewidth
+          } else {
+            return 0
+          }
+        })
         .attr("stroke", this.options.arcstrokecolor)
         .on('mouseover', function (d, i) {
           if(!GeoDash.Browser.touch) {
