@@ -159,6 +159,8 @@
   position: absolute;
   top: 0px;
   right: 0px;
+  border: 1px solid #999;
+  padding: 5px;
 }
 .geodash .legend .legend-item {
   text-align: left;
@@ -166,12 +168,13 @@
 }
 .geodash .legend .legend-item .swatch {
   float: left;
+  margin: 0 3px 0 0;
 }
 .geodash .legend .legend-item .value {
   float: left;
   color: #b1b1b1;
   font-size: 11px;
-  padding: 0 0 0 3px;
+  line-height: 12px;
 }
 .axis path,
 .axis line {
