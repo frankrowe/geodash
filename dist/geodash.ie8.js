@@ -16343,7 +16343,6 @@ GeoDash.Chart = GeoDash.Class.extend({
           .text(function(d) { return d })
 
       if (this.options.legendWidth !== 'auto') {
-        console.log(value, this.options.legendWidth - block.width - padding*2 + 'px')
         value.style("width", this.options.legendWidth - block.width - padding*2 - block.padding + 'px')
       }
 
@@ -17505,6 +17504,7 @@ GeoDash.LineChart = GeoDash.Chart.extend({
     , outerPadding: 0
     , linePadding: 20
     , showArea: false
+    , accumulate: false
   }
   , makeSVG: function() {
     var self = this
@@ -17558,6 +17558,17 @@ GeoDash.LineChart = GeoDash.Chart.extend({
       }
       self.linedata.push(l)
     })
+
+    if (this.options.accumulate) {
+      this.linedata.forEach(function(line) {
+        var sums = []
+        line.values.forEach(function(value, idx) {
+          if (idx > 0) {
+            line.values[idx].y += line.values[idx-1].y
+          }
+        })
+      })
+    }
 
     /*
       dashed: [{
@@ -17648,6 +17659,7 @@ GeoDash.LineChart = GeoDash.Chart.extend({
       d3.min(this.linedata, function(c) { return d3.min(c.values, function(v) { return v.y; }) }),
       d3.max(this.linedata, function(c) { return d3.max(c.values, function(v) { return v.y; }) })
     ])
+
     var ydomain = this.y.domain()
 
     var range = ydomain[1] - ydomain[0]
