@@ -356,6 +356,19 @@ GeoDash.Chart = GeoDash.Class.extend({
             return d
           }
         })
+        .on('mouseover', function (d, i) {
+          if(!GeoDash.Browser.touch) {
+            self.mouseOver(d, i, this)
+          }
+        })
+        .on('mouseout', function (d, i) {
+          if(!GeoDash.Browser.touch) {
+            self.mouseOut(d, i, this)
+          }
+        })
+        .on('click', function (d, i) {
+          self.setActiveBar(i)
+        })
     }
   }
   , updateLegend: function() {
