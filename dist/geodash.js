@@ -1306,6 +1306,19 @@ GeoDash.Chart = GeoDash.Class.extend({
             return d
           }
         })
+        .on('mouseover', function (d, i) {
+          if(!GeoDash.Browser.touch) {
+            self.mouseOver(d, i, this)
+          }
+        })
+        .on('mouseout', function (d, i) {
+          if(!GeoDash.Browser.touch) {
+            self.mouseOut(d, i, this)
+          }
+        })
+        .on('click', function (d, i) {
+          self.setActiveBar(i)
+        })
     }
   }
   , updateLegend: function() {
@@ -2019,6 +2032,19 @@ GeoDash.BarChartHorizontal = GeoDash.BarChart.extend({
           .text(function(d){
             return d
           })
+        .on('mouseover', function (d, i) {
+          if(!GeoDash.Browser.touch) {
+            self.mouseOver(d, i, this)
+          }
+        })
+        .on('mouseout', function (d, i) {
+          if(!GeoDash.Browser.touch) {
+            self.mouseOut(d, i, this)
+          }
+        })
+        .on('click', function (d, i) {
+          self.setActiveBar(i)
+        })
 
       tickElements.exit().remove()
     }
@@ -2040,11 +2066,21 @@ GeoDash.BarChartHorizontal = GeoDash.BarChart.extend({
       , x
       , output = ''
 
-    var x = self._data[i].x
-    var y = self._data[i].y
-    if(typeof self.options.x == 'object') {
-      y += ' ' + self.options.x[i % self.stackNumber]
+    if(d3.select(el).attr('class') === 'gd-label') {
+      x = 0
+      var start = i * self.stackNumber
+      for (var j = start; j < start + self.stackNumber; j++) {
+        x += self._data[j].x
+      }
+      y = self._data[start].y
+    } else {
+      y = self._data[i].y
+      x = self._data[i].x
+      if(typeof self.options.x == 'object') {
+        y += ' ' + self.options.x[i % self.stackNumber]
+      }
     }
+
     if(x !== null) {
       x = self.options.valueFormat(x)
       var view = {
@@ -2432,11 +2468,21 @@ GeoDash.BarChartVertical = GeoDash.BarChart.extend({
       , x
       , output = ''
 
-    var x = self._data[i].x
-    var y = self._data[i].y
-    if(typeof self.options.y == 'object') {
-      x += ' ' + self.options.y[i % self.stackNumber]
+    if(d3.select(el).attr('class') === 'gd-label') {
+      y = 0
+      var start = i * self.stackNumber
+      for (var j = start; j < start + self.stackNumber; j++) {
+        y += self._data[j].y
+      }
+      x = self._data[start].x
+    } else {
+      y = self._data[i].y
+      x = self._data[i].x
+      if(typeof self.options.y == 'object') {
+        x += ' ' + self.options.y[i % self.stackNumber]
+      }
     }
+
     if(y !== null) {
       y = self.options.valueFormat(y)
       var view = {
@@ -2471,7 +2517,9 @@ GeoDash.BarChartVertical = GeoDash.BarChart.extend({
     if(d[self.options.x] == self.options.highlight) {
       opacity =  1
     }
-    d3.select(el).style('opacity', opacity)
+    if(d3.select(el).attr('class') === 'bar') {
+      d3.select(el).style('opacity', opacity)
+    }
     self.container.select('.hoverbox')
       .transition()
       .duration(this.options.transitionDuration)
