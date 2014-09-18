@@ -81,11 +81,6 @@ window.onload = function() {
     barcharthorizontal2.update(randomize(false))
   }
 
-  document.getElementById('sort2').onclick = function() {
-    var data = barcharthorizontal2.getData()
-    barcharthorizontal2.update(sort(data))
-  }
-
   document.getElementById('randomize3').onclick = function() {
     linechart2.update(randomizeLine())
   }
