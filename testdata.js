@@ -7,7 +7,7 @@ function makeid() {
   return text
 }
 
-function randomize() {
+function randomize(negatives) {
   var datalength = Math.floor((Math.random()*10)+1)
   var newdata = []
   for (var i = 0; i <= datalength; i++) {
@@ -16,6 +16,11 @@ function randomize() {
     obj.value2 = Math.floor((Math.random()*100000)+1)
     obj.value3 = Math.floor((Math.random()*100000)+1)
     obj.id = makeid()
+    if (!negatives) {
+      if (obj.value < 0) obj.value *= -1
+      if (obj.value2 < 0) obj.value *= -1
+      if (obj.value3 < 0) obj.value *= -1
+    }
     newdata.push(obj)
   }
   var addnegative = Math.floor((Math.random()*4)+1)
@@ -45,8 +50,9 @@ function randomizeLine() {
 
 function sort(data){
   data.sort(function(a, b) {
-    var atotal = a.value + a.value2 + a.value3
-    var btotal = b.value + b.value2 + b.value3
+    console.log(a, b)
+    var atotal = a.value
+    var btotal = b.value
     if (atotal > btotal)
       return 1
     if (atotal < btotal)
@@ -58,12 +64,12 @@ function sort(data){
 
 window.onload = function() {
   document.getElementById('randomize4').onclick = function() {
-    piechart.update(randomize())
+    piechart.update(randomize(false))
     //piechart.update(piedata3)
   }
 
   document.getElementById('randomize').onclick = function() {
-    barchartvertical2.update(randomize())
+    barchartvertical2.update(randomize(true))
   }
 
   document.getElementById('sort').onclick = function() {
@@ -72,7 +78,7 @@ window.onload = function() {
   }
 
   document.getElementById('randomize2').onclick = function() {
-    barcharthorizontal2.update(randomize())
+    barcharthorizontal2.update(randomize(false))
   }
 
   document.getElementById('sort2').onclick = function() {
