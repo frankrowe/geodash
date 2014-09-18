@@ -16319,7 +16319,7 @@ GeoDash.Chart = GeoDash.Class.extend({
           }
         })
         .on('click', function (d, i) {
-          self.setActiveBar(i)
+          self.setActiveBar(i, this)
         })
     }
   }
@@ -16810,7 +16810,7 @@ GeoDash.BarChartHorizontal = GeoDash.BarChart.extend({
         }
       })
       .on('click', function (d, i) {
-        self.setActiveBar(i)
+        self.setActiveBar(i. this)
       })
   }
   , updateXAxis: function() {
@@ -17045,13 +17045,16 @@ GeoDash.BarChartHorizontal = GeoDash.BarChart.extend({
           }
         })
         .on('click', function (d, i) {
-          self.setActiveBar(i)
+          self.setActiveBar(i, this)
         })
 
       tickElements.exit().remove()
     }
   }
-  , setActiveBar: function(i) {
+  , setActiveBar: function(i, el) {
+    if(d3.select(el).attr('class') === 'gd-label') {
+      i = i * this.stackNumber
+    }
     var d = this._data[i];
     var el = d3.select(this.el).selectAll('.bar')[0][i]
     if(this.options.activeBar === i) {
@@ -17440,7 +17443,7 @@ GeoDash.BarChartVertical = GeoDash.BarChart.extend({
         }
       })
       .on('click', function (d, i) {
-        self.setActiveBar(i)
+        self.setActiveBar(i, this)
       })
       .append('div')
         .attr('class', 'bar-label')
@@ -17453,7 +17456,10 @@ GeoDash.BarChartVertical = GeoDash.BarChart.extend({
         })
     bars.exit().remove()
   }
-  , setActiveBar: function(i) {
+  , setActiveBar: function(i, el) {
+    if(d3.select(el).attr('class') === 'gd-label') {
+      i = i * this.stackNumber
+    }
     var d = this._data[i];
     var el = d3.select(this.el).selectAll('.bar')[0][i]
     if(this.options.activeBar === i) {

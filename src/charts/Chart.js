@@ -367,7 +367,7 @@ GeoDash.Chart = GeoDash.Class.extend({
           }
         })
         .on('click', function (d, i) {
-          self.setActiveBar(i)
+          self.setActiveBar(i, this)
         })
     }
   }
