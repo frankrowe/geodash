@@ -190,7 +190,11 @@ GeoDash.BarChartVertical = GeoDash.BarChart.extend({
         .style("top", "-12px")
         .text(function(d){
           if(self.options.barLabels) {
-            return self.options.valueFormat(d.y)
+            if (self.options.barLabelFormat) {
+              return self.options.barLabelFormat(d.y)
+            } else {
+              return self.options.valueFormat(d.y)
+            }
           }
         })
 
