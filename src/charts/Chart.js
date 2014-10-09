@@ -299,14 +299,6 @@ GeoDash.Chart = GeoDash.Class.extend({
           return m + 'px' + ' 0 0 0'
         })
         .style("width", self.options.yAxisWidth + 'px')
-        // .style("background-color", function(){
-        //   var c = self.container.style("background-color")
-        //   //IE8 can't get bg color?
-        //   if(!c) {
-        //     return '#fff'
-        //   }
-        //   return c
-        // })
     }
   }
   , updateXAxis: function() {
