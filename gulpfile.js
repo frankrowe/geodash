@@ -29,7 +29,7 @@ var gulpconcat = function(){
 
   gulp.src([
     'src/GeoDash.js'
-    , 'src/lib/d3.v3.min.js'
+    , 'src/lib/d3.min.js'
     , 'src/lib/mustache.js'
     , 'dist/geodash.min.js'
     ])
@@ -49,7 +49,7 @@ var gulpconcat = function(){
 
   gulp.src([
     'src/GeoDash.js'
-    , 'src/lib/d3.v3.min.js'
+    , 'src/lib/d3.min.js'
     , 'src/lib/mustache.js'
     , 'dist/geodash.js'
     ])

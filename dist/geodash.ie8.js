@@ -16212,7 +16212,17 @@ GeoDash.Chart = GeoDash.Class.extend({
       newTicks
         .append('div')
         .attr("class", "line")
-        .style("width", "100%")
+        .style("width", function() {
+          return self.width - self.marginleft - 5 + 'px'
+        })
+        .style("margin", function(d){
+          var m = self.marginleft + 5
+          if (self.options.yLabel) {
+            m -= self.options.axisLabelPadding
+          }
+          return '0 0 0 ' + m + 'px'
+        })
+
 
       newTicks
         .append('div')
@@ -16241,14 +16251,14 @@ GeoDash.Chart = GeoDash.Class.extend({
           return m + 'px' + ' 0 0 0'
         })
         .style("width", self.options.yAxisWidth + 'px')
-        .style("background-color", function(){
-          var c = self.container.style("background-color")
-          //IE8 can't get bg color?
-          if(!c) {
-            return '#fff'
-          }
-          return c
-        })
+        // .style("background-color", function(){
+        //   var c = self.container.style("background-color")
+        //   //IE8 can't get bg color?
+        //   if(!c) {
+        //     return '#fff'
+        //   }
+        //   return c
+        // })
     }
   }
   , updateXAxis: function() {
