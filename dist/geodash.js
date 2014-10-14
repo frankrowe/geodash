@@ -3030,8 +3030,8 @@ GeoDash.PieChart = GeoDash.Chart.extend({
         d[self.options.value] = +d[self.options.value]
         if(+d[self.options.value] > 0) {
           self.total += +d[self.options.value]
-          new_data.push(d)
         }
+        new_data.push(d)
       })
     } else {
       this.total = this.options.total
@@ -3046,6 +3046,7 @@ GeoDash.PieChart = GeoDash.Chart.extend({
     for (var i = 0; i < this.data.length; i++) {
       domain.push(this.data[i][this.options.label])
     }
+
     this.color.domain(domain)
 
     this.enterAntiClockwise = {
