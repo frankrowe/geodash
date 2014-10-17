@@ -4,7 +4,7 @@ GeoDash.js
 An interactive chart library.
 Builit on d3.js.
 
-http://apps.esrgc.org/dashboards/geodash/
+http://frankrowe.github.io/geodash/
 
 This is an alpha build under heavy development. Expect API breaks in new versions.
 
