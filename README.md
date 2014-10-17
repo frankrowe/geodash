@@ -1,8 +1,7 @@
 GeoDash.js
 =======
 
-An interactive chart library.
-Builit on d3.js.
+A minimal chart library built on D3.
 
 http://frankrowe.github.io/geodash/
 
