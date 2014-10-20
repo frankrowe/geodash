@@ -15654,6 +15654,303 @@ d3 = function() {
 
 }));
 /*
+ * GeoDash.Class powers the OOP facilities of the library.
+ * Thanks to John Resig and Dean Edwards for inspiration!
+ */
+
+GeoDash.Class = function () {};
+
+GeoDash.Class.extend = function (props) {
+
+  // extended class with the new prototype
+  var NewClass = function () {
+
+    // call the constructor
+    if (this.initialize) {
+      this.initialize.apply(this, arguments);
+    }
+
+    // call all constructor hooks
+    if (this._initHooks.length) {
+      this.callInitHooks();
+    }
+  };
+
+  // jshint camelcase: false
+  var parentProto = NewClass.__super__ = this.prototype;
+
+  var proto = GeoDash.Util.create(parentProto);
+  proto.constructor = NewClass;
+
+  NewClass.prototype = proto;
+
+  //inherit parent's statics
+  for (var i in this) {
+    if (this.hasOwnProperty(i) && i !== 'prototype') {
+      NewClass[i] = this[i];
+    }
+  }
+
+  // mix static properties into the class
+  if (props.statics) {
+    GeoDash.extend(NewClass, props.statics);
+    delete props.statics;
+  }
+
+  // mix includes into the prototype
+  if (props.includes) {
+    GeoDash.Util.extend.apply(null, [proto].concat(props.includes));
+    delete props.includes;
+  }
+
+  // merge options
+  if (proto.options) {
+    props.options = GeoDash.Util.extend(GeoDash.Util.create(proto.options), props.options);
+  }
+
+  // mix given properties into the prototype
+  GeoDash.extend(proto, props);
+
+  proto._initHooks = [];
+
+  // add method for calling all hooks
+  proto.callInitHooks = function () {
+
+    if (this._initHooksCalled) { return; }
+
+    if (parentProto.callInitHooks) {
+      parentProto.callInitHooks.call(this);
+    }
+
+    this._initHooksCalled = true;
+
+    for (var i = 0, len = proto._initHooks.length; i < len; i++) {
+      proto._initHooks[i].call(this);
+    }
+  };
+
+  return NewClass;
+};
+
+
+// method for adding properties to prototype
+GeoDash.Class.include = function (props) {
+  GeoDash.extend(this.prototype, props);
+};
+
+// merge new default options to the Class
+GeoDash.Class.mergeOptions = function (options) {
+  GeoDash.extend(this.prototype.options, options);
+};
+
+// add a constructor hook
+GeoDash.Class.addInitHook = function (fn) { // (Function) || (String, args...)
+  var args = Array.prototype.slice.call(arguments, 1);
+
+  var init = typeof fn === 'function' ? fn : function () {
+    this[fn].apply(this, args);
+  };
+
+  this.prototype._initHooks = this.prototype._initHooks || [];
+  this.prototype._initHooks.push(init);
+};
+/*
+ * GeoDash.Util contains various utility functions used throughout Leaflet code.
+ */
+
+GeoDash.Util = {
+  // extend an object with properties of one or more other objects
+  extend: function (dest) {
+    var sources = Array.prototype.slice.call(arguments, 1),
+        i, j, len, src;
+
+    for (j = 0, len = sources.length; j < len; j++) {
+      src = sources[j];
+      for (i in src) {
+        dest[i] = src[i];
+      }
+    }
+    return dest;
+  },
+
+  // create an object from a given prototype
+  create: Object.create || (function () {
+    function F() {}
+    return function (proto) {
+      F.prototype = proto;
+      return new F();
+    };
+  })(),
+
+  // bind a function to be called with a given context
+  bind: function (fn, obj) {
+    var slice = Array.prototype.slice;
+
+    if (fn.bind) {
+      return fn.bind.apply(fn, slice.call(arguments, 1));
+    }
+
+    var args = slice.call(arguments, 2);
+
+    return function () {
+      return fn.apply(obj, args.length ? args.concat(slice.call(arguments)) : arguments);
+    };
+  },
+
+  // return unique ID of an object
+  stamp: function (obj) {
+    // jshint camelcase: false
+    obj._leaflet_id = obj._leaflet_id || ++GeoDash.Util.lastId;
+    return obj._leaflet_id;
+  },
+
+  lastId: 0,
+
+  // return a function that won't be called more often than the given interval
+  throttle: function (fn, time, context) {
+    var lock, args, wrapperFn, later;
+
+    later = function () {
+      // reset lock and call if queued
+      lock = false;
+      if (args) {
+        wrapperFn.apply(context, args);
+        args = false;
+      }
+    };
+
+    wrapperFn = function () {
+      if (lock) {
+        // called too soon, queue to call later
+        args = arguments;
+
+      } else {
+        // call and lock until later
+        fn.apply(context, arguments);
+        setTimeout(later, time);
+        lock = true;
+      }
+    };
+
+    return wrapperFn;
+  },
+
+  // wrap the given number to lie within a certain range (used for wrapping longitude)
+  wrapNum: function (x, range, includeMax) {
+    var max = range[1],
+        min = range[0],
+        d = max - min;
+    return x === max && includeMax ? x : ((x - min) % d + d) % d + min;
+  },
+
+  // do nothing (used as a noop throughout the code)
+  falseFn: function () { return false; },
+
+  // round a given number to a given precision
+  formatNum: function (num, digits) {
+    var pow = Math.pow(10, digits || 5);
+    return Math.round(num * pow) / pow;
+  },
+
+  // trim whitespace from both sides of a string
+  trim: function (str) {
+    return str.trim ? str.trim() : str.replace(/^\s+|\s+$/g, '');
+  },
+
+  // split a string into words
+  splitWords: function (str) {
+    return GeoDash.Util.trim(str).split(/\s+/);
+  },
+
+  // set options to an object, inheriting parent's options as well
+  setOptions: function (obj, options) {
+    if (!obj.hasOwnProperty('options')) {
+      obj.options = obj.options ? GeoDash.Util.create(obj.options) : {};
+    }
+    for (var i in options) {
+      obj.options[i] = options[i];
+    }
+    return obj.options;
+  },
+
+  // make an URL with GET parameters out of a set of properties/values
+  getParamString: function (obj, existingUrl, uppercase) {
+    var params = [];
+    for (var i in obj) {
+      params.push(encodeURIComponent(uppercase ? i.toUpperCase() : i) + '=' + encodeURIComponent(obj[i]));
+    }
+    return ((!existingUrl || existingUrl.indexOf('?') === -1) ? '?' : '&') + params.join('&');
+  },
+
+  // super-simple templating facility, used for TileLayer URLs
+  template: function (str, data) {
+    return str.replace(GeoDash.Util.templateRe, function (str, key) {
+      var value = data[key];
+
+      if (value === undefined) {
+        throw new Error('No value provided for variable ' + str);
+
+      } else if (typeof value === 'function') {
+        value = value(data);
+      }
+      return value;
+    });
+  },
+
+  templateRe: /\{ *([\w_]+) *\}/g,
+
+  isArray: Array.isArray || function (obj) {
+    return (Object.prototype.toString.call(obj) === '[object Array]');
+  },
+
+  // minimal image URI, set to an image when disposing to flush memory
+  emptyImageUrl: 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs='
+};
+
+(function () {
+  // inspired by http://paulirish.com/2011/requestanimationframe-for-smart-animating/
+
+  function getPrefixed(name) {
+    return window['webkit' + name] || window['moz' + name] || window['ms' + name];
+  }
+
+  var lastTime = 0;
+
+  // fallback for IE 7-8
+  function timeoutDefer(fn) {
+    var time = +new Date(),
+        timeToCall = Math.max(0, 16 - (time - lastTime));
+
+    lastTime = time + timeToCall;
+    return window.setTimeout(fn, timeToCall);
+  }
+
+  var requestFn = window.requestAnimationFrame || getPrefixed('RequestAnimationFrame') || timeoutDefer,
+      cancelFn = window.cancelAnimationFrame || getPrefixed('CancelAnimationFrame') ||
+                 getPrefixed('CancelRequestAnimationFrame') || function (id) { window.clearTimeout(id); };
+
+
+  GeoDash.Util.requestAnimFrame = function (fn, context, immediate) {
+    if (immediate && requestFn === timeoutDefer) {
+      fn.call(context);
+    } else {
+      return requestFn.call(window, GeoDash.bind(fn, context));
+    }
+  };
+
+  GeoDash.Util.cancelAnimFrame = function (id) {
+    if (id) {
+      cancelFn.call(window, id);
+    }
+  };
+})();
+
+// shortcuts for most used utility functions
+GeoDash.extend = GeoDash.Util.extend;
+GeoDash.bind = GeoDash.Util.bind;
+GeoDash.stamp = GeoDash.Util.stamp;
+GeoDash.setOptions = GeoDash.Util.setOptions;
+/*
 Chart base class
 */
 
@@ -16980,7 +17277,11 @@ GeoDash.BarChartVertical = GeoDash.BarChart.extend({
         return self.options.opacity
       })
       .style("background-color", function(d, i) { 
-        return self.options.colors[i%self.stackNumber]
+        if (self.stackNumber > 1) {
+          return self.options.colors[i%self.stackNumber]
+        } else {
+          return self.options.colors[i%self.options.colors.length]
+        }
       })
       .style("border-top-right-radius", function(d, i){
         var notend = (i + 1) % self.stackNumber
@@ -18030,301 +18331,3 @@ GeoDash.TableChart = GeoDash.Chart.extend({
     return display;
   }
 });
-
-/*
- * GeoDash.Class powers the OOP facilities of the library.
- * Thanks to John Resig and Dean Edwards for inspiration!
- */
-
-GeoDash.Class = function () {};
-
-GeoDash.Class.extend = function (props) {
-
-  // extended class with the new prototype
-  var NewClass = function () {
-
-    // call the constructor
-    if (this.initialize) {
-      this.initialize.apply(this, arguments);
-    }
-
-    // call all constructor hooks
-    if (this._initHooks.length) {
-      this.callInitHooks();
-    }
-  };
-
-  // jshint camelcase: false
-  var parentProto = NewClass.__super__ = this.prototype;
-
-  var proto = GeoDash.Util.create(parentProto);
-  proto.constructor = NewClass;
-
-  NewClass.prototype = proto;
-
-  //inherit parent's statics
-  for (var i in this) {
-    if (this.hasOwnProperty(i) && i !== 'prototype') {
-      NewClass[i] = this[i];
-    }
-  }
-
-  // mix static properties into the class
-  if (props.statics) {
-    GeoDash.extend(NewClass, props.statics);
-    delete props.statics;
-  }
-
-  // mix includes into the prototype
-  if (props.includes) {
-    GeoDash.Util.extend.apply(null, [proto].concat(props.includes));
-    delete props.includes;
-  }
-
-  // merge options
-  if (proto.options) {
-    props.options = GeoDash.Util.extend(GeoDash.Util.create(proto.options), props.options);
-  }
-
-  // mix given properties into the prototype
-  GeoDash.extend(proto, props);
-
-  proto._initHooks = [];
-
-  // add method for calling all hooks
-  proto.callInitHooks = function () {
-
-    if (this._initHooksCalled) { return; }
-
-    if (parentProto.callInitHooks) {
-      parentProto.callInitHooks.call(this);
-    }
-
-    this._initHooksCalled = true;
-
-    for (var i = 0, len = proto._initHooks.length; i < len; i++) {
-      proto._initHooks[i].call(this);
-    }
-  };
-
-  return NewClass;
-};
-
-
-// method for adding properties to prototype
-GeoDash.Class.include = function (props) {
-  GeoDash.extend(this.prototype, props);
-};
-
-// merge new default options to the Class
-GeoDash.Class.mergeOptions = function (options) {
-  GeoDash.extend(this.prototype.options, options);
-};
-
-// add a constructor hook
-GeoDash.Class.addInitHook = function (fn) { // (Function) || (String, args...)
-  var args = Array.prototype.slice.call(arguments, 1);
-
-  var init = typeof fn === 'function' ? fn : function () {
-    this[fn].apply(this, args);
-  };
-
-  this.prototype._initHooks = this.prototype._initHooks || [];
-  this.prototype._initHooks.push(init);
-};
-/*
- * GeoDash.Util contains various utility functions used throughout Leaflet code.
- */
-
-GeoDash.Util = {
-  // extend an object with properties of one or more other objects
-  extend: function (dest) {
-    var sources = Array.prototype.slice.call(arguments, 1),
-        i, j, len, src;
-
-    for (j = 0, len = sources.length; j < len; j++) {
-      src = sources[j];
-      for (i in src) {
-        dest[i] = src[i];
-      }
-    }
-    return dest;
-  },
-
-  // create an object from a given prototype
-  create: Object.create || (function () {
-    function F() {}
-    return function (proto) {
-      F.prototype = proto;
-      return new F();
-    };
-  })(),
-
-  // bind a function to be called with a given context
-  bind: function (fn, obj) {
-    var slice = Array.prototype.slice;
-
-    if (fn.bind) {
-      return fn.bind.apply(fn, slice.call(arguments, 1));
-    }
-
-    var args = slice.call(arguments, 2);
-
-    return function () {
-      return fn.apply(obj, args.length ? args.concat(slice.call(arguments)) : arguments);
-    };
-  },
-
-  // return unique ID of an object
-  stamp: function (obj) {
-    // jshint camelcase: false
-    obj._leaflet_id = obj._leaflet_id || ++GeoDash.Util.lastId;
-    return obj._leaflet_id;
-  },
-
-  lastId: 0,
-
-  // return a function that won't be called more often than the given interval
-  throttle: function (fn, time, context) {
-    var lock, args, wrapperFn, later;
-
-    later = function () {
-      // reset lock and call if queued
-      lock = false;
-      if (args) {
-        wrapperFn.apply(context, args);
-        args = false;
-      }
-    };
-
-    wrapperFn = function () {
-      if (lock) {
-        // called too soon, queue to call later
-        args = arguments;
-
-      } else {
-        // call and lock until later
-        fn.apply(context, arguments);
-        setTimeout(later, time);
-        lock = true;
-      }
-    };
-
-    return wrapperFn;
-  },
-
-  // wrap the given number to lie within a certain range (used for wrapping longitude)
-  wrapNum: function (x, range, includeMax) {
-    var max = range[1],
-        min = range[0],
-        d = max - min;
-    return x === max && includeMax ? x : ((x - min) % d + d) % d + min;
-  },
-
-  // do nothing (used as a noop throughout the code)
-  falseFn: function () { return false; },
-
-  // round a given number to a given precision
-  formatNum: function (num, digits) {
-    var pow = Math.pow(10, digits || 5);
-    return Math.round(num * pow) / pow;
-  },
-
-  // trim whitespace from both sides of a string
-  trim: function (str) {
-    return str.trim ? str.trim() : str.replace(/^\s+|\s+$/g, '');
-  },
-
-  // split a string into words
-  splitWords: function (str) {
-    return GeoDash.Util.trim(str).split(/\s+/);
-  },
-
-  // set options to an object, inheriting parent's options as well
-  setOptions: function (obj, options) {
-    if (!obj.hasOwnProperty('options')) {
-      obj.options = obj.options ? GeoDash.Util.create(obj.options) : {};
-    }
-    for (var i in options) {
-      obj.options[i] = options[i];
-    }
-    return obj.options;
-  },
-
-  // make an URL with GET parameters out of a set of properties/values
-  getParamString: function (obj, existingUrl, uppercase) {
-    var params = [];
-    for (var i in obj) {
-      params.push(encodeURIComponent(uppercase ? i.toUpperCase() : i) + '=' + encodeURIComponent(obj[i]));
-    }
-    return ((!existingUrl || existingUrl.indexOf('?') === -1) ? '?' : '&') + params.join('&');
-  },
-
-  // super-simple templating facility, used for TileLayer URLs
-  template: function (str, data) {
-    return str.replace(GeoDash.Util.templateRe, function (str, key) {
-      var value = data[key];
-
-      if (value === undefined) {
-        throw new Error('No value provided for variable ' + str);
-
-      } else if (typeof value === 'function') {
-        value = value(data);
-      }
-      return value;
-    });
-  },
-
-  templateRe: /\{ *([\w_]+) *\}/g,
-
-  isArray: Array.isArray || function (obj) {
-    return (Object.prototype.toString.call(obj) === '[object Array]');
-  },
-
-  // minimal image URI, set to an image when disposing to flush memory
-  emptyImageUrl: 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs='
-};
-
-(function () {
-  // inspired by http://paulirish.com/2011/requestanimationframe-for-smart-animating/
-
-  function getPrefixed(name) {
-    return window['webkit' + name] || window['moz' + name] || window['ms' + name];
-  }
-
-  var lastTime = 0;
-
-  // fallback for IE 7-8
-  function timeoutDefer(fn) {
-    var time = +new Date(),
-        timeToCall = Math.max(0, 16 - (time - lastTime));
-
-    lastTime = time + timeToCall;
-    return window.setTimeout(fn, timeToCall);
-  }
-
-  var requestFn = window.requestAnimationFrame || getPrefixed('RequestAnimationFrame') || timeoutDefer,
-      cancelFn = window.cancelAnimationFrame || getPrefixed('CancelAnimationFrame') ||
-                 getPrefixed('CancelRequestAnimationFrame') || function (id) { window.clearTimeout(id); };
-
-
-  GeoDash.Util.requestAnimFrame = function (fn, context, immediate) {
-    if (immediate && requestFn === timeoutDefer) {
-      fn.call(context);
-    } else {
-      return requestFn.call(window, GeoDash.bind(fn, context));
-    }
-  };
-
-  GeoDash.Util.cancelAnimFrame = function (id) {
-    if (id) {
-      cancelFn.call(window, id);
-    }
-  };
-})();
-
-// shortcuts for most used utility functions
-GeoDash.extend = GeoDash.Util.extend;
-GeoDash.bind = GeoDash.Util.bind;
-GeoDash.stamp = GeoDash.Util.stamp;
-GeoDash.setOptions = GeoDash.Util.setOptions;
