@@ -132,6 +132,7 @@ GeoDash.BarChartVertical = GeoDash.BarChart.extend({
         return self.options.opacity
       })
       .style("background-color", function(d, i) { 
+        console.log(i, self.stackNumber, i%self.stackNumber)
         return self.options.colors[i%self.stackNumber]
       })
       .style("border-top-right-radius", function(d, i){
@@ -183,7 +184,11 @@ GeoDash.BarChartVertical = GeoDash.BarChart.extend({
         }
       })
       .style("background-color", function(d, i) {
-        return self.options.colors[i%self.stackNumber]
+        if (self.stackNumber > 1) {
+          return self.options.colors[i%self.stackNumber]
+        } else {
+          return self.options.colors[i%self.options.colors.length]
+        }
       }, 'important')
       .select('.bar-label')
         .style("width", self.x.rangeBand() + 'px')
@@ -251,7 +256,11 @@ GeoDash.BarChartVertical = GeoDash.BarChart.extend({
         else return self.options.opacity
       })
       .style("background-color", function(d, i) {
-        return self.options.colors[i%self.stackNumber]
+        if (self.stackNumber > 1) {
+          return self.options.colors[i%self.stackNumber]
+        } else {
+          return self.options.colors[i%self.options.colors.length]
+        }
       }, 'important')
       .style("border-top-right-radius", function(d, i){
         var notend = (i + 1) % self.stackNumber

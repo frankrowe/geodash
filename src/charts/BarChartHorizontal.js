@@ -247,7 +247,11 @@ GeoDash.BarChartHorizontal = GeoDash.BarChart.extend({
         }
       })
       .style("background-color", function(d, i) {
-        return self.options.colors[i%self.stackNumber]
+        if (self.stackNumber > 1) {
+          return self.options.colors[i%self.stackNumber]
+        } else {
+          return self.options.colors[i%self.options.colors.length]
+        }
       }, 'important')
 
     var barsenter = bars.enter().append("div")
@@ -365,7 +369,11 @@ GeoDash.BarChartHorizontal = GeoDash.BarChart.extend({
       })
       .style("-webkit-print-color-adjust", "exact")
       .style("background-color", function(d, i) {
-        return self.options.colors[i%self.stackNumber]
+        if (self.stackNumber > 1) {
+          return self.options.colors[i%self.stackNumber]
+        } else {
+          return self.options.colors[i%self.options.colors.length]
+        }
       }, 'important')
 
     bars.exit().remove()
