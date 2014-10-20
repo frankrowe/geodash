@@ -132,7 +132,6 @@ GeoDash.BarChartVertical = GeoDash.BarChart.extend({
         return self.options.opacity
       })
       .style("background-color", function(d, i) { 
-        console.log(i, self.stackNumber, i%self.stackNumber)
         return self.options.colors[i%self.stackNumber]
       })
       .style("border-top-right-radius", function(d, i){
