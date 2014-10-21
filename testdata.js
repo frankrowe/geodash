@@ -163,15 +163,7 @@ var piedata = [
 var piedata2 = [
   {
     'id':'lol',
-    'value':33
-  },
-  {
-    'id':'cats',
-    'value':11
-  },
-  {
-    'id':'cool',
-    'value':6
+    'value':0
   }
 ]
 

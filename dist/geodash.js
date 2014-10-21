@@ -3057,10 +3057,6 @@ GeoDash.PieChart = GeoDash.Chart.extend({
       this.total = this.options.total
     }
     this.data = new_data
-    this.updateChart(firstUpdate)
-  }
-  , updateChart: function(firstUpdate) {
-    var self = this
 
     var domain = []
     for (var i = 0; i < this.data.length; i++) {
@@ -3068,6 +3064,19 @@ GeoDash.PieChart = GeoDash.Chart.extend({
     }
 
     this.color.domain(domain)
+
+    var empty = true
+    this.data.forEach(function(d, i) {
+      if (d[self.options.value] > 0) empty = false
+    })
+    if (!empty) {
+      this.updateChart(firstUpdate)
+    } else {
+      this.updateLegend()
+    }
+  }
+  , updateChart: function(firstUpdate) {
+    var self = this
 
     this.enterAntiClockwise = {
       startAngle: Math.PI * 2,
