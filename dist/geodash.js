@@ -3072,8 +3072,21 @@ GeoDash.PieChart = GeoDash.Chart.extend({
     if (!empty) {
       this.updateChart(firstUpdate)
     } else {
+      this.emptyChart()
       this.updateLegend()
     }
+  }
+  , emptyChart: function() {
+    var self = this
+    this.svg.selectAll("path")
+      .transition()
+      .duration(this.options.transitionDuration)
+      .attrTween("d", function (d, i) {
+        return self.arcTweenOut(this, d)
+      })
+      .remove()
+    this.svg.selectAll(".arc-text")
+      .remove()
   }
   , updateChart: function(firstUpdate) {
     var self = this
