@@ -2931,30 +2931,81 @@ GeoDash.LineChart = GeoDash.Chart.extend({
           var m = (w / 2) * -1
           return '0 0 0 ' + m + 'px'
         })
+        // .on('mouseover', function (d, i) {
+        //   if(!GeoDash.Browser.touch) {
+        //     self.mouseOver(d, i, this)
+        //   }
+        // })
+        // .on('mouseout', function (d, i) {
+        //   if(!GeoDash.Browser.touch) {
+        //     self.mouseOut(d, i, this)
+        //   }
+        // })
     }
   }
   , mouseOver: function(d, i, el){
     var self = this
-      , y = d.y
-      , x = d.x
       , output = ''
 
-    if(self.options.labelFormat) {
-      x = self.options.labelFormat(x)
-    }
-    if(typeof self.options.y == 'object') {
-      x = d3.select(el).attr('label') + ' ' + x
-    }
-    if(y !== null) {
-      y = self.options.valueFormat(y)
-      var view = {
-        y: y
-        , x: x
+    if(d3.select(el).attr('class') === 'gd-label') {
+      var x = d
+      console.log(x, self.data[i])
+      if(self.stackNumber > 1) {
+        var y
+        for (var j = 0; j < self.stackNumber; j++) {
+          y = self.data[i][self.options.y[j]]
+          output += makeLabel(x, y, self.options.y[j])
+          output += '<br>'
+        }
+      } else {
+        var y = self.data[i][self.options.y[0]]
+        output = makeLabel(x, y)
       }
-      output = Mustache.render(self.options.hoverTemplate, view)
     } else {
-      output = 'NA'
+      var y = d.y
+      , x = d.x
+      output = makeLabel(x, y)
     }
+
+    function makeLabel(x, y, yLabel) {
+      var label = ''
+
+      if(self.options.labelFormat) {
+        x = self.options.labelFormat(x)
+      }
+
+      if(y !== null) {
+        y = self.options.valueFormat(y)
+        if(yLabel) {
+          y = yLabel + ': ' + y
+        }
+        var view = {
+          y: y
+          , x: x
+        }
+        label = Mustache.render(self.options.hoverTemplate, view)
+      } else {
+        label = 'NA'
+      }
+      return label
+    }
+    // if(self.options.labelFormat) {
+    //   x = self.options.labelFormat(x)
+    // }
+
+    // if(y !== null) {
+    //   y = self.options.valueFormat(y)
+    //   if(self.stackNumber > 1) {
+    //     x = x + ' ' + d3.select(el).attr('label')
+    //   }
+    //   var view = {
+    //     y: y
+    //     , x: x
+    //   }
+    //   output = Mustache.render(self.options.hoverTemplate, view)
+    // } else {
+    //   output = 'NA'
+    // }
 
     d3.select(el)
       .attr('r', this.options.dotRadius + 3)

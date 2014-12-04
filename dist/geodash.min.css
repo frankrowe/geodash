@@ -201,6 +201,7 @@
 .hoverbox {
   font-family: 'arial', sans-serif;
   font-size: 12px;
+  text-align: left;
   position: absolute;
   right: 5px;
   top: 5px;
