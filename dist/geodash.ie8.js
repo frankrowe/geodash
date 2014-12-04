@@ -17782,6 +17782,27 @@ GeoDash.LineChart = GeoDash.Chart.extend({
 
     var delay = function(d, i) { return i * 10 }
 
+    if(this.options.showArea) {
+      var areas = this.svg.selectAll(".area")
+        .data(this.linedata)
+
+      areas
+        .enter()
+        .append("path")
+        .attr("class", "area")
+        .attr('opacity', 0.1)
+        .attr('fill', function(d) { return self.color(d.name) })
+        .attr("d", function(d) { return self.area(d.values) })
+
+      areas
+        .transition()
+        .duration(this.options.transitionDuration)
+        .attr('fill', function(d) { return self.color(d.name) })
+        .attr("d", function(d) { return self.area(d.values) })
+
+      areas.exit().remove()
+    }
+
     var line_groups = this.svg.selectAll(".line_group")
       .data(this.linedata)
 
@@ -17840,33 +17861,34 @@ GeoDash.LineChart = GeoDash.Chart.extend({
         .attr("fill-opacity", self.options.opacity)
         .attr("data", function(d){ return d.y; })
         .attr("label", function(d){ return label })
+        .attr("cx", function(d) { return self.xLine(d.x) })
+        .attr("cy", function(d) { return self.y(d.y); })
+
+      dots.exit().remove()
+
+      var dot_targets = this.svg.select(".line_group" + i).selectAll('.dot-target')
+          .data(one_line)
+
+      dot_targets
+        .transition()
+        .duration(this.options.transitionDuration)
+        .attr("data", function(d){ return d.y; })
+        .attr("cx", function(d) { return self.xLine(d.x)})
+        .attr("cy", function(d) { return self.y(d.y); })
+
+      dot_targets.enter().append("circle")
+        .attr("class", "dot-target")
+        .attr("r", 6)
+        .attr("fill", '#333')
+        .attr("fill-opacity", .2)
+        .attr("data", function(d){ return d.y; })
+        .attr("label", function(d){ return label })
         .on('mouseover', function(d, i) {self.mouseOver(d, i, this); })
         .on('mouseout', function(d, i) {self.mouseOut(d, i, this); })
         .attr("cx", function(d) { return self.xLine(d.x) })
         .attr("cy", function(d) { return self.y(d.y); })
 
-      dots.exit().remove()
-    }
-
-    if(this.options.showArea) {
-      var areas = this.svg.selectAll(".area")
-        .data(this.linedata)
-
-      areas
-        .enter()
-        .append("path")
-        .attr("class", "area")
-        .attr('opacity', 0.1)
-        .attr('fill', function(d) { return self.color(d.name) })
-        .attr("d", function(d) { return self.area(d.values) })
-
-      areas
-        .transition()
-        .duration(this.options.transitionDuration)
-        .attr('fill', function(d) { return self.color(d.name) })
-        .attr("d", function(d) { return self.area(d.values) })
-
-      areas.exit().remove()
+      dot_targets.exit().remove()
     }
   }
   , updateXAxis: function() {
@@ -17991,27 +18013,17 @@ GeoDash.LineChart = GeoDash.Chart.extend({
       }
       return label
     }
-    // if(self.options.labelFormat) {
-    //   x = self.options.labelFormat(x)
-    // }
 
-    // if(y !== null) {
-    //   y = self.options.valueFormat(y)
-    //   if(self.stackNumber > 1) {
-    //     x = x + ' ' + d3.select(el).attr('label')
-    //   }
-    //   var view = {
-    //     y: y
-    //     , x: x
-    //   }
-    //   output = Mustache.render(self.options.hoverTemplate, view)
-    // } else {
-    //   output = 'NA'
-    // }
-
-    d3.select(el)
-      .attr('r', this.options.dotRadius + 3)
-    d3.select(el).style("fill-opacity", 0.9)
+    var el = d3.select(el)
+    var selector = '.dot'
+     + '[cx="' + el.attr('cx') + '"]'
+     + '[cy="' + el.attr('cy') + '"]'
+     + '[label="' + el.attr('label') + '"]'
+     + '[data="' + el.attr('data') + '"]'
+    var dot = self.container.select(selector)
+    console.log(dot)
+    dot.attr('r', this.options.dotRadius + 3)
+    dot.style("fill-opacity", 0.9)
 
     if(self.options.hover) {
       self.container.select('.hoverbox')
@@ -18023,10 +18035,18 @@ GeoDash.LineChart = GeoDash.Chart.extend({
   }
   , mouseOut: function(d, i, el){
     var self = this;
-    // d3.select(self.el).select('.hoverbox').transition().style('display', 'none');
-    d3.select(el).style("fill-opacity", self.options.opacity)
-    d3.select(el)
-      .attr('r', this.options.dotRadius);
+    var el = d3.select(el)
+    var selector = '.dot'
+     + '[cx="' + el.attr('cx') + '"]'
+     + '[cy="' + el.attr('cy') + '"]'
+     + '[label="' + el.attr('label') + '"]'
+     + '[data="' + el.attr('data') + '"]'
+    var dot = self.container.select(selector)
+    
+    // d3.select(el)
+    dot
+      .attr('r', this.options.dotRadius)
+      .style("fill-opacity", self.options.opacity)
     self.container.select('.hoverbox')
       .style('display', 'none')
   }
