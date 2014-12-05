@@ -309,7 +309,7 @@ GeoDash.LineChart = GeoDash.Chart.extend({
         .attr("class", "dot-target")
         .attr("r", 6)
         .attr("fill", '#333')
-        .attr("fill-opacity", .2)
+        .attr("fill-opacity", 0)
         .attr("data", function(d){ return d.y; })
         .attr("label", function(d){ return label })
         .on('mouseover', function(d, i) {self.mouseOver(d, i, this); })
@@ -338,7 +338,7 @@ GeoDash.LineChart = GeoDash.Chart.extend({
         .duration(this.options.transitionDuration)
         .style("left", function (d) { return self.xLine(d) + 'px' })
         .style("bottom", function (d) {
-          var b = self.height - self.yrange - self.options.axisLabelPadding
+          var b = self.height - self.yrange - self.options.xAxisLabelPadding
           return b + 'px'
         })
 
@@ -360,10 +360,10 @@ GeoDash.LineChart = GeoDash.Chart.extend({
         .attr("class", "tick")
         .style("left", function (d) { return self.xLine(d) + 'px' })
         .style("bottom", function (d) {
-          var b = self.height - self.yrange - self.options.axisLabelPadding
+          var b = self.height - self.yrange - self.options.xAxisLabelPadding
           return b + 'px'
         })
-        .style("height", self.options.axisLabelPadding + 'px')
+        .style("height", self.options.xAxisLabelPadding + 'px')
 
       tickElements.exit().remove()
 

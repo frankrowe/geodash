@@ -29,13 +29,17 @@ GeoDash.Chart = GeoDash.Class.extend({
     // position of legend. top, middle, bottom, inside
     , legendPosition: 'middle'
     // width of y axis label, height of x axis label
-    , axisLabelPadding: 20
+    //, axisLabelPadding: 20
+    , xAxisLabelPadding: 20
+    , yAxisLabelPadding: 20
     // width of y axis scale
     , yAxisWidth: 25
     // number of ticks on y axis (approx)
     , yTicksCount: 10
     // number of ticks on x axis (approx)
     , xTicksCount: 10
+    // x axis label angle ( false = horizontal )
+    , xLabelAngle: false
     // template that appears on mouse over
     , hoverTemplate: "{{x}}: {{y}}"
     // format x axis tick marks
@@ -107,10 +111,10 @@ GeoDash.Chart = GeoDash.Class.extend({
     if(self.options.xLabel) {
       this.xAxisElement.append("div")
         .attr("class", "xAxisLabel")
-        .style("height", this.options.axisLabelPadding + 'px')
+        .style("height", this.options.xAxisLabelPadding + 'px')
         .append("div")
         .attr("class", "gd-label")
-        .style("line-height", this.options.axisLabelPadding + 'px')
+        .style("line-height", this.options.xAxisLabelPadding + 'px')
         .text(this.options.xLabel)
     }
 
@@ -123,11 +127,12 @@ GeoDash.Chart = GeoDash.Class.extend({
     if(self.options.yLabel) {
       this.yAxisElement.append("div")
         .attr("class", "yAxisLabel")
-        .style("height", this.options.axisLabelPadding + 'px')
+        .style("height", this.options.yAxisLabelPadding + 'px')
         .style("width", this.height + 'px')
+        .style('bottom', this.options.yAxisLabelPadding * -1 + 'px')
         .append("div")
         .attr("class", "gd-label")
-        .style("line-height", this.options.axisLabelPadding + 'px')
+        .style("line-height", this.options.yAxisLabelPadding + 'px')
         .text(this.options.yLabel)
     }
 
@@ -176,8 +181,8 @@ GeoDash.Chart = GeoDash.Class.extend({
       marginleft += this.options.yAxisWidth
     }
     if(this.options.yLabel) {
-      xrange -= this.options.axisLabelPadding
-      marginleft += this.options.axisLabelPadding
+      xrange -= this.options.yAxisLabelPadding
+      marginleft += this.options.yAxisLabelPadding
     }
     this.xrange = xrange
     this.marginleft = marginleft
@@ -188,10 +193,10 @@ GeoDash.Chart = GeoDash.Class.extend({
     var yrange = this.height
     var topPadding = 0
     if(this.options.xLabel) {
-      yrange -= this.options.axisLabelPadding
+      yrange -= this.options.xAxisLabelPadding
     }
     if(this.options.drawX){
-      yrange -= this.options.axisLabelPadding
+      yrange -= this.options.xAxisLabelPadding
     }
     if(this.options.barLabels){
       topPadding = 15
@@ -244,12 +249,12 @@ GeoDash.Chart = GeoDash.Class.extend({
         })
         .style("left", function(){
           if(self.options.yLabel) {
-            return self.options.axisLabelPadding + 'px'
+            return self.options.yAxisLabelPadding + 'px'
           }
         })
         .style("width", function(){
           if(self.options.yLabel) {
-            return self.width - self.options.axisLabelPadding + "px"
+            return self.width - self.options.yAxisLabelPadding + "px"
           } else {
             return self.width + "px"
           }
@@ -266,7 +271,7 @@ GeoDash.Chart = GeoDash.Class.extend({
         .style("margin", function(d){
           var m = self.marginleft + 5
           if (self.options.yLabel) {
-            m -= self.options.axisLabelPadding
+            m -= self.options.yAxisLabelPadding
           }
           return '0 0 0 ' + m + 'px'
         })
@@ -328,16 +333,20 @@ GeoDash.Chart = GeoDash.Class.extend({
             return d
           }
         })
+      if (self.options.xLabelAngle) {
+        ticks.select('.gd-label')
+          .style("right", (self.x.rangeBand() / 2) + 8 + 'px')
+      }
 
       var newTicks = tickElements.enter().append('div')
         .attr("class", "tick")
         .style("left", function (d) { return self.x(d) + 'px' })
         .style("width", self.x.rangeBand() + 'px')
         .style("bottom", function (d) {
-          var b = self.height - self.yrange - self.options.axisLabelPadding
+          var b = self.height - self.yrange - self.options.xAxisLabelPadding
           return b + 'px'
         })
-        .style("height", self.options.axisLabelPadding + 'px')
+        .style("height", self.options.xAxisLabelPadding + 'px')
 
       tickElements.exit().remove()
 
@@ -348,9 +357,9 @@ GeoDash.Chart = GeoDash.Class.extend({
           return '0 0 0 ' + m + 'px'
         })
 
-      newTicks.append('div')
+      var label = newTicks.append('div')
         .attr("class", "gd-label")
-        .style("line-height", self.options.axisLabelPadding + 'px')
+        .style("line-height", self.options.xAxisLabelPadding + 'px')
         .text(function(d){
           if(self.options.xTickFormat) {
             return self.options.xTickFormat(d)
@@ -371,6 +380,17 @@ GeoDash.Chart = GeoDash.Class.extend({
         .on('click', function (d, i) {
           self.setActiveBar(i, this)
         })
+
+      if (self.options.xLabelAngle) {
+        label.style("transform", 'rotate(' + self.options.xLabelAngle+ 'deg)')
+          .style("transform-origin", 'right top')
+          .style("line-height", 'normal')
+          .style('overflow', 'visible')
+          .style('text-align', 'right')
+          .style('position', 'absolute')
+          .style("right", (self.x.rangeBand() / 2) + 8 + 'px')
+          .style("top", '2px')
+      }
     }
   }
   , updateLegend: function() {

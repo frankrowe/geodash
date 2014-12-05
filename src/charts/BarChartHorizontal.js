@@ -22,8 +22,8 @@ GeoDash.BarChartHorizontal = GeoDash.BarChart.extend({
       marginleft += this.options.yAxisWidth
     }
     if(this.options.yLabel) {
-      xrange -= this.options.axisLabelPadding
-      marginleft += this.options.axisLabelPadding
+      xrange -= this.options.yAxisLabelPadding
+      marginleft += this.options.yAxisLabelPadding
     }
     this.xrange = xrange
     this.marginleft = marginleft
@@ -33,10 +33,10 @@ GeoDash.BarChartHorizontal = GeoDash.BarChart.extend({
   , setYAxis: function() {
     var yrange = this.height
     if(this.options.drawX) {
-      yrange -= this.options.axisLabelPadding
+      yrange -= this.options.xAxisLabelPadding
     }
     if(this.options.xLabel){
-      yrange -= this.options.axisLabelPadding
+      yrange -= this.options.xAxisLabelPadding
     }
     this.yrange = yrange
     this.y = d3.scale.ordinal()
@@ -51,10 +51,10 @@ GeoDash.BarChartHorizontal = GeoDash.BarChart.extend({
         + this.options.padding * data.length
         + this.options.topPadding * 2
         if(this.options.drawX) {
-          height += this.options.axisLabelPadding
+          height += this.options.xAxisLabelPadding
         }
         if(this.options.xLabel) {
-          height += this.options.axisLabelPadding
+          height += this.options.xAxisLabelPadding
         }
       this.height = height
       this.container.select('.bars')
@@ -414,7 +414,7 @@ GeoDash.BarChartHorizontal = GeoDash.BarChart.extend({
         })
         .style("height", function(){
           if(self.options.xLabel) {
-            return self.height - self.options.axisLabelPadding + "px"
+            return self.height - self.options.xAxisLabelPadding + "px"
           } else {
             return self.height + "px"
           }
@@ -445,13 +445,13 @@ GeoDash.BarChartHorizontal = GeoDash.BarChart.extend({
         })
         .style("bottom", function(){
           if(self.options.yLabel) {
-            return self.options.axisLabelPadding + 'px'
+            return self.options.xAxisLabelPadding + 'px'
           }
         })
         .style("height", function(){
           var h = 0
           if(self.options.xLabel) {
-            h = self.height - self.options.axisLabelPadding + "px"
+            h = self.height - self.options.xAxisLabelPadding + "px"
           } else {
             h =  self.height + "px"
           }
@@ -496,8 +496,8 @@ GeoDash.BarChartHorizontal = GeoDash.BarChart.extend({
           var m = (parseInt(width)/2*-1)
           return '0 0 0 ' + m + 'px'
         })
-        .style("height", self.options.axisLabelPadding + 'px')
-        .style("line-height", self.options.axisLabelPadding + 'px')
+        .style("height", self.options.xAxisLabelPadding + 'px')
+        .style("line-height", self.options.xAxisLabelPadding + 'px')
     }
   }
   , updateYAxis: function() {

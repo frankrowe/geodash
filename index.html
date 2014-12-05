@@ -181,6 +181,8 @@
       , xLabel: 'X Axis Label'
       , barLabels: true
       , lowerLimit: 3
+      , xLabelAngle: -45
+      , xAxisLabelPadding: 40
       , valueFormat: function(n) {
           if(n <= 3) {
             return '<= 3'
@@ -226,6 +228,7 @@
       , yLabel: 'Number of Cats'
       , xTickFormat: d3.time.format('%m/%y')
       , showArea: true
+      , yAxisLabelPadding: 50
       , xTimeInterval: {
         timePeriod: d3.time.month,
         interval: 6

@@ -9,7 +9,6 @@ GeoDash.PieChart = GeoDash.Chart.extend({
     , innerRadius: 10
     , padding: 10
     , yAxisWidth: 0
-    , axisLabelPadding: 0
     , arclabels: false
     , arclabelsMin: 10
     , valueFormat: d3.format(',.0f')
