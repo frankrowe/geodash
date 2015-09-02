@@ -6,7 +6,7 @@
   "dependencies": {},
   "devDependencies": {
     "gulp-util": "~2.2.13",
-    "gulp": "~3.4.0",
+    "gulp": "^3.4.0",
     "gulp-uglify": "~0.1.0",
     "gulp-less": "~1.1.10",
     "gulp-concat": "~2.1.7",
