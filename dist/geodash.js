@@ -2743,6 +2743,11 @@ GeoDash.LineChart = GeoDash.Chart.extend({
     ])
 
     var ydomain = this.y.domain()
+     //In the event of a single point
+   if(ydomain[0]==ydomain[1]){
+      ydomain[1]=ydomain[0]*2;
+      ydomain[0]=0;
+    }
 
     var range = ydomain[1] - ydomain[0]
     var ypadding = range * .10
